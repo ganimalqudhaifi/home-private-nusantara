@@ -1,90 +1,90 @@
-import React from 'react';
-import Link from 'next/link';
-import { TopNavBar } from '../../../src/components/shared/TopNavBar';
-import { Footer } from '../../../src/components/shared/Footer';
-import { TutorPendingAlert } from '../../../src/components/tutor/TutorPendingAlert';
-import { TutorVerificationSteps } from '../../../src/components/tutor/TutorVerificationSteps';
-import { Lock, ArrowRight } from 'lucide-react';
+import React from'react';
+import Link from'next/link';
+import { TopNavBar } from'../../../src/components/shared/TopNavBar';
+import { Footer } from'../../../src/components/shared/Footer';
+import { TutorPendingAlert } from'../../../src/components/tutor/TutorPendingAlert';
+import { TutorVerificationSteps } from'../../../src/components/tutor/TutorVerificationSteps';
+import { Lock, ArrowRight } from'lucide-react';
 
 export interface TutorPendingPageProps {
-  readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+ readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function TutorPendingPage({ searchParams }: TutorPendingPageProps) {
-  if (searchParams) await searchParams;
+ if (searchParams) await searchParams;
 
-  return (
-    <div className="bg-surface dark:bg-slate-950 text-text-primary dark:text-gray-100 min-h-screen flex flex-col">
-      <TopNavBar
-        activeRoute="/tutor/pending"
-        role="tutor"
-        userName="Sarah Amanda, S.Pd."
-        userBadge="Menunggu Verifikasi"
-      />
+ return (
+ <div className="bg-surface text-text-primary min-h-screen flex flex-col">
+ <TopNavBar
+ activeRoute="/tutor/pending"
+ role="tutor"
+ userName="Sarah Amanda, S.Pd."
+ userBadge="Menunggu Verifikasi"
+ />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column: Alerts & Steps */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
-            <TutorPendingAlert />
-            <TutorVerificationSteps currentStep={2} />
-          </div>
+ <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+ <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+ {/* Left Column: Alerts & Steps */}
+ <div className="lg:col-span-8 flex flex-col gap-6">
+ <TutorPendingAlert />
+ <TutorVerificationSteps currentStep={2} />
+ </div>
 
-          {/* Right Column: Locked Settings Preview & Quick Help */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            {/* Locked Settings Notice */}
-            <div className="bg-white dark:bg-surface-container-low rounded-2xl p-6 border border-border-whisper dark:border-outline-variant shadow-sm relative overflow-hidden">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center">
-                  <Lock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-headline text-base font-bold text-primary dark:text-white">
-                    Pengaturan Jadwal Terkunci
-                  </h4>
-                  <p className="text-xs text-text-muted">Fitur aktif setelah verifikasi</p>
-                </div>
-              </div>
+ {/* Right Column: Locked Settings Preview & Quick Help */}
+ <div className="lg:col-span-4 flex flex-col gap-6">
+ {/* Locked Settings Notice */}
+ <div className="bg-white rounded-2xl p-6 border border-border-whisper shadow-sm relative overflow-hidden">
+ <div className="flex items-center gap-3 mb-4">
+ <div className="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 flex items-center justify-center">
+ <Lock className="w-5 h-5" />
+ </div>
+ <div>
+ <h4 className="font-headline text-base font-bold text-primary">
+ Pengaturan Jadwal Terkunci
+ </h4>
+ <p className="text-xs text-text-muted">Fitur aktif setelah verifikasi</p>
+ </div>
+ </div>
 
-              <p className="text-xs text-text-muted dark:text-gray-400 leading-relaxed mb-6">
-                Setelah akun disetujui dan diverifikasi oleh admin, Anda dapat mengatur matriks jenjang
-                mengajar (SD/SMP), membuka slot hari & jam mengajar, serta menerima permintaan bimbingan
-                dari orang tua siswa.
-              </p>
+ <p className="text-xs text-text-muted leading-relaxed mb-6">
+ Setelah akun disetujui dan diverifikasi oleh admin, Anda dapat mengatur matriks jenjang
+ mengajar (SD/SMP), membuka slot hari & jam mengajar, serta menerima permintaan bimbingan
+ dari orang tua siswa.
+ </p>
 
-              <div className="pt-4 border-t border-border-whisper dark:border-outline-variant">
-                <Link
-                  href="/tutor/dashboard"
-                  className="w-full bg-surface-container-low dark:bg-surface-container-high hover:bg-primary-container hover:text-white text-primary dark:text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
-                >
-                  <span>Preview Tampilan Dashboard</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
+ <div className="pt-4 border-t border-border-whisper">
+ <Link
+ href="/tutor/dashboard"
+ className="w-full bg-surface-container-low hover:bg-primary-container hover:text-white text-primary text-xs font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
+ >
+ <span>Preview Tampilan Dashboard</span>
+ <ArrowRight className="w-3.5 h-3.5" />
+ </Link>
+ </div>
+ </div>
 
-            {/* Help Card */}
-            <div className="bg-surface-container-low dark:bg-surface-container-high rounded-2xl p-6 border border-border-whisper dark:border-outline-variant">
-              <h4 className="font-headline text-sm font-bold text-primary dark:text-white mb-2">
-                Butuh Bantuan Pendaftaran?
-              </h4>
-              <p className="text-xs text-text-muted dark:text-gray-400 leading-relaxed mb-4">
-                Jika ada kendala unggah dokumen atau perubahan nomor WhatsApp, hubungi tim helpdesk kami.
-              </p>
-              <a
-                href="https://wa.me/6281234567890"
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-              >
-                Chat WhatsApp Tim Helpdesk →
-              </a>
-            </div>
-          </div>
-        </div>
-      </main>
+ {/* Help Card */}
+ <div className="bg-surface-container-low rounded-2xl p-6 border border-border-whisper">
+ <h4 className="font-headline text-sm font-bold text-primary mb-2">
+ Butuh Bantuan Pendaftaran?
+ </h4>
+ <p className="text-xs text-text-muted leading-relaxed mb-4">
+ Jika ada kendala unggah dokumen atau perubahan nomor WhatsApp, hubungi tim helpdesk kami.
+ </p>
+ <a
+ href="https://wa.me/6281234567890"
+ target="_blank"
+ rel="noreferrer"
+ className="text-xs font-bold text-emerald-600 hover:underline"
+ >
+ Chat WhatsApp Tim Helpdesk →
+ </a>
+ </div>
+ </div>
+ </div>
+ </main>
 
-      <Footer />
-    </div>
-  );
+ <Footer />
+ </div>
+ );
 }
