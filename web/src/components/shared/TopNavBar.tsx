@@ -1,9 +1,9 @@
 'use client';
 
-import React from'react';
+import React, { useEffect, useState } from'react';
 import Link from'next/link';
 import Image from'next/image';
-import { ShieldCheck, HelpCircle } from'lucide-react';
+import { ShieldCheck, HelpCircle, Menu, X } from'lucide-react';
 import { BRAND_INFO, NAV_LINKS } from'../../data/mockData';
 
 export interface TopNavBarProps {
@@ -18,8 +18,21 @@ export function TopNavBar({
  role ='guest',
  userName,
  userBadge,
-}: TopNavBarProps) {
- return (
+ }: TopNavBarProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+  const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key ==='Escape') setIsMobileMenuOpen(false);
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  return (
  <header className="bg-surface-container-lowest sticky top-0 w-full border-b border-border-whisper shadow-sm z-50 animate-fade-in">
  <div className="flex justify-between items-center w-full px-4 md:px-8 max-w-7xl mx-auto h-20">
  {/* Brand Logo & Name - Always Links to Home */}
@@ -70,8 +83,20 @@ export function TopNavBar({
  </nav>
  )}
 
- {/* Action Buttons */}
- <div className="flex items-center gap-3">
+  {/* Action Buttons */}
+  <div className="flex items-center gap-2 md:gap-3">
+  {role ==='guest' && (
+  <button
+  type="button"
+  onClick={() => setIsMobileMenuOpen((open) => !open)}
+  className="md:hidden p-2 rounded-xl border border-border-whisper text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
+  aria-label={isMobileMenuOpen ?'Tutup menu navigasi' :'Buka menu navigasi'}
+  aria-expanded={isMobileMenuOpen}
+  >
+  {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+  </button>
+  )}
+  <div className="hidden md:flex items-center gap-3">
  {role ==='guest' ? (
  <>
  <Link
@@ -117,8 +142,45 @@ export function TopNavBar({
  </Link>
  </div>
  )}
- </div>
- </div>
- </header>
+   </div>
+   </div>
+   </div>
+ 
+   {role ==='guest' && isMobileMenuOpen && (
+  <>
+  <button
+  type="button"
+  aria-label="Tutup menu navigasi"
+  className="fixed inset-0 top-20 z-40 bg-slate-900/20 md:hidden"
+  onClick={closeMobileMenu}
+  />
+  <nav className="absolute left-4 right-4 top-[calc(100%-0.5rem)] z-50 rounded-2xl border border-border-whisper bg-surface-container-lowest p-3 shadow-xl animate-scale-in md:hidden">
+  <div className="flex flex-col gap-1">
+  {NAV_LINKS.map((link) => {
+  const isActive = activeRoute === link.href;
+  return (
+  <Link
+  key={link.href}
+  href={link.href}
+  onClick={closeMobileMenu}
+  className={`rounded-xl px-4 py-3 text-sm font-semibold transition-colors hover:bg-surface-container-low hover:text-primary ${isActive ?'bg-surface-container-low text-primary' :'text-text-muted'}`}
+  >
+  {link.label}
+  </Link>
+  );
+  })}
+  <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border-whisper pt-3">
+  <Link href="/auth" onClick={closeMobileMenu} className="rounded-xl border border-border-whisper px-3 py-2.5 text-center text-xs font-bold text-primary hover:bg-surface-container-low">
+  Masuk Portal
+  </Link>
+  <Link href="/student/search" onClick={closeMobileMenu} className="rounded-xl bg-primary-container px-3 py-2.5 text-center text-xs font-bold text-white hover:bg-primary-hover">
+  Cari Guru Privat
+  </Link>
+  </div>
+  </div>
+  </nav>
+  </>
+  )}
+  </header>
  );
 }
