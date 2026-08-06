@@ -1,18 +1,27 @@
 # Home Private Nusantara — Stitch Screen Prompts Catalog
 
-Koleksi prompt spesifikasi layar terstruktur untuk **Google Stitch** / **Stitch MCP**, dirancang untuk merealisasikan seluruh kebutuhan fungsional dan alur interaksi **Home Private Nusantara (PRD v1.1.0)**.
+Koleksi prompt spesifikasi layar terstruktur untuk **Google Stitch** / **Stitch MCP**, dirancang untuk merealisasikan seluruh kebutuhan fungsional dan alur interaksi **Home Private Nusantara (PRD v1.1.0)** dengan identitas visual resmi dari **`Logo.jpg`**.
 
-Layar-layar yang memiliki relasi erat telah digabungkan menjadi satu screen terpadu berbasis *multi-state* (Tab / Toggle / Modal / Drawer) untuk meminimalkan fragmentasi halaman dan meningkatkan konsistensi pengalaman pengguna.
+Layar-layar yang memiliki relasi erat telah dikonsolidasi menjadi **10 screen terpadu berbasis multi-state** (Tab / Toggle / Modal / Drawer) untuk meminimalkan fragmentasi halaman dan meningkatkan konsistensi pengalaman pengguna.
 
 ---
 
-## Daftar Screen Prompts
+## 🎨 Identitas Desain Resmi (Berdasarkan `Logo.jpg`)
+
+- **Nusantara Deep Navy (`#0B2545`)**: Kata *"HOME"*, atap rumah, figur siswa, dan lengkungan dasar. Melambangkan otoritas institusional, fondasi akademis terpercaya, navigasi utama, dan tombol primer.
+- **Nusantara Crimson Red (`#DC2626`)**: Kata *"PRIVATE"*, lengkungan kiri, dan daun buku kiri. Melambangkan dedikasi bimbingan privat 1-on-1, tombol CTA konversi tinggi (*"Daftar Siswa"*, *"Konek / Booking"*), dan status urgensi.
+- **Nusantara Emerald Green (`#16A34A`)**: Lengkungan kanan dan daun buku kanan. Melambangkan pertumbuhan akademis siswa, badge tutor terverifikasi (*"Terverifikasi Admin"*), ketersediaan slot tanggal, dan konfirmasi sesi belajar.
+- **Slate Canvas (`#F8FAFC`) & Pure White (`#FFFFFF`)**: Background bersih dan nyaman di mata serta permukaan kartu modular dengan *whisper border* 1px (`#E2E8F0`).
+
+---
+
+## 📋 Daftar Screen Prompts
 
 | File Prompt | Route Target | Role Akses | Fitur & State yang Dimuat |
 | :--- | :--- | :--- | :--- |
 | [`01-landing-page.md`](./01-landing-page.md) | `/` | Guest / Publik | **Landing Page Utama**: Hero asimetris, program SD (1–6) & SMP (7–9), alur kurasi 4 langkah, testimonial, dan sticky CTA. |
 | [`02-auth-hub.md`](./02-auth-hub.md) | `/auth/login`<br>`/auth/register-student`<br>`/auth/register-tutor` | Guest / Auth | **Unified Auth Portal**: Tab switcher (Login terpadu, Form Siswa dinamis SD 1-6 & SMP 7-9 + nama wali, Form Pengajar baru). |
-| [`03-tutor-portal.md`](./03-tutor-portal.md) | `/tutor/pending`<br>`/tutor/dashboard` | Pengajar | **Dashboard Pengajar Multi-State**: State A (Holding Banner Verifikasi Admin Offline) vs State B (Dashboard Tutor Verified & Statistik). |
+| [`03-tutor-portal.md`](./03-tutor-portal.md) | `/tutor/pending`<br>`/tutor/dashboard` | Pengajar | **Dashboard Pengajar Multi-State**: State A (*Holding Banner Verifikasi Admin Offline*) vs State B (*Dashboard Tutor Verified & Statistik*). |
 | [`04-tutor-availability.md`](./04-tutor-availability.md) | `/tutor/availability` | Pengajar (Verified) | **Konfigurasi Ketersediaan**: Matriks jenjang & kelas yang diampu (SD/SMP), seleksi hari mingguan, builder multi-slot jam (24h), dan proteksi bentrok. |
 | [`05-tutor-schedule.md`](./05-tutor-schedule.md) | `/tutor/schedule` | Pengajar (Verified) | **Kalender Mengajar**: Tampilan kalender jadwal aktif + Slide-over Drawer detail alamat domisili siswa dan materi belajar. |
 | [`06-student-search-booking.md`](./06-student-search-booking.md) | `/student/search`<br>`/student/booking/confirm` | Siswa / Orang Tua | **Pencarian & Booking Terpadu**: Filter kelas SD/SMP + Date Picker interaktif + Kartu Pengajar + Modal Review Booking + Modal Tiket Sukses. |
@@ -23,9 +32,9 @@ Layar-layar yang memiliki relasi erat telah digabungkan menjadi satu screen terp
 
 ---
 
-## Panduan Penggunaan dengan Stitch
+## 🚀 Panduan Penggunaan dengan Stitch
 
 1. Buka file prompt `.md` yang diinginkan.
 2. Salin seluruh isi blok pada bagian **"Stitch Master Prompt (Copy-Ready)"**.
 3. Tempelkan (*paste*) langsung ke antarmuka **Google Stitch** atau panggil melalui tool MCP `generate_design`.
-4. Semua prompt sudah menyertakan konteks token warna dari [`DESIGN.md`](./DESIGN.md) sehingga hasil generasi layar akan konsisten secara visual.
+4. Seluruh prompt telah disinkronkan dengan acuan token warna dari [`DESIGN.md`](./DESIGN.md) yang diekstrak langsung dari `Logo.jpg`.

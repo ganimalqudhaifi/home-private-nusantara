@@ -9,13 +9,14 @@
 
 ---
 
-## Design System Tokens
+## Design System Tokens (Derived from Logo.jpg)
 - **Platform**: Web Responsive (Desktop 1440px / Tablet 768px / Mobile 375px)
 - **Background**: `#F8FAFC` (Slate Canvas)
 - **Surface**: `#FFFFFF` (Pure White) with 1px border `#E2E8F0`
-- **Primary Accent**: `#1E3A8A` (Nusantara Blue)
+- **Primary Brand (HOME)**: `#0B2545` (Nusantara Deep Navy)
+- **High-Impact CTA (PRIVATE)**: `#DC2626` (Nusantara Crimson Red)
+- **Growth & Verified (NUSANTARA)**: `#16A34A` (Nusantara Emerald Green - `bg-emerald-50 border-emerald-300 text-emerald-800`)
 - **Pending/Warning Color**: `#D97706` (Warm Amber - `bg-amber-50 border-amber-300 text-amber-900`)
-- **Verified/Success Color**: `#059669` (Emerald Green - `bg-emerald-50 border-emerald-300 text-emerald-900`)
 - **Text Headings**: `#0F172A` (Charcoal Slate), font: `Outfit`
 - **Text Body**: `#475569` (Slate-600), font: `Geist`
 
@@ -37,10 +38,10 @@
 ## Struktur Layar Detail per State
 
 ### 1. Header & Navigation Bar
-- Logo Home Private Nusantara.
+- Logo resmi Home Private Nusantara.
 - Badge Status Akun di pojok kanan atas:
   - *Jika Pending*: Badge Amber `⏳ Menunggu Verifikasi Admin`
-  - *Jika Verified*: Badge Emerald `✓ Pengajar Terverifikasi`
+  - *Jika Verified*: Badge Emerald `✓ Pengajar Terverifikasi` (Nusantara Emerald `#16A34A`)
 - Menu Navigasi: Dashboard, Ketersediaan Mengajar, Jadwal Sesi, Profil Saya, Keluar.
 
 ---
@@ -77,14 +78,14 @@
     - Jadwal: **Senin, 10 Agustus 2026 • 16:00 - 18:00 WIB**
     - Materi: Matematika Dasar (Pecahan & Desimal)
     - Lokasi: Jl. Tebet Barat Dalam No. 14, Jakarta Selatan (Tombol "Buka Peta / Detail Alamat")
-    - Status: `Terkonfirmasi`
+    - Status: `Terkonfirmasi ✓` (Emerald Badge)
   - Kartu Sesi 2:
     - Siswa: **Rizky Ramadhan (SMP Kelas 8)**
     - Jadwal: **Kamis, 13 Agustus 2026 • 16:00 - 18:00 WIB**
     - Materi: IPA Terpadu (Sistem Gerak Manusia)
-    - Status: `Terkonfirmasi`
+    - Status: `Terkonfirmasi ✓` (Emerald Badge)
 - **Pintasan Aksi Cepat (Quick Actions)**:
-  - Tombol Primer: "Perbarui Slot Hari & Jam Mengajar" (`/tutor/availability`)
+  - Tombol Primer: "Perbarui Slot Hari & Jam Mengajar" (`/tutor/availability`) (Nusantara Deep Navy `#0B2545`)
   - Tombol Sekunder: "Lihat Seluruh Kalender Sesi" (`/tutor/schedule`)
 
 ---
@@ -92,19 +93,20 @@
 ## Stitch Master Prompt (Copy-Ready)
 
 ```text
-Create a modern, clean web dashboard portal for verified and pending tutors on "Home Private Nusantara" (a curated private tutoring service for SD and SMP students in Indonesia), supporting both a Pending Holding State and a Verified Active Dashboard.
+Create a modern, clean web dashboard portal for verified and pending tutors on "Home Private Nusantara", supporting both a Pending Holding State and a Verified Active Dashboard.
 
-DESIGN SYSTEM (REQUIRED):
+DESIGN SYSTEM (REQUIRED - FROM BRAND LOGO):
 - Platform: Responsive Web Dashboard (Desktop 1440px with sticky sidebar/navbar).
 - Background: Slate Canvas (#F8FAFC).
 - Surface: Pure White (#FFFFFF) cards with 1px border (#E2E8F0) and subtle elevation shadow.
-- Primary Accent: Nusantara Deep Blue (#1E3A8A) for primary action buttons and active navigation links.
+- Primary Brand: Nusantara Deep Navy (#0B2545) for primary action buttons and active navigation links.
+- High-Conversion CTA: Nusantara Crimson Red (#DC2626) for priority alerts.
+- Growth Accent: Nusantara Emerald Green (#16A34A) for Verified status badges and confirmed sessions.
 - Status Amber (#D97706): Used for Pending holding states, warnings, and review notices.
-- Status Emerald (#059669): Used for Verified status badges and confirmed sessions.
 - Typography: Outfit (Headings) and Geist (Body, data tables, metrics).
 
 PAGE STRUCTURE:
-1. NAVIGATION: Top navigation bar with logo "Home Private Nusantara", tutor avatar with name "Sarah Amanda, S.Pd.", and an interactive badge toggle demonstrating both states: "Pending Verification" (Amber) and "Verified" (Emerald).
+1. NAVIGATION: Top navigation bar with official logo emblem "Home Private Nusantara", tutor avatar with name "Sarah Amanda, S.Pd.", and an interactive badge toggle demonstrating both states: "Pending Verification" (Amber) and "Verified" (Emerald).
 2. STATE A (WHEN STATUS IS PENDING):
    - Large prominent Amber Alert Card at the top: Headline "Akun Anda Sedang Dalam Proses Verifikasi Admin", explanatory text stating that offline interview and credential checks are in progress within 24-48 business hours.
    - 4-step vertical visual progress tracker: 1. Registrasi (Done) -> 2. Review Berkas (In Progress) -> 3. Wawancara Offline/WA -> 4. Akun Aktif.
@@ -112,7 +114,7 @@ PAGE STRUCTURE:
    - "Hubungi Admin Support" WhatsApp quick contact card.
    - Muted/Locked visual placeholders for calendar and availability settings.
 3. STATE B (WHEN STATUS IS VERIFIED):
-   - Welcoming header with green check badge "Pengajar Terverifikasi" and CTA "Atur Slot Jadwal".
+   - Welcoming header with emerald green check badge "Pengajar Terverifikasi" and CTA "Atur Slot Jadwal".
    - 4-metric statistics grid: "Total Sesi Selesai (18)", "Murid Aktif (4 Siswa: 2 SD, 2 SMP)", "Slot Ketersediaan (4 Hari Aktif)", and "Rating Kepuasan (4.9/5.0)".
    - Upcoming Tutoring Sessions section displaying structured session cards with student name, grade tag ("SD Kelas 5", "SMP Kelas 8"), scheduled date & time ("Senin, 16:00 - 18:00 WIB"), home address, and "Detail Alamat" action.
    - Quick action shortcuts: "Update Ketersediaan Hari & Jam" and "Buka Kalender Mengajar".

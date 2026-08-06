@@ -7,36 +7,37 @@
 
 ---
 
-## Design System Tokens
+## Design System Tokens (Derived from Logo.jpg)
 - **Platform**: Web Responsive (Desktop 1440px / Tablet 768px / Mobile 375px)
 - **Background**: `#F8FAFC` (Slate Canvas)
 - **Surface**: `#FFFFFF` (Pure White) with 1px border `#E2E8F0`
-- **Primary Accent**: `#1E3A8A` (Nusantara Blue)
-- **Secondary Accent**: `#D97706` (Warm Amber / Gold)
-- **Text Headings**: `#0F172A` (Charcoal Slate), font: `Outfit` or `Geist`
-- **Text Body**: `#475569` (Muted Slate), font: `Geist` or `Plus Jakarta Sans`
+- **Primary Brand (HOME)**: `#0B2545` (Nusantara Deep Navy)
+- **High-Impact CTA (PRIVATE)**: `#DC2626` (Nusantara Crimson Red)
+- **Growth & Verified (NUSANTARA)**: `#16A34A` (Nusantara Emerald Green)
+- **Text Headings**: `#0F172A` (Charcoal Slate), font: `Outfit`
+- **Text Body**: `#475569` (Muted Slate), font: `Plus Jakarta Sans` or `Geist`
 - **Badges**:
-  - SD Badge: `bg-blue-50 text-blue-700 border-blue-200`
-  - SMP Badge: `bg-indigo-50 text-indigo-700 border-indigo-200`
-  - Verified Badge: `bg-emerald-50 text-emerald-700 border-emerald-200`
+  - SD Badge: `bg-blue-50 text-blue-900 border-blue-200`
+  - SMP Badge: `bg-indigo-50 text-indigo-900 border-indigo-200`
+  - Verified Badge: `bg-emerald-50 text-emerald-800 border-emerald-300`
 
 ---
 
 ## Struktur Layar & Komponen
 
 1. **Top Navigation Bar (Sticky)**:
-   - Kiri: Logo "Home Private Nusantara" dengan emblem buku & bintang emas + teks pendukung "Portal Les Privat SD & SMP Terkurasi".
+   - Kiri: Logo resmi "Home Private Nusantara" (Emblem Atap Rumah Navy, Dua Daun Buku Merah & Hijau, Figur Siswa Meraih Prestasi) + teks pendukung "Portal Les Privat SD & SMP Terkurasi".
    - Tengah: Menu Navigasi ("Tentang Kami", "Program SD & SMP", "Alur Kurasi", "Testimoni", "Hubungi Kami").
-   - Kanan: Tombol Sekunder "Masuk Portal" (`/auth/login`) dan Tombol Primer "Cari Guru Privat" (Scroll ke Program / Register).
+   - Kanan: Tombol Sekunder "Masuk Portal" (`/auth/login`) dan Tombol Utama Merah Crimson "Cari Guru Privat" (`#DC2626`).
 
 2. **Hero Section (Asymmetrical Split)**:
    - Kiri (Konten):
-     - Pill Tag: "✨ 100% Pengajar Lolos Seleksi & Wawancara Offline"
+     - Pill Tag: "✨ 100% Pengajar Lolos Seleksi & Wawancara Offline" (Emerald Green tint `bg-emerald-50 text-emerald-800 border-emerald-300`)
      - Headline Utama: "Bimbingan Belajar Privat Terbaik untuk Siswa SD & SMP di Rumah Anda"
      - Subheadline: "Dapatkan guru les privat berpengalaman yang siap membimbing materi sekolah dasar hingga menengah pertama dengan jadwal belajar yang fleksibel dan transparan."
      - Dual CTA Box:
-       - Tombol Utama A: "Daftar Sebagai Siswa" (Icon: GraduationCap, bg-blue-900 text-white)
-       - Tombol Utama B: "Gabung Sebagai Pengajar" (Icon: Briefcase, border border-slate-300 text-slate-800)
+       - Tombol Utama A: "Daftar Sebagai Siswa" (Icon: GraduationCap, bg-red-600 text-white hover:bg-red-700)
+       - Tombol Utama B: "Gabung Sebagai Pengajar" (Icon: Briefcase, border border-slate-300 text-slate-900 hover:bg-slate-50)
      - Social Proof Mini-Strip: Rating 4.9/5.0 dari 1,200+ sesi belajar, 100% Guru Terverifikasi.
    - Kanan (Visual Card Layout):
      - Interactive Preview Card: Mockup pencarian cepat tanggal & jenjang (SD Kelas 5 / SMP Kelas 8).
@@ -77,20 +78,21 @@
 ```text
 Create a modern, highly trustworthy web landing page for "Home Private Nusantara", a premium curated private tutoring platform in Indonesia dedicated exclusively to Elementary School (SD Kelas 1-6) and Junior High School (SMP Kelas 7-9).
 
-DESIGN SYSTEM (REQUIRED):
+DESIGN SYSTEM (REQUIRED - FROM BRAND LOGO):
 - Platform: Responsive Web (Desktop 1440px viewport centered, max-width 1280px).
-- Theme: Clean, academic, and authoritative.
+- Theme: Authoritative, warm, academic institution feel.
 - Background: Slate Canvas (#F8FAFC).
 - Surface: Pure White (#FFFFFF) cards with subtle 1px border (#E2E8F0) and soft elevation.
-- Primary Accent: Nusantara Deep Blue (#1E3A8A) for headers and primary CTA buttons.
-- Secondary Accent: Warm Amber Gold (#D97706) for verified badges, stars, and key highlights.
-- Text Primary: Charcoal Slate (#0F172A). Text Secondary: Muted Slate (#475569).
-- Typography: Clean geometric modern sans-serif (Outfit/Geist).
+- Primary Brand: Nusantara Deep Navy (#0B2545) for header, house emblem, and primary buttons.
+- High-Conversion CTA: Nusantara Crimson Red (#DC2626) for primary conversion buttons ("Daftar Siswa", "Konek").
+- Verified & Growth Accent: Nusantara Emerald Green (#16A34A) for verified badges, rating stars, and confirmation chips.
+- Text Headings: Charcoal Slate (#0F172A). Text Secondary: Muted Slate (#475569).
+- Typography: Outfit (Headings) and Plus Jakarta Sans (Body text).
 
 PAGE STRUCTURE:
-1. HEADER: Sticky clean navigation bar featuring the logo "Home Private Nusantara" with book/star emblem, navigation links ("Tentang Kami", "Program SD & SMP", "Alur Kurasi", "Testimoni"), a secondary "Masuk Portal" button, and a primary blue "Cari Guru Privat" button.
+1. HEADER: Sticky clean navigation bar featuring the official "Home Private Nusantara" logo emblem (Navy house roof with window, central student figure, red left book leaf, green right book leaf), navigation links ("Tentang Kami", "Program SD & SMP", "Alur Kurasi", "Testimoni"), secondary "Masuk Portal" button, and primary red button "Cari Guru Privat".
 2. HERO SECTION (Asymmetrical):
-   - Left column: Amber verified badge "100% Pengajar Lolos Seleksi & Wawancara Offline", large headline "Bimbingan Belajar Privat Terbaik untuk Siswa SD & SMP di Rumah Anda", supporting descriptive paragraph, and dual CTA buttons: primary deep blue button "Daftar Sebagai Siswa" and outline button "Gabung Sebagai Pengajar". Includes rating pill (4.9/5.0 with 1,200+ verified sessions).
+   - Left column: Emerald badge "✨ 100% Pengajar Lolos Seleksi & Wawancara Offline", large bold navy headline "Bimbingan Belajar Privat Terbaik untuk Siswa SD & SMP di Rumah Anda", supporting descriptive paragraph, and dual CTA buttons: primary red button "Daftar Sebagai Siswa" (#DC2626) and outline button "Gabung Sebagai Pengajar". Includes rating pill (4.9/5.0 with 1,200+ verified sessions).
    - Right column: Clean interactive preview card showing a mini calendar date picker with highlighted active dates and a floating verified tutor card with avatar, name "Sarah Amanda, S.Pd.", badge "Tutor Matematika & IPA SD-SMP", and a green "Terverifikasi Admin" badge.
 3. VALUE PROPOSITIONS: 3 structured cards highlighting "100% Offline-to-Online Curation", "Spesialisasi SD 1-6 & SMP 7-9", and "Pencocokan Jadwal Instan via Date Picker".
 4. PROGRAM SECTION: Segmented tab selector for "Program SD (Kelas 1-6)" and "Program SMP (Kelas 7-9)" displaying curriculum tags, key subjects, and class levels.

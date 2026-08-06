@@ -7,14 +7,16 @@
 
 ---
 
-## Design System Tokens
+## Design System Tokens (Derived from Logo.jpg)
 - **Platform**: Web Responsive (Desktop 1440px / Tablet 768px / Mobile 375px)
 - **Background**: `#F8FAFC` (Slate Canvas)
 - **Surface**: `#FFFFFF` (Pure White) with 1px border `#E2E8F0`
-- **Primary Brand**: `#1E3A8A` (Nusantara Blue)
+- **Primary Brand (HOME)**: `#0B2545` (Nusantara Deep Navy)
+- **High-Impact CTA (PRIVATE)**: `#DC2626` (Nusantara Crimson Red)
+- **Growth & Verified (NUSANTARA)**: `#16A34A` (Nusantara Emerald Green)
 - **Session Tags**:
-  - SD Session: `bg-blue-100 border-blue-300 text-blue-900`
-  - SMP Session: `bg-indigo-100 border-indigo-300 text-indigo-900`
+  - SD Session: `bg-blue-50 border-blue-300 text-blue-900`
+  - SMP Session: `bg-indigo-50 border-indigo-300 text-indigo-900`
 - **Text Headings**: `#0F172A` (Charcoal Slate), font: `Outfit`
 - **Numbers & Times**: `Geist Mono` (Tabular format 24 Jam)
 
@@ -37,14 +39,14 @@
        - Nama: "Fajar Pratama"
        - Topik: "Matematika Dasar - Pecahan & Desimal"
        - Lokasi: "Tebet Barat, Jaksel"
-       - Status: `Terkonfirmasi ✓`
+       - Status: `Terkonfirmasi ✓` (Emerald Badge `#16A34A`)
        - Interaksi: Klik kartu membuka Slide-Over Drawer Detail Murid.
      - **Blok Sesi 2 (Kamis 13 Ags, 16:00 - 18:00 WIB)**:
        - Tag: `SMP Kelas 8` (Indigo Badge)
        - Nama: "Rizky Ramadhan"
        - Topik: "IPA Terpadu - Sistem Gerak Manusia"
        - Lokasi: "Pancoran, Jaksel"
-       - Status: `Terkonfirmasi ✓`
+       - Status: `Terkonfirmasi ✓` (Emerald Badge)
      - **Blok Sesi 3 (Sabtu 15 Ags, 09:00 - 11:00 WIB)**:
        - Tag: `SD Kelas 3` (Blue Badge)
        - Nama: "Alya Zahra"
@@ -60,7 +62,7 @@
      - Sekolah Asal: SDN Tebet Timur 01
    - **Informasi Orang Tua / Wali**:
      - Nama Wali: "Ibu Rina Kartika"
-     - Nomor Kontak WhatsApp: `+62 812-3456-7890` (Tombol Cepat: "Chat WhatsApp Wali Murid")
+     - Nomor Kontak WhatsApp: `+62 812-3456-7890` (Tombol Cepat Hijau: "Chat WhatsApp Wali Murid" `#16A34A`)
    - **Lokasi & Alamat Lengkap Belajar di Rumah**:
      - Alamat: "Jl. Tebet Barat Dalam IV No. 14, RT 05/RW 03, Tebet, Jakarta Selatan (Patokan: Pagar hitam depan Taman Tebet)."
      - Tombol Aksi: "Buka di Google Maps" (Icon: MapPin)
@@ -68,7 +70,7 @@
      - Waktu: "Senin, 10 Agustus 2026 (16:00 - 18:00 WIB)"
      - Catatan dari Orang Tua: "Fajar butuh bimbingan sabar untuk konsep pembagian bersusun dan pecahan campuran."
    - **Aksi Drawer**:
-     - Tombol Utama: "Tandai Sesi Selesai Dilaksanakan" (Emerald Green).
+     - Tombol Utama: "Tandai Sesi Selesai Dilaksanakan" (Nusantara Emerald Green `#16A34A`).
      - Tombol Sekunder: "Laporkan Kendala ke Admin" (Outline Slate).
 
 ---
@@ -78,13 +80,15 @@
 ```text
 Create a modern, clean tutor schedule calendar screen with an interactive slide-over student detail drawer for "Home Private Nusantara".
 
-DESIGN SYSTEM (REQUIRED):
+DESIGN SYSTEM (REQUIRED - FROM BRAND LOGO):
 - Platform: Responsive Web Dashboard (Desktop 1440px, max-width 1280px).
 - Background: Slate Canvas (#F8FAFC).
 - Surface: Pure White (#FFFFFF) with 1px border (#E2E8F0) and subtle elevation.
-- Primary Brand: Nusantara Deep Blue (#1E3A8A).
-- SD Session Badge: Soft Blue (#EFF6FF, border #93C5FD, text #1E3A8A).
-- SMP Session Badge: Soft Indigo (#EEF2FF, border #A5B4FC, text #3730A3).
+- Primary Brand: Nusantara Deep Navy (#0B2545).
+- High-Conversion Accent: Nusantara Crimson Red (#DC2626).
+- Growth & Verified Accent: Nusantara Emerald Green (#16A34A) for completed session buttons and confirmation badges.
+- SD Session Badge: Soft Blue (#EFF6FF, border #93C5FD, text #0B2545).
+- SMP Session Badge: Soft Indigo (#EEF2FF, border #A5B4FC, text #312E81).
 - Typography: Outfit (Headings), Geist (Body), and Geist Mono (24-hour time slots).
 
 PAGE STRUCTURE:
@@ -92,7 +96,7 @@ PAGE STRUCTURE:
 2. WEEKLY CALENDAR GRID:
    - 7-column timetable (Monday to Sunday) covering hours 08:00 to 21:00.
    - Interactive scheduled session blocks placed at specific time coordinates:
-     * Monday 16:00-18:00 block: Blue badge "SD Kelas 5", student name "Fajar Pratama", topic "Matematika Dasar", address "Tebet Barat, Jaksel".
+     * Monday 16:00-18:00 block: Blue badge "SD Kelas 5", student name "Fajar Pratama", topic "Matematika Dasar", address "Tebet Barat, Jaksel", Emerald badge "Terkonfirmasi".
      * Thursday 16:00-18:00 block: Indigo badge "SMP Kelas 8", student name "Rizky Ramadhan", topic "IPA Terpadu".
      * Saturday 09:00-11:00 block: Blue badge "SD Kelas 3", student name "Alya Zahra".
 3. SLIDE-OVER STUDENT DETAIL DRAWER (Overlay panel positioned on the right):
@@ -102,7 +106,7 @@ PAGE STRUCTURE:
    - Home Learning Address: Complete residential address with landmark notes and a "Buka Google Maps" button.
    - Session Time: "Senin, 10 Agustus 2026 • 16:00 - 18:00 WIB".
    - Parent Learning Notes card: Special requests for patient tutoring on math fractions.
-   - Bottom actions: Green button "Tandai Sesi Selesai" and secondary "Hubungi Admin".
+   - Bottom actions: Emerald Green button "Tandai Sesi Selesai" (#16A34A) and secondary "Hubungi Admin".
 
 BANNED: No emojis, no neon glow, clean tabular grid with high contrast.
 ```

@@ -9,18 +9,20 @@
 
 ---
 
-## Design System Tokens
+## Design System Tokens (Derived from Logo.jpg)
 - **Platform**: Web Responsive (Desktop 1440px dengan Sidebar / 12-column grid)
 - **Background**: `#F8FAFC` (Slate Canvas)
 - **Surface**: `#FFFFFF` (Pure White) with 1px border `#E2E8F0`
-- **Primary Brand**: `#1E3A8A` (Nusantara Blue)
+- **Primary Brand (HOME)**: `#0B2545` (Nusantara Deep Navy)
+- **High-Impact CTA (PRIVATE)**: `#DC2626` (Nusantara Crimson Red)
+- **Growth & Verified (NUSANTARA)**: `#16A34A` (Nusantara Emerald Green)
 - **Grade Badges**:
-  - `SD Badge`: `bg-blue-50 text-blue-700 border-blue-200`
-  - `SMP Badge`: `bg-indigo-50 text-indigo-700 border-indigo-200`
+  - `SD Badge`: `bg-blue-50 text-blue-900 border-blue-200`
+  - `SMP Badge`: `bg-indigo-50 text-indigo-900 border-indigo-200`
 - **Status Sesi**:
-  - `Terkonfirmasi`: `bg-emerald-50 text-emerald-700 border-emerald-200`
+  - `Terkonfirmasi`: `bg-emerald-50 text-emerald-800 border-emerald-300`
   - `Selesai`: `bg-slate-100 text-slate-700 border-slate-200`
-  - `Dibatalkan`: `bg-rose-50 text-rose-700 border-rose-200`
+  - `Dibatalkan`: `bg-rose-50 text-rose-800 border-rose-300`
 - **Typography**: Outfit (Headings), Geist (Tabel, Data rows), Geist Mono (Timestamps, 24h Time Slots, ID Transaksi).
 
 ---
@@ -61,7 +63,7 @@
 
 ### 3. State B: Tampilan Monitoring Seluruh Booking (`Tab: Global Bookings`)
 - **Status KPI Card Mini-Strip**:
-  - `Sesi Berjalan Hari Ini: 42 Sesi` • `Sesi Mendatang: 186 Sesi` • `Sesi Selesai Bulan Ini: 96 Sesi` • `Tingkat Konflik Jadwal: 0%`
+  - `Sesi Berjalan Hari Ini: 42 Sesi` • `Sesi Mendatang: 186 Sesi` • `Sesi Selesai Bulan Ini: 96 Sesi` • `Tingkat Konflik Jadwal: 0% (Emerald Badge)`
 - **Filter & Search Bar**:
   - Filter Tanggal: Date Range Picker (`10 Ags 2026 - 16 Ags 2026`).
   - Filter Status: `Semua`, `Terkonfirmasi`, `Selesai`, `Dibatalkan`.
@@ -72,7 +74,7 @@
   - Kolom 3: **Siswa & Jenjang** (Fajar Pratama • `SD Kelas 5`).
   - Kolom 4: **Pengajar Ditugaskan** (Sarah Amanda, S.Pd. • `Terverifikasi`).
   - Kolom 5: **Alamat Pelaksanaan Belajar** (Tebet Barat, Jakarta Selatan).
-  - Kolom 6: **Status Sesi** (Badge Hijau: `Terkonfirmasi`).
+  - Kolom 6: **Status Sesi** (Badge Hijau Emerald: `Terkonfirmasi`).
   - Kolom 7: **Aksi Koordinasi** (Tombol "Buka Tiket Koordinasi WA" / "Detail Sesi").
 
 ---
@@ -82,24 +84,26 @@
 ```text
 Create a modern, data-rich admin directory and global booking monitoring screen for "Home Private Nusantara" with a 2-tab view switcher between Student Directory and Global Bookings Monitor.
 
-DESIGN SYSTEM (REQUIRED):
+DESIGN SYSTEM (REQUIRED - FROM BRAND LOGO):
 - Platform: Responsive Web Admin Dashboard (Desktop 1440px with sidebar, max-width 1400px).
 - Background: Slate Canvas (#F8FAFC).
 - Surface: Pure White (#FFFFFF) cards with 1px border (#E2E8F0) and subtle elevation.
-- Primary Accent: Nusantara Deep Blue (#1E3A8A).
-- Grade Badges: SD (#EFF6FF, text #1E3A8A) and SMP (#EEF2FF, text #3730A3).
-- Status Colors: Emerald (#059669) for Confirmed, Slate (#475569) for Completed, Rose (#E11D48) for Cancelled.
+- Primary Brand: Nusantara Deep Navy (#0B2545).
+- High-Impact CTA: Nusantara Crimson Red (#DC2626).
+- Growth & Verified Accent: Nusantara Emerald Green (#16A34A).
+- Grade Badges: SD (#EFF6FF, text #0B2545) and SMP (#EEF2FF, text #312E81).
+- Status Colors: Emerald (#16A34A) for Confirmed, Slate (#475569) for Completed, Crimson (#DC2626) for Cancelled.
 - Typography: Outfit (Headings), Geist (Table rows), Geist Mono (24-hour time slots, Booking IDs).
 
 PAGE STRUCTURE:
 1. HEADER: Page title "Direktori Siswa & Pemantauan Jadwal Belajar", subtitle, and a prominent 2-way tab selector: "Direktori Siswa SD & SMP (480)" and "Monitoring Seluruh Booking (324 Sesi)" [Active].
-2. KPI MINI STRIP: 4 summary pill badges at the top showing "Sesi Hari Ini (42)", "Sesi Mendatang (186)", "Sesi Selesai (96)", and "Konflik Jadwal (0% - Zero Collision)".
+2. KPI MINI STRIP: 4 summary pill badges at the top showing "Sesi Hari Ini (42)", "Sesi Mendatang (186)", "Sesi Selesai (96)", and "Konflik Jadwal (0% - Zero Collision, Emerald Badge)".
 3. TAB 1 - STUDENT DIRECTORY VIEW:
    - Filter bar with search by student name/parent/address, grade filter (SD 1-6 / SMP 7-9).
    - Data table displaying: Student Name, Grade Badge, Parent/Guardian Name with WhatsApp link, Full Residential Address, Total Sessions, and Assigned Tutor.
 4. TAB 2 - GLOBAL BOOKINGS MONITOR VIEW:
    - Date range selector ("10 - 16 Agustus 2026") and status filters.
-   - Master bookings data table with columns: Booking ID & Date, 24-hour Time Slot ("16:00 - 18:00 WIB"), Student Name & Grade ("Fajar Pratama - SD Kelas 5"), Assigned Tutor ("Sarah Amanda, S.Pd."), Residential Learning Address ("Tebet Barat, Jaksel"), Status Badge ("Terkonfirmasi"), and Action button "Detail Tiket".
+   - Master bookings data table with columns: Booking ID & Date, 24-hour Time Slot ("16:00 - 18:00 WIB"), Student Name & Grade ("Fajar Pratama - SD Kelas 5"), Assigned Tutor ("Sarah Amanda, S.Pd."), Residential Learning Address ("Tebet Barat, Jaksel"), Status Badge ("Terkonfirmasi", Emerald), and Action button "Detail Tiket".
 
 BANNED: No emojis as UI icons, no neon glows, clean high-contrast tabular structure.
 ```
