@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pengaturan Jenjang & Slot Ketersediaan Mengajar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#93000b",
+                        "surface-container-highest": "#e0e3e5",
+                        "status-warning": "#D97706",
+                        "tertiary-fixed-dim": "#62df7d",
+                        "tertiary-fixed": "#7ffc97",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed-dim": "#ffb4ab",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c6cf",
+                        "surface-emerald": "#F0FDF4",
+                        "secondary-container": "#e02928",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed-variant": "#005320",
+                        "primary-container": "#0b2545",
+                        "secondary-fixed": "#ffdad6",
+                        "primary": "#001026",
+                        "on-primary-fixed": "#001c3b",
+                        "on-error": "#ffffff",
+                        "border-whisper": "#E2E8F0",
+                        "on-surface-variant": "#44474e",
+                        "background": "#f7f9fb",
+                        "on-primary-container": "#778db2",
+                        "text-primary": "#0F172A",
+                        "on-surface": "#191c1e",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#314769",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#d5e3ff",
+                        "secondary-hover": "#B91C1C",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-tertiary-fixed": "#002109",
+                        "outline": "#74777f",
+                        "tertiary": "#001404",
+                        "surface-container-low": "#f2f4f6",
+                        "inverse-primary": "#b1c7f0",
+                        "text-muted": "#64748B",
+                        "primary-fixed-dim": "#b1c7f0",
+                        "primary-hover": "#133E72",
+                        "tertiary-container": "#002c0e",
+                        "surface-dim": "#d8dadc",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed": "#410002",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#495f82",
+                        "secondary": "#bb0112",
+                        "surface": "#f7f9fb",
+                        "surface-bright": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#12a148"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "1.5rem",
+                        "stack-sm": "0.5rem",
+                        "stack-md": "1rem",
+                        "margin-desktop": "2.5rem",
+                        "stack-lg": "2rem",
+                        "margin-mobile": "1rem",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "data-mono": ["Geist Mono"],
+                        "headline-sm": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "display": ["Outfit"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Outfit"],
+                        "body-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "data-mono": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #E2E8F0;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen text-text-primary font-body-md flex flex-col">
+<!-- TopNavBar (Settings/Dashboard intent, suppressing TopAppBar in favor of Settings canvas structure) -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-whisper dark:border-outline-variant shadow-sm sticky top-0 w-full z-50 flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
+            Home Private Nusantara
+        </div>
+<nav class="hidden md:flex gap-6">
+<a class="text-text-muted dark:text-surface-variant hover:text-primary-hover dark:hover:text-primary-fixed-dim transition-colors" href="#">Dashboard</a>
+<a class="text-text-muted dark:text-surface-variant hover:text-primary-hover dark:hover:text-primary-fixed-dim transition-colors" href="#">Categories</a>
+<a class="text-text-muted dark:text-surface-variant hover:text-primary-hover dark:hover:text-primary-fixed-dim transition-colors" href="#">Schedule</a>
+<a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary dark:border-primary-fixed pb-1 active:scale-98 transition-all duration-200" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-text-muted dark:text-surface-variant hover:text-primary-hover dark:hover:text-primary-fixed-dim transition-colors cursor-pointer" data-icon="help">help</span>
+<span class="material-symbols-outlined text-text-muted dark:text-surface-variant hover:text-primary-hover dark:hover:text-primary-fixed-dim transition-colors cursor-pointer" data-icon="notifications">notifications</span>
+<img alt="Tutor Profile Avatar" class="w-10 h-10 rounded-full object-cover border border-border-whisper" data-alt="Professional headshot of a smiling Indonesian tutor in their 30s, wearing neat business casual attire against a clean, bright, white studio background. Soft, even lighting creates a trustworthy and approachable appearance, suitable for an academic profile picture in a prestigious educational platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0RrucZLk12HJkqptK7_kX82bxhJs7PHgue6rzfkl-HA6UHCJqwXP2OfqYLIezAnm4O-RXGDGAqk2OkqBAnEvGfqUIUYevCDx7iqhTR-AG_epmhaSb7hSiFYd611GYWOObGkak2vGQUPh1wl2lS3XHcJ3GZ720blEF398sUl33erZ7ofofYNuvARro60Q8GbsZn-Y2oKrmvJNLQU6jowNEKHeWXVo3P_ZePDfgdsOcn3xDWzgbVeFokc7FasKIFJalM_ae2Of4m-rL"/>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-8 md:py-12 pb-32">
+<!-- Header Section -->
+<div class="mb-stack-lg flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-container mb-stack-sm">Pengaturan Jenjang & Slot Ketersediaan Mengajar</h1>
+<p class="font-body-lg text-body-lg text-text-muted max-w-2xl">Kelola jenjang pendidikan yang Anda ajar dan atur jadwal ketersediaan mingguan secara rutin.</p>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-lowest border border-border-whisper rounded-xl p-3 shadow-sm">
+<span class="font-label-caps text-label-caps text-primary-container">STATUS KETERSEDIAAN</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#16A34A]"></div>
+<span class="ml-3 font-body-sm text-body-sm font-medium text-text-primary">Menerima Pesanan</span>
+</label>
+</div>
+</div>
+<!-- Section 1: Teaching Grade Matrix -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-sm text-headline-sm text-primary-container mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">school</span>
+                Jenjang Pendidikan
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Card A: SD -->
+<div class="glass-card rounded-2xl p-6 transition-transform hover:-translate-y-0.5 duration-200">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Jenjang Sekolah Dasar (SD)</h3>
+<input checked="" class="w-5 h-5 text-primary-container bg-surface-container-lowest border-outline rounded focus:ring-primary-container focus:ring-2" type="checkbox"/>
+</div>
+<div class="flex flex-wrap gap-3">
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EFF6FF] text-[#0B2545] font-body-sm text-body-sm font-medium">Kelas 1</span>
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EFF6FF] text-[#0B2545] font-body-sm text-body-sm font-medium">Kelas 2</span>
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EFF6FF] text-[#0B2545] font-body-sm text-body-sm font-medium">Kelas 3</span>
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EFF6FF] text-[#0B2545] font-body-sm text-body-sm font-medium">Kelas 4</span>
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EFF6FF] text-[#0B2545] font-body-sm text-body-sm font-medium">Kelas 5</span>
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EFF6FF] text-[#0B2545] font-body-sm text-body-sm font-medium">Kelas 6</span>
+</div>
+</div>
+<!-- Card B: SMP -->
+<div class="glass-card rounded-2xl p-6 transition-transform hover:-translate-y-0.5 duration-200">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Jenjang Sekolah Menengah Pertama (SMP)</h3>
+<input checked="" class="w-5 h-5 text-primary-container bg-surface-container-lowest border-outline rounded focus:ring-primary-container focus:ring-2" type="checkbox"/>
+</div>
+<div class="flex flex-wrap gap-3">
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EEF2FF] text-[#312E81] font-body-sm text-body-sm font-medium">Kelas 7</span>
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-primary-container bg-[#EEF2FF] text-[#312E81] font-body-sm text-body-sm font-medium">Kelas 8</span>
+<span class="inline-flex items-center px-4 py-2 rounded-full border border-outline bg-surface-container-low text-text-muted font-body-sm text-body-sm font-medium">Kelas 9</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Active Booking Collision Notice (Moved up for visibility before scheduling) -->
+<div class="mb-stack-lg bg-secondary-container rounded-xl p-4 flex items-start gap-3 shadow-sm border border-[#B91C1C]">
+<span class="material-symbols-outlined text-white">warning</span>
+<p class="font-body-md text-body-md text-white">
+<strong>Peringatan:</strong> Hari atau slot jam dengan reservasi siswa aktif tidak dapat dinonaktifkan tanpa koordinasi tim admin.
+            </p>
+</div>
+<!-- Section 2: Weekly Availability Scheduler -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-sm text-headline-sm text-primary-container mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">calendar_month</span>
+                Jadwal Ketersediaan Mingguan
+            </h2>
+<div class="glass-card rounded-2xl overflow-hidden">
+<!-- Tab Bar -->
+<div class="flex overflow-x-auto border-b border-border-whisper bg-surface-container-low hide-scrollbar">
+<button class="px-6 py-4 font-headline-sm text-headline-sm font-medium border-b-2 border-primary-container text-primary-container whitespace-nowrap bg-surface-container-lowest">Senin</button>
+<button class="px-6 py-4 font-headline-sm text-headline-sm font-medium border-b-2 border-transparent text-text-muted hover:text-primary-container whitespace-nowrap transition-colors">Selasa</button>
+<button class="px-6 py-4 font-headline-sm text-headline-sm font-medium border-b-2 border-transparent text-text-muted hover:text-primary-container whitespace-nowrap transition-colors">Rabu</button>
+<button class="px-6 py-4 font-headline-sm text-headline-sm font-medium border-b-2 border-transparent text-text-muted hover:text-primary-container whitespace-nowrap transition-colors">Kamis</button>
+<button class="px-6 py-4 font-headline-sm text-headline-sm font-medium border-b-2 border-transparent text-text-muted hover:text-primary-container whitespace-nowrap transition-colors">Jumat</button>
+<button class="px-6 py-4 font-headline-sm text-headline-sm font-medium border-b-2 border-primary-container text-primary-container whitespace-nowrap bg-surface-container-lowest">Sabtu</button>
+<button class="px-6 py-4 font-headline-sm text-headline-sm font-medium border-b-2 border-transparent text-text-muted hover:text-primary-container whitespace-nowrap transition-colors">Minggu</button>
+</div>
+<!-- Detailed Panel for Senin -->
+<div class="p-6 bg-surface-container-lowest">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Slot Jam Senin</h3>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+<span class="ml-2 font-body-sm text-body-sm text-text-muted">Aktif</span>
+</label>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Chip 1 -->
+<div class="flex items-center justify-between p-3 border border-border-whisper rounded-xl bg-surface-container-lowest hover:bg-surface transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">schedule</span>
+<span class="font-data-mono text-data-mono text-primary-container">14:00 - 16:00</span>
+</div>
+<button class="text-text-muted hover:text-[#DC2626] transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+<!-- Chip 2 (Booked) -->
+<div class="flex items-center justify-between p-3 border border-[#DC2626] rounded-xl bg-surface-emerald opacity-90">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#DC2626]">lock</span>
+<span class="font-data-mono text-data-mono text-primary-container">16:00 - 18:00 <span class="text-[#DC2626] font-body-sm ml-2">(Booked: Fajar Pratama)</span></span>
+</div>
+<button class="text-outline cursor-not-allowed" disabled=""><span class="material-symbols-outlined">delete</span></button>
+</div>
+<!-- Chip 3 -->
+<div class="flex items-center justify-between p-3 border border-border-whisper rounded-xl bg-surface-container-lowest hover:bg-surface transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">schedule</span>
+<span class="font-data-mono text-data-mono text-primary-container">19:00 - 21:00</span>
+</div>
+<button class="text-text-muted hover:text-[#DC2626] transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+<!-- Add Button -->
+<button class="mt-2 flex items-center justify-center gap-2 w-full py-3 border border-border-whisper border-dashed rounded-xl text-primary-container font-headline-sm text-headline-sm hover:bg-surface transition-colors">
+<span class="material-symbols-outlined">add</span>
+                            Tambah Slot Jam
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-border-whisper shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40">
+<div class="max-w-container-max mx-auto px-gutter py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-text-muted font-body-md text-body-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">info</span>
+                4 Hari Aktif • 9 Slot Jam Tersedia
+            </div>
+<button class="w-full md:w-auto px-8 py-3 bg-primary-container text-white font-headline-sm text-headline-sm rounded-xl hover:bg-primary-hover active:scale-98 transition-all duration-200">
+                Simpan Pengaturan Ketersediaan
+            </button>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-dim w-full py-8 px-gutter flex flex-col md:flex-row justify-between items-center gap-4 border-t border-border-whisper dark:border-outline-variant mt-auto relative z-30 mb-20 md:mb-0">
+<div class="font-label-caps text-label-caps text-on-surface-variant">
+            © 2024 Home Private Nusantara. All rights reserved.
+        </div>
+<nav class="flex flex-wrap gap-4 justify-center">
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-opacity hover:opacity-80" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-opacity hover:opacity-80" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-opacity hover:opacity-80" href="#">Tutor Agreement</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-opacity hover:opacity-80" href="#">Contact Support</a>
+</nav>
+</footer>
+</body></html>

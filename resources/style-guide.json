@@ -1,0 +1,49 @@
+{
+  "projectId": "10991291023562948498",
+  "name": "Home Private Nusantara Style Guide",
+  "colors": {
+    "primary": "#001026",
+    "primary-hover": "#133E72",
+    "primary-container": "#0b2545",
+    "on-primary": "#ffffff",
+    "on-primary-container": "#778db2",
+    "secondary": "#bb0112",
+    "secondary-hover": "#B91C1C",
+    "secondary-container": "#e02928",
+    "on-secondary": "#ffffff",
+    "on-secondary-container": "#fffbff",
+    "surface": "#f7f9fb",
+    "surface-emerald": "#F0FDF4",
+    "surface-container": "#eceef0",
+    "surface-container-low": "#f2f4f6",
+    "surface-container-high": "#e6e8ea",
+    "surface-container-highest": "#e0e3e5",
+    "surface-container-lowest": "#ffffff",
+    "surface-dim": "#d8dadc",
+    "surface-bright": "#f7f9fb",
+    "on-surface": "#191c1e",
+    "on-surface-variant": "#44474e",
+    "text-primary": "#0F172A",
+    "text-muted": "#64748B",
+    "border-whisper": "#E2E8F0",
+    "status-warning": "#D97706",
+    "tertiary": "#001404",
+    "on-tertiary-container": "#12a148",
+    "error": "#ba1a1a",
+    "background": "#f7f9fb"
+  },
+  "fonts": {
+    "display": ["Outfit", "sans-serif"],
+    "headline": ["Outfit", "sans-serif"],
+    "body": ["Plus Jakarta Sans", "sans-serif"],
+    "mono": ["Geist Mono", "monospace"]
+  },
+  "borderRadius": {
+    "sm": "0.25rem",
+    "DEFAULT": "0.5rem",
+    "md": "0.75rem",
+    "lg": "1rem",
+    "xl": "1.5rem",
+    "full": "9999px"
+  }
+}

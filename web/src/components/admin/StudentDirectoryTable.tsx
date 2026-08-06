@@ -1,0 +1,167 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Student, LevelType } from '../../types';
+import { Search, GraduationCap, BookOpen, Phone, MapPin, Calendar } from 'lucide-react';
+
+export interface StudentDirectoryTableProps {
+  readonly students: readonly Student[];
+  readonly className?: string;
+}
+
+export function StudentDirectoryTable({
+  students,
+  className = '',
+}: StudentDirectoryTableProps) {
+  const [filterLevel, setFilterLevel] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const filteredStudents = students.filter((s) => {
+    const matchesLevel = filterLevel === 'all' || s.level === filterLevel;
+    const matchesSearch =
+      searchQuery.trim() === '' ||
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.parentName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesLevel && matchesSearch;
+  });
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      {/* Search and Filters Header */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white dark:bg-surface-container-low p-4 rounded-2xl border border-border-whisper dark:border-outline-variant shadow-xs">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setFilterLevel('all')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+              filterLevel === 'all'
+                ? 'bg-primary-container text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            Semua Siswa ({students.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterLevel('SD')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+              filterLevel === 'SD'
+                ? 'bg-blue-900 text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            SD (310)
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterLevel('SMP')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+              filterLevel === 'SMP'
+                ? 'bg-indigo-900 text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            SMP (170)
+          </button>
+        </div>
+
+        <div className="relative">
+          <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari siswa, wali, sekolah..."
+            className="pl-8 pr-3 py-2 rounded-xl border border-border-whisper dark:border-outline-variant bg-surface-container-low dark:bg-surface-container-high text-xs outline-none w-full sm:w-64"
+          />
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white dark:bg-surface-container-low rounded-2xl border border-border-whisper dark:border-outline-variant shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[760px]">
+            <thead className="bg-surface-container-low/70 dark:bg-surface-container-high/50 border-b border-border-whisper dark:border-outline-variant text-xs text-text-muted uppercase tracking-wider">
+              <tr>
+                <th className="px-6 py-4 font-semibold">Nama Siswa & Sekolah</th>
+                <th className="px-6 py-4 font-semibold">Jenjang / Kelas</th>
+                <th className="px-6 py-4 font-semibold">Orang Tua / Wali</th>
+                <th className="px-6 py-4 font-semibold">Alamat Domisili</th>
+                <th className="px-6 py-4 font-semibold text-center">Total Sesi</th>
+                <th className="px-6 py-4 font-semibold text-right">Kontak</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border-whisper dark:divide-outline-variant/60 text-xs">
+              {filteredStudents.map((student) => {
+                const isSD = student.level === 'SD';
+                return (
+                  <tr
+                    key={student.id}
+                    className="hover:bg-surface-container-low/40 dark:hover:bg-surface-container-high/40 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
+                            isSD
+                              ? 'bg-blue-50 text-blue-900 dark:bg-blue-950/40 dark:text-blue-300'
+                              : 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-300'
+                          }`}
+                        >
+                          {isSD ? <BookOpen className="w-4 h-4" /> : <GraduationCap className="w-4 h-4" />}
+                        </div>
+                        <div>
+                          <p className="font-headline text-sm font-bold text-primary dark:text-white">
+                            {student.name}
+                          </p>
+                          <p className="text-[11px] text-text-muted">{student.school}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                          isSD
+                            ? 'bg-blue-50 text-blue-900 dark:bg-blue-950/40 dark:text-blue-300'
+                            : 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-300'
+                        }`}
+                      >
+                        {student.level} Kelas {student.grade}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-text-primary dark:text-gray-200">
+                      <p className="font-medium">{student.parentName}</p>
+                      <p className="text-[11px] text-text-muted font-mono">{student.parentPhone}</p>
+                    </td>
+                    <td className="px-6 py-4 text-text-muted max-w-xs truncate">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                        <span className="truncate">{student.address}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center font-mono font-bold text-primary dark:text-white">
+                      {student.totalSessions} Sesi
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <a
+                        href={`https://wa.me/${student.parentPhone.replace(/[^0-9]/g, '')}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 px-3 py-1.5 rounded-xl font-semibold transition-colors"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>Chat WA</span>
+                      </a>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

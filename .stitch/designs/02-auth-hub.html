@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Portal Akses Layanan - Home Private Nusantara</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#410002",
+                      "background": "#f7f9fb",
+                      "secondary-hover": "#B91C1C",
+                      "primary-fixed": "#d5e3ff",
+                      "on-primary-fixed-variant": "#314769",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-secondary-fixed-variant": "#93000b",
+                      "surface-container-high": "#e6e8ea",
+                      "outline-variant": "#c4c6cf",
+                      "secondary": "#bb0112",
+                      "outline": "#74777f",
+                      "on-surface": "#191c1e",
+                      "tertiary-fixed": "#7ffc97",
+                      "on-primary-fixed": "#001c3b",
+                      "on-error-container": "#93000a",
+                      "primary-hover": "#133E72",
+                      "on-tertiary-fixed-variant": "#005320",
+                      "on-secondary": "#ffffff",
+                      "surface-emerald": "#F0FDF4",
+                      "surface-bright": "#f7f9fb",
+                      "on-primary": "#ffffff",
+                      "text-primary": "#0F172A",
+                      "status-warning": "#D97706",
+                      "on-tertiary-container": "#12a148",
+                      "surface-container-low": "#f2f4f6",
+                      "tertiary-container": "#002c0e",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#62df7d",
+                      "secondary-container": "#e02928",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-container": "#fffbff",
+                      "primary-container": "#0b2545",
+                      "surface-dim": "#d8dadc",
+                      "border-whisper": "#E2E8F0",
+                      "secondary-fixed": "#ffdad6",
+                      "primary-fixed-dim": "#b1c7f0",
+                      "on-tertiary-fixed": "#002109",
+                      "text-muted": "#64748B",
+                      "surface-variant": "#e0e3e5",
+                      "inverse-primary": "#b1c7f0",
+                      "on-primary-container": "#778db2",
+                      "tertiary": "#001404",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#e0e3e5",
+                      "secondary-fixed-dim": "#ffb4ab",
+                      "on-surface-variant": "#44474e",
+                      "inverse-surface": "#2d3133",
+                      "surface-tint": "#495f82",
+                      "primary": "#001026",
+                      "on-background": "#191c1e",
+                      "error-container": "#ffdad6",
+                      "surface": "#f7f9fb",
+                      "surface-container": "#eceef0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "2.5rem",
+                      "margin-mobile": "1rem",
+                      "gutter": "1.5rem",
+                      "stack-lg": "2rem",
+                      "stack-sm": "0.5rem",
+                      "stack-md": "1rem",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Outfit"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display": [
+                              "Outfit"
+                      ],
+                      "label-caps": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Outfit"
+                      ],
+                      "headline-lg": [
+                              "Outfit"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg-mobile": [
+                              "Outfit"
+                      ],
+                      "data-mono": [
+                              "Geist Mono"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "data-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col font-body-md text-body-md text-text-primary">
+<!-- TopAppBar -->
+<header class="bg-surface docked full-width top-0 border-b border-border-whisper shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto shrink-0">
+<div class="flex items-center gap-4">
+<img alt="Home Private Nusantara Logo" class="h-12 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLsxkn09jrtYCONWn3M8G6wDCXqfdSjQYtaPvHmU0RnbNz7YFTtKBb79f1YPyPk7Epaf5GNf7WltXRC4NLkOJiJo0Zj8NhF10kzr7OARLqUJKAViV6XMEMZGluvVbLzZyHWFgwq84ksn8A1oEWfO5LG4VBUAa4bb0JjuMSZm48OrwN_zFV8JgeCfRxT6SV0kldFJL7p1hXs1LJKs8PYs4d0UnuZqupVnK_04QCzjzv8HS06DnGcxvm4SHc3-"/>
+<div class="hidden md:block font-headline-md text-headline-md font-bold text-primary">
+                Home Private Nusantara
+                <span class="block font-body-sm text-body-sm font-normal text-text-muted">Portal Akses Layanan Les Privat SD &amp; SMP</span>
+</div>
+</div>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-colors hover:bg-surface-container-low px-3 py-2 rounded-lg" href="#">Tentang Kami</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-colors hover:bg-surface-container-low px-3 py-2 rounded-lg" href="#">Program</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-colors hover:bg-surface-container-low px-3 py-2 rounded-lg" href="#">Biaya</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-colors hover:bg-surface-container-low px-3 py-2 rounded-lg" href="#">Kontak</a>
+</div>
+<button class="bg-primary-container text-white px-4 py-2 rounded-xl font-body-md text-body-md hover:bg-primary-hover active:scale-95 transition-transform duration-200">
+            Bantuan
+        </button>
+</header>
+<!-- MAIN CONTENT AREA -->
+<main class="flex-grow flex items-center justify-center py-12 px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto">
+<div class="w-full max-w-2xl bg-white rounded-2xl border border-border-whisper shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
+<div class="p-6 md:p-8">
+<div class="text-center mb-8">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-container mb-2">Selamat Datang</h1>
+<p class="font-body-md text-body-md text-text-muted">Silakan masuk atau daftar untuk melanjutkan.</p>
+</div>
+<!-- SEGMENTED TAB SWITCHER -->
+<div class="flex p-1 bg-surface-container-low rounded-xl mb-8">
+<button class="flex-1 py-2 px-4 rounded-lg font-body-sm text-body-sm text-center transition-colors bg-primary-container text-white tab-btn" data-target="login">Masuk Akun</button>
+<button class="flex-1 py-2 px-4 rounded-lg font-body-sm text-body-sm text-center transition-colors text-text-muted hover:bg-surface-variant tab-btn" data-target="student">Daftar Siswa (SD/SMP)</button>
+<button class="flex-1 py-2 px-4 rounded-lg font-body-sm text-body-sm text-center transition-colors text-text-muted hover:bg-surface-variant tab-btn" data-target="tutor">Daftar Pengajar</button>
+</div>
+<!-- STATE A - LOGIN FORM -->
+<div class="tab-content active space-y-6" id="login">
+<form class="space-y-5">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="Masukkan alamat email" type="email"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Password</label>
+<a class="font-body-sm text-body-sm text-secondary hover:underline" href="#">Lupa password?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+<input class="w-full pl-10 pr-10 py-3 rounded-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="Masukkan password" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-text-primary" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-primary-container text-white py-3 rounded-xl font-body-md text-body-md font-semibold hover:bg-primary-hover active:scale-98 transition-all" type="submit">
+                            Masuk ke Portal
+                        </button>
+</form>
+</div>
+<!-- STATE B - STUDENT REGISTRATION -->
+<div class="tab-content space-y-6" id="student">
+<form class="space-y-5">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Nama Lengkap Siswa</label>
+<input class="w-full px-4 py-3 rounded-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="Nama siswa" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Nama Orang Tua/Wali</label>
+<input class="w-full px-4 py-3 rounded-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="Nama orang tua/wali" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Tingkat Pendidikan</label>
+<div class="flex gap-4">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" name="edu_level" type="radio"/>
+<div class="p-4 rounded-xl border border-border-whisper peer-checked:border-primary-container peer-checked:bg-blue-50 transition-colors text-center">
+<span class="font-headline-sm text-headline-sm text-blue-900 block mb-1">SD</span>
+<span class="font-body-sm text-body-sm text-text-muted">Sekolah Dasar</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="edu_level" type="radio"/>
+<div class="p-4 rounded-xl border border-border-whisper peer-checked:border-primary-container peer-checked:bg-indigo-50 transition-colors text-center">
+<span class="font-headline-sm text-headline-sm text-indigo-900 block mb-1">SMP</span>
+<span class="font-body-sm text-body-sm text-text-muted">Sekolah Menengah Pertama</span>
+</div>
+</label>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Nomor WhatsApp</label>
+<div class="flex">
+<span class="inline-flex items-center px-4 rounded-l-lg border border-r-0 border-border-whisper bg-surface-container-low text-text-muted font-data-mono text-data-mono">
+                                    +62
+                                </span>
+<input class="w-full px-4 py-3 rounded-r-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="8123456789" type="tel"/>
+</div>
+</div>
+<button class="w-full bg-secondary text-white py-3 rounded-xl font-body-md text-body-md font-semibold hover:bg-secondary-hover active:scale-98 transition-all" type="submit">
+                            Daftar Akun Siswa
+                        </button>
+</form>
+</div>
+<!-- STATE C - TUTOR REGISTRATION -->
+<div class="tab-content space-y-6" id="tutor">
+<div class="p-4 rounded-xl bg-surface-emerald border border-emerald-200 mb-6 flex items-start gap-3">
+<span class="material-symbols-outlined text-emerald-600 mt-0.5">info</span>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-emerald-900">Pendaftaran Pengajar</h4>
+<p class="font-body-sm text-body-sm text-emerald-800 mt-1">Status pendaftaran akan masuk ke antrean PENDING untuk ditinjau oleh tim akademik kami.</p>
+</div>
+</div>
+<form class="space-y-5">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Nama &amp; Gelar</label>
+<input class="w-full px-4 py-3 rounded-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="Cth: Budi Santoso, S.Pd" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Asal Universitas</label>
+<input class="w-full px-4 py-3 rounded-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="Universitas Anda" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-text-muted uppercase tracking-wide">Link CV / Portofolio</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">link</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-border-whisper focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md text-text-primary bg-surface-bright" placeholder="https://..." type="url"/>
+</div>
+</div>
+<button class="w-full bg-primary-container text-white py-3 rounded-xl font-body-md text-body-md font-semibold hover:bg-primary-hover active:scale-98 transition-all" type="submit">
+                            Kirim Pendaftaran Pengajar
+                        </button>
+</form>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-primary text-on-primary w-full py-8 px-margin-mobile md:px-margin-desktop mt-auto border-t border-primary-fixed-dim/10 shrink-0">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="text-center md:text-left">
+<div class="font-headline-sm text-headline-sm text-on-primary mb-2">Home Private Nusantara</div>
+<div class="font-body-sm text-body-sm text-primary-fixed-dim/80">© 2024 Home Private Nusantara. Mencerdaskan Bangsa dengan Kasih Sayang.</div>
+</div>
+<div class="flex flex-wrap justify-center gap-6 font-label-caps text-label-caps">
+<a class="text-primary-fixed-dim/80 hover:text-white hover:underline transition-all" href="#">Kebijakan Privasi</a>
+<a class="text-primary-fixed-dim/80 hover:text-white hover:underline transition-all" href="#">Syarat &amp; Ketentuan</a>
+<a class="text-primary-fixed-dim/80 hover:text-white hover:underline transition-all" href="#">Pusat Bantuan</a>
+<a class="text-primary-fixed-dim/80 hover:text-white hover:underline transition-all" href="#">Karir</a>
+</div>
+</div>
+</footer>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active states from all tabs
+                    tabBtns.forEach(b => {
+                        b.classList.remove('bg-primary-container', 'text-white');
+                        b.classList.add('text-text-muted', 'hover:bg-surface-variant');
+                    });
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // Add active state to clicked tab
+                    btn.classList.remove('text-text-muted', 'hover:bg-surface-variant');
+                    btn.classList.add('bg-primary-container', 'text-white');
+                    
+                    const targetId = btn.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body></html>

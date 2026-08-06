@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Home Private Nusantara - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#62df7d",
+                      "surface-container-high": "#e6e8ea",
+                      "on-tertiary": "#ffffff",
+                      "outline": "#74777f",
+                      "surface-container-highest": "#e0e3e5",
+                      "secondary": "#bb0112",
+                      "on-tertiary-fixed": "#002109",
+                      "surface-bright": "#f7f9fb",
+                      "surface-tint": "#495f82",
+                      "secondary-hover": "#B91C1C",
+                      "surface-container-low": "#f2f4f6",
+                      "background": "#f7f9fb",
+                      "inverse-primary": "#b1c7f0",
+                      "surface-container": "#eceef0",
+                      "secondary-fixed-dim": "#ffb4ab",
+                      "primary-hover": "#133E72",
+                      "tertiary": "#001404",
+                      "on-secondary-fixed": "#410002",
+                      "on-secondary-container": "#fffbff",
+                      "on-secondary-fixed-variant": "#93000b",
+                      "tertiary-fixed": "#7ffc97",
+                      "outline-variant": "#c4c6cf",
+                      "surface-emerald": "#F0FDF4",
+                      "inverse-on-surface": "#eff1f3",
+                      "primary": "#001026",
+                      "on-surface-variant": "#44474e",
+                      "text-primary": "#0F172A",
+                      "secondary-container": "#e02928",
+                      "on-secondary": "#ffffff",
+                      "border-whisper": "#E2E8F0",
+                      "text-muted": "#64748B",
+                      "on-primary-fixed-variant": "#314769",
+                      "on-primary-fixed": "#001c3b",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#005320",
+                      "on-tertiary-container": "#12a148",
+                      "on-surface": "#191c1e",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "surface-dim": "#d8dadc",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-container": "#0b2545",
+                      "surface-variant": "#e0e3e5",
+                      "status-warning": "#D97706",
+                      "secondary-fixed": "#ffdad6",
+                      "inverse-surface": "#2d3133",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "primary-fixed-dim": "#b1c7f0",
+                      "on-background": "#191c1e",
+                      "primary-fixed": "#d5e3ff",
+                      "tertiary-container": "#002c0e",
+                      "surface": "#f7f9fb",
+                      "on-primary-container": "#778db2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "1rem",
+                      "gutter": "1.5rem",
+                      "margin-desktop": "2.5rem",
+                      "stack-md": "1rem",
+                      "stack-sm": "0.5rem",
+                      "stack-lg": "2rem",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Outfit"
+                      ],
+                      "body-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg": [
+                              "Outfit"
+                      ],
+                      "headline-md": [
+                              "Outfit"
+                      ],
+                      "data-mono": [
+                              "Geist Mono"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display": [
+                              "Outfit"
+                      ],
+                      "headline-lg-mobile": [
+                              "Outfit"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-caps": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "data-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-text-primary antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-primary-container docked full-width top-0 border-b border-outline-variant dark:border-primary shadow-sm sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
+                Home Private Nusantara
+            </div>
+<nav class="hidden md:flex gap-gutter h-full items-center">
+<a class="text-secondary dark:text-secondary-fixed-dim font-bold border-b-2 border-secondary pb-1 flex flex-col justify-center h-full active:scale-95 transition-transform duration-150" href="#">
+<span class="font-headline-sm text-headline-sm md:font-body-md md:text-body-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:text-primary hover:bg-surface-container-low dark:hover:bg-primary transition-colors duration-200 px-4 py-2 rounded-lg flex flex-col justify-center" href="#">
+<span class="font-headline-sm text-headline-sm md:font-body-md md:text-body-md">Cari Guru</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:text-primary hover:bg-surface-container-low dark:hover:bg-primary transition-colors duration-200 px-4 py-2 rounded-lg flex flex-col justify-center" href="#">
+<span class="font-headline-sm text-headline-sm md:font-body-md md:text-body-md">Jadwal</span>
+</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="bg-[#DC2626] text-white px-6 py-2 rounded-xl font-body-md text-body-md font-semibold hover:bg-secondary-hover transition-colors active:scale-95">
+                    Konek Sekarang
+                </button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-border-whisper">
+<img alt="Student Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a confident, welcoming tutor or administrator set against a clean, modern educational background. The lighting is bright and even, highlighting a friendly expression. The aesthetic is corporate yet warm, utilizing a subtle palette of navy and white." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCplb9b-_KTGE7z3H_6ptucSR79eY6O7bVWyelwBHrgCL-VqGi78822hopYDhxObERD7XL7aZVm2j5YtfAOIJzEsPNUTeMA_m7b38Dg5QXdArIjx3vQo99l-jl2_fL7I9gIXoKEGzRWxpzrJ7XfWJKyAUxciErxZMtA0xgWvEF8-6yn5SEXoLWsCZyMzz8fvtl46rXNgrljwCHDxHZzWQsn4oX_pXJYuBGyod61HfN5o1HctMzdZY-UxpWjna1pe3EHX9_5s59TSPC7"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col gap-stack-lg">
+<!-- Header Section -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-stack-md">
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary-container mb-stack-sm">
+                    Halo, Fajar Pratama &amp; Ibu Rina
+                </h1>
+<div class="inline-flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+<span class="material-symbols-outlined text-blue-900 text-sm">school</span>
+<span class="font-label-caps text-label-caps text-blue-900">SD Kelas 5</span>
+</div>
+</div>
+<button class="bg-[#DC2626] text-white px-6 py-3 rounded-xl font-body-md text-body-md font-semibold hover:bg-secondary-hover transition-colors active:scale-95 flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+                Pesan Sesi Les Baru
+            </button>
+</section>
+<!-- Metrics Cards -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:-translate-y-[2px] transition-transform duration-300">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">calendar_month</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-text-muted">Total Sesi</p>
+<p class="font-headline-sm text-headline-sm text-primary-container">8 Pertemuan</p>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:-translate-y-[2px] transition-transform duration-300">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">group</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-text-muted">Guru Terhubung</p>
+<p class="font-headline-sm text-headline-sm text-primary-container">2 Pengajar</p>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:-translate-y-[2px] transition-transform duration-300">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container">schedule</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-text-muted">Sesi Terdekat</p>
+<p class="font-headline-sm text-headline-sm text-primary-container">Senin, 10 Ags • 16:00 WIB</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Bookings & History Section -->
+<section class="flex flex-col gap-stack-md">
+<!-- Segmented Tabs -->
+<div class="flex border-b border-border-whisper gap-gutter">
+<button class="pb-2 font-headline-sm text-headline-sm text-primary-container border-b-2 border-primary-container">
+                    Sesi Mendatang (2)
+                </button>
+<button class="pb-2 font-body-md text-body-md text-text-muted hover:text-text-primary transition-colors">
+                    Riwayat Selesai (6)
+                </button>
+</div>
+<!-- Upcoming List -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<span class="font-data-mono text-data-mono text-text-muted">#HPN-0810-77</span>
+<div class="inline-flex items-center gap-1 bg-surface-emerald px-2 py-1 rounded-full border border-emerald-100">
+<span class="material-symbols-outlined text-on-tertiary-container text-[14px]">check_circle</span>
+<span class="font-label-caps text-label-caps text-on-tertiary-container">Terkonfirmasi</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Pecahan Campuran &amp; Pembagian Bersusun</h3>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]">event</span>
+<span>Senin, 10 Agustus 2026, 16:00-18:00 WIB</span>
+</div>
+<div class="flex items-center gap-3 mt-2">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-whisper">
+<img alt="Sarah Amanda" class="w-full h-full object-cover" data-alt="A professional headshot of a female tutor named Sarah Amanda, wearing a neat blouse, smiling warmly in a bright classroom setting. The image is crisp, corporate yet approachable, lit evenly to convey trust and expertise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMDP5IPObXEzjsTR3XlIQI1jSUz0qKInEzO5pliBu386cqZ3aZcrA7D_LUAvjH40GYa9bI_oeT7tYNf02eE_-MzPH6ohv1wSBarwcMRFKBd26fBQi4A-wr_tXOIVPnWyzImH9R_JFufxWFRr7jHHlP-PRlK5A9coA3U0hYiqIYEqhQ5zboyCKKNHH4yAoG0vGrvYY3WucVQJdxbcfgQK2uVqyMQBuSLnjSpe7biXGuFvPOy38b-RlEn0ol8ZGuKXZ30mvvgZTJJZGC"/>
+</div>
+<span class="font-body-sm text-body-sm text-text-primary font-semibold">Sarah Amanda, S.Pd.</span>
+</div>
+</div>
+<button class="bg-[#25D366] text-white px-5 py-2 rounded-xl font-body-sm text-body-sm font-semibold hover:bg-green-600 transition-colors active:scale-95 flex items-center gap-2 shadow-sm whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+                    WhatsApp Tutor
+                </button>
+</div>
+</section>
+<!-- Connected Tutors Section -->
+<section class="flex flex-col gap-stack-md mt-stack-lg">
+<h2 class="font-headline-md text-headline-md text-primary-container border-b border-border-whisper pb-2">Guru Terhubung</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Tutor Card 1 -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<div class="w-20 h-20 rounded-full overflow-hidden border border-border-whisper shrink-0">
+<img alt="Budi Santoso" class="w-full h-full object-cover" data-alt="A professional headshot of a male tutor, well-groomed, wearing a smart casual shirt, smiling reassuringly in a modern library or bright study room. The style is clean, academic, and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCENGIqxtKcIDrS_zk7QngzXS_YYkJbpsdYMm5Xw4kYUjFtkJl6-1Nqxh7uWXLOtZRDcVhkazXJ5SKmBqxrlK2ZhVDAMebVdwHiY27iOA9AhXErhbgqHe-JGvH2fI97n9ZJA2uTw_mVu1Tdrul76bIHLR6EuyBzFHuQKSZAUJoKpldzjK7euwGBVx10unp4bmtj-PvT4e5HbipkKCP1F9liwGcuARgq1rHu21cOVVB69itqStejvBLvFhclK7OUJDJaU2LGEcbHSNI5"/>
+</div>
+<div class="flex flex-col items-center md:items-start text-center md:text-left w-full gap-2">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Budi Santoso, M.Pd.</h3>
+<p class="font-body-sm text-body-sm text-text-muted">Matematika &amp; IPA</p>
+</div>
+<button class="mt-2 w-full md:w-auto bg-transparent border border-border-whisper text-slate-700 px-4 py-2 rounded-xl font-body-sm text-body-sm font-semibold hover:bg-surface-container-low transition-colors active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_add_on</span>
+                            Pesan Jadwal Lagi
+                        </button>
+</div>
+</div>
+<!-- Tutor Card 2 -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<div class="w-20 h-20 rounded-full overflow-hidden border border-border-whisper shrink-0">
+<img alt="Sarah Amanda" class="w-full h-full object-cover" data-alt="A professional headshot of a female tutor named Sarah Amanda, wearing a neat blouse, smiling warmly in a bright classroom setting. The image is crisp, corporate yet approachable, lit evenly to convey trust and expertise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnTvV5idN45cljNotv4pFR9PzvkXgl7nPWlOcdbqq3_GsZHt7-2ymF2wpzFL-UgTKke_lVzg_p3_VZXM0r9BeHEq2D9EAZTZteWeQ0iLIuegCp2xLqSnIU1VwNLOPd6t7Y-3auVNq2-hC-HwZNex3pOB7ZTovBWipVSxdBTWox92l7qksWMEzRNeSJB8zEdvzy-IiWmYZHF9NmdQ0OdIInkpy21ofrMUPrFlyw1jj__cBiKVQa-aebePp7r-4t8BaqV8SChYFG6jg0"/>
+</div>
+<div class="flex flex-col items-center md:items-start text-center md:text-left w-full gap-2">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Sarah Amanda, S.Pd.</h3>
+<p class="font-body-sm text-body-sm text-text-muted">Bahasa Inggris</p>
+</div>
+<button class="mt-2 w-full md:w-auto bg-transparent border border-border-whisper text-slate-700 px-4 py-2 rounded-xl font-body-sm text-body-sm font-semibold hover:bg-surface-container-low transition-colors active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_add_on</span>
+                            Pesan Jadwal Lagi
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-surface-dim full-width bottom-0 bg-primary dark:bg-surface-dim">
+<div class="w-full py-stack-lg px-margin-desktop max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="font-headline-sm text-headline-sm font-bold text-on-primary">
+                Home Private Nusantara
+            </div>
+<div class="flex flex-wrap justify-center gap-6 text-on-primary-container dark:text-on-surface-variant font-body-sm text-body-sm">
+<a class="hover:text-secondary-fixed transition-colors" href="#">Tentang Kami</a>
+<a class="hover:text-secondary-fixed transition-colors" href="#">Pusat Bantuan</a>
+<a class="hover:text-secondary-fixed transition-colors" href="#">Syarat &amp; Ketentuan</a>
+<a class="hover:text-secondary-fixed transition-colors" href="#">Kebijakan Privasi</a>
+</div>
+<div class="font-body-sm text-body-sm text-on-primary-container dark:text-on-surface-variant text-center md:text-right">
+                © 2024 Home Private Nusantara. Mencerdaskan Bangsa dengan Kasih Sayang.
+            </div>
+</div>
+</footer>
+</body></html>

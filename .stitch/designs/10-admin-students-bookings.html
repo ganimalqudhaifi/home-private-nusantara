@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Direktori Siswa &amp; Pemantauan Jadwal Belajar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#74777f",
+                        "inverse-primary": "#b1c7f0",
+                        "on-tertiary-fixed-variant": "#005320",
+                        "on-primary-fixed": "#001c3b",
+                        "background": "#f7f9fb",
+                        "text-muted": "#64748B",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#ffdad6",
+                        "on-secondary-container": "#fffbff",
+                        "surface-bright": "#f7f9fb",
+                        "on-background": "#191c1e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#93000b",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#001026",
+                        "on-primary-container": "#778db2",
+                        "border-whisper": "#E2E8F0",
+                        "secondary": "#bb0112",
+                        "tertiary-fixed": "#7ffc97",
+                        "surface-variant": "#e0e3e5",
+                        "surface-emerald": "#F0FDF4",
+                        "secondary-container": "#e02928",
+                        "surface": "#f7f9fb",
+                        "surface-container": "#eceef0",
+                        "text-primary": "#0F172A",
+                        "outline-variant": "#c4c6cf",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#d5e3ff",
+                        "secondary-fixed-dim": "#ffb4ab",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-hover": "#133E72",
+                        "on-error": "#ffffff",
+                        "status-warning": "#D97706",
+                        "on-surface-variant": "#44474e",
+                        "tertiary": "#001404",
+                        "tertiary-container": "#002c0e",
+                        "secondary-hover": "#B91C1C",
+                        "on-primary-fixed-variant": "#314769",
+                        "tertiary-fixed-dim": "#62df7d",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed": "#410002",
+                        "on-tertiary-fixed": "#002109",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b1c7f0",
+                        "on-tertiary-container": "#12a148",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-dim": "#d8dadc",
+                        "on-surface": "#191c1e",
+                        "surface-tint": "#495f82",
+                        "surface-container-high": "#e6e8ea",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#0b2545"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "1rem",
+                        "stack-sm": "0.5rem",
+                        "stack-md": "1rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "2rem",
+                        "container-max": "1280px",
+                        "margin-desktop": "2.5rem"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["Geist Mono", "monospace"],
+                        "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-sm": ["Outfit", "sans-serif"],
+                        "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "display": ["Outfit", "sans-serif"],
+                        "headline-lg-mobile": ["Outfit", "sans-serif"],
+                        "headline-md": ["Outfit", "sans-serif"],
+                        "headline-lg": ["Outfit", "sans-serif"],
+                        "label-caps": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-hidden flex">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-border-whisper dark:border-outline bg-primary dark:bg-primary-container flex flex-col h-full p-4 z-50">
+<div class="flex items-center gap-4 mb-8">
+<img alt="Logo" class="w-12 h-12 rounded-full object-cover bg-white p-1" src="https://lh3.googleusercontent.com/aida/AP1WRLsxkn09jrtYCONWn3M8G6wDCXqfdSjQYtaPvHmU0RnbNz7YFTtKBb79f1YPyPk7Epaf5GNf7WltXRC4NLkOJiJo0Zj8NhF10kzr7OARLqUJKAViV6XMEMZGluvVbLzZyHWFgwq84ksn8A1oEWfO5LG4VBUAa4bb0JjuMSZm48OrwN_zFV8JgeCfRxT6SV0kldFJL7p1hXs1LJKs8PYs4d0UnuZqupVnK_04QCzjzv8HS06DnGcxvm4SHc3-"/>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-primary">Home Private Nusantara</h1>
+<p class="font-body-sm text-body-sm text-on-primary/70">Admin Hub</p>
+</div>
+</div>
+<button class="w-full bg-secondary text-on-secondary rounded-xl py-3 px-4 font-body-md font-medium mb-6 hover:bg-secondary-hover transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">add</span>
+            Add New Record
+        </button>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary transition-all rounded-xl hover:bg-primary-hover dark:hover:bg-primary" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary transition-all rounded-xl hover:bg-primary-hover dark:hover:bg-primary" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary transition-all rounded-xl hover:bg-primary-hover dark:hover:bg-primary" href="#">
+<span class="material-symbols-outlined" data-icon="folder_shared">folder_shared</span>
+<span class="font-body-md text-body-md">Directory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" data-weight="fill">analytics</span>
+<span class="font-body-md text-body-md">Monitoring</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-on-primary/10 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary transition-all rounded-xl hover:bg-primary-hover dark:hover:bg-primary" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary transition-all rounded-xl hover:bg-primary-hover dark:hover:bg-primary" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar & Main Content Wrapper -->
+<div class="flex-1 ml-64 flex flex-col h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-gutter z-40 bg-surface dark:bg-surface-container-low border-b border-border-whisper dark:border-outline shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-inverse-primary hidden md:block">Home Private Nusantara</h2>
+<div class="relative w-64 max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container border border-border-whisper rounded-full focus:outline-none focus:border-primary font-body-sm text-body-sm text-text-primary" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant rounded-full p-2 transition-colors active:scale-98">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant rounded-full p-2 transition-colors active:scale-98">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant rounded-full p-2 transition-colors active:scale-98">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 pt-16 p-margin-desktop overflow-y-auto bg-slate-50">
+<div class="max-w-container-max mx-auto space-y-stack-lg">
+<!-- Header & Tabs -->
+<div class="space-y-stack-md">
+<h1 class="font-headline-lg text-headline-lg text-primary">Direktori Siswa &amp; Pemantauan Jadwal Belajar</h1>
+<div class="flex border-b border-border-whisper gap-6">
+<button class="font-body-md text-body-md text-text-muted pb-2 hover:text-primary transition-colors border-b-2 border-transparent">
+                            Direktori Siswa SD &amp; SMP (480)
+                        </button>
+<button class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-2">
+                            Monitoring Seluruh Booking (324 Sesi)
+                        </button>
+</div>
+</div>
+<!-- KPI Strip -->
+<div class="flex flex-wrap gap-4">
+<div class="bg-white border border-border-whisper rounded-xl py-2 px-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">today</span>
+<span class="font-label-caps text-label-caps text-text-muted">Sesi Hari Ini</span>
+<span class="font-headline-sm text-headline-sm text-primary ml-2">42</span>
+</div>
+<div class="bg-white border border-border-whisper rounded-xl py-2 px-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+<span class="font-label-caps text-label-caps text-text-muted">Sesi Mendatang</span>
+<span class="font-headline-sm text-headline-sm text-primary ml-2">186</span>
+</div>
+<div class="bg-white border border-border-whisper rounded-xl py-2 px-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span class="font-label-caps text-label-caps text-text-muted">Sesi Selesai</span>
+<span class="font-headline-sm text-headline-sm text-primary ml-2">96</span>
+</div>
+<div class="bg-surface-emerald border border-tertiary-fixed-dim/30 rounded-xl py-2 px-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-container">verified_user</span>
+<span class="font-label-caps text-label-caps text-tertiary-container">Konflik Jadwal</span>
+<span class="font-headline-sm text-headline-sm text-tertiary-container ml-2">0% - Zero Collision</span>
+</div>
+</div>
+<!-- Global Bookings View -->
+<div class="bg-white rounded-2xl border border-border-whisper shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col">
+<!-- Filter Bar -->
+<div class="p-4 border-b border-border-whisper flex justify-between items-center bg-surface-container-lowest rounded-t-2xl">
+<div class="flex items-center gap-3 bg-surface-container-low border border-border-whisper rounded-lg px-3 py-1.5">
+<span class="material-symbols-outlined text-text-muted text-sm">date_range</span>
+<span class="font-data-mono text-data-mono text-text-primary">10 - 16 Agustus 2026</span>
+<span class="material-symbols-outlined text-text-muted text-sm cursor-pointer hover:text-primary">arrow_drop_down</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-text-muted mr-2">Filter Status:</span>
+<button class="bg-primary/5 border border-primary/20 text-primary font-body-sm text-body-sm rounded-full px-3 py-1">Semua</button>
+<button class="hover:bg-primary/5 border border-transparent text-text-muted font-body-sm text-body-sm rounded-full px-3 py-1 transition-colors">Terkonfirmasi</button>
+<button class="hover:bg-primary/5 border border-transparent text-text-muted font-body-sm text-body-sm rounded-full px-3 py-1 transition-colors">Selesai</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest border-b border-border-whisper">
+<th class="p-4 font-label-caps text-label-caps text-text-muted font-medium w-48">ID &amp; TANGGAL</th>
+<th class="p-4 font-label-caps text-label-caps text-text-muted font-medium w-40">WAKTU (WIB)</th>
+<th class="p-4 font-label-caps text-label-caps text-text-muted font-medium">SISWA &amp; TINGKAT</th>
+<th class="p-4 font-label-caps text-label-caps text-text-muted font-medium">TUTOR PENGAJAR</th>
+<th class="p-4 font-label-caps text-label-caps text-text-muted font-medium">LOKASI BELAJAR</th>
+<th class="p-4 font-label-caps text-label-caps text-text-muted font-medium w-32">STATUS</th>
+<th class="p-4 font-label-caps text-label-caps text-text-muted font-medium w-24 text-right">AKSI</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y divide-border-whisper">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="p-4 align-top">
+<div class="font-data-mono text-data-mono text-primary font-medium">#BK-9021A</div>
+<div class="text-text-muted mt-1">Senin, 10 Ags</div>
+</td>
+<td class="p-4 align-top">
+<div class="font-data-mono text-data-mono text-text-primary bg-surface py-1 px-2 rounded border border-border-whisper inline-block">16:00 - 18:00</div>
+</td>
+<td class="p-4 align-top">
+<div class="font-medium text-text-primary">Fajar Pratama</div>
+<div class="mt-1 inline-block bg-blue-50 text-blue-900 font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-blue-100">SD KELAS 5</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">SA</div>
+<span class="text-text-primary">Sarah Amanda, S.Pd.</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-start gap-1 text-text-primary">
+<span class="material-symbols-outlined text-[16px] text-text-muted mt-0.5">location_on</span>
+<span class="line-clamp-2">Jl. Tebet Barat Dalam X No.15, Jaksel</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<span class="inline-flex items-center gap-1 bg-surface-emerald text-tertiary-container border border-tertiary-fixed-dim/30 px-2 py-1 rounded-md font-label-caps text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                                            TERKONFIRMASI
+                                        </span>
+</td>
+<td class="p-4 align-top text-right">
+<button class="text-primary border border-border-whisper hover:bg-surface-container rounded-lg p-1.5 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="p-4 align-top">
+<div class="font-data-mono text-data-mono text-primary font-medium">#BK-9022B</div>
+<div class="text-text-muted mt-1">Selasa, 11 Ags</div>
+</td>
+<td class="p-4 align-top">
+<div class="font-data-mono text-data-mono text-text-primary bg-surface py-1 px-2 rounded border border-border-whisper inline-block">14:00 - 15:30</div>
+</td>
+<td class="p-4 align-top">
+<div class="font-medium text-text-primary">Nadia Larasati</div>
+<div class="mt-1 inline-block bg-indigo-50 text-indigo-900 font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-indigo-100">SMP KELAS 8</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">BK</div>
+<span class="text-text-primary">Budi Kurniawan, M.Sc.</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-start gap-1 text-text-primary">
+<span class="material-symbols-outlined text-[16px] text-text-muted mt-0.5">location_on</span>
+<span class="line-clamp-2">Kebayoran Baru, Jakarta Selatan</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<span class="inline-flex items-center gap-1 bg-surface-emerald text-tertiary-container border border-tertiary-fixed-dim/30 px-2 py-1 rounded-md font-label-caps text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                                            TERKONFIRMASI
+                                        </span>
+</td>
+<td class="p-4 align-top text-right">
+<button class="text-primary border border-border-whisper hover:bg-surface-container rounded-lg p-1.5 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="p-4 align-top">
+<div class="font-data-mono text-data-mono text-primary font-medium">#BK-9024C</div>
+<div class="text-text-muted mt-1">Selasa, 11 Ags</div>
+</td>
+<td class="p-4 align-top">
+<div class="font-data-mono text-data-mono text-text-primary bg-surface py-1 px-2 rounded border border-border-whisper inline-block">16:30 - 18:00</div>
+</td>
+<td class="p-4 align-top">
+<div class="font-medium text-text-primary">Kevin Sanjaya</div>
+<div class="mt-1 inline-block bg-blue-50 text-blue-900 font-label-caps text-[10px] px-2 py-0.5 rounded-full border border-blue-100">SD KELAS 6</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">SA</div>
+<span class="text-text-primary">Sarah Amanda, S.Pd.</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<div class="flex items-start gap-1 text-text-primary">
+<span class="material-symbols-outlined text-[16px] text-text-muted mt-0.5">location_on</span>
+<span class="line-clamp-2">Pancoran, Jakarta Selatan</span>
+</div>
+</td>
+<td class="p-4 align-top">
+<span class="inline-flex items-center gap-1 bg-surface-container-highest text-on-surface-variant border border-outline-variant px-2 py-1 rounded-md font-label-caps text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+                                            MENUNGGU
+                                        </span>
+</td>
+<td class="p-4 align-top text-right">
+<button class="text-primary border border-border-whisper hover:bg-surface-container rounded-lg p-1.5 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination (Simplified) -->
+<div class="p-4 border-t border-border-whisper flex justify-between items-center bg-surface-container-lowest rounded-b-2xl">
+<span class="font-body-sm text-body-sm text-text-muted">Menampilkan 1-3 dari 324 sesi</span>
+<div class="flex gap-2">
+<button class="p-1 border border-border-whisper rounded text-text-muted opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-1 border border-border-whisper rounded text-primary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

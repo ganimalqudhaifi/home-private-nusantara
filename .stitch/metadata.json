@@ -1,0 +1,85 @@
+{
+  "projectId": "10991291023562948498",
+  "title": "Home Private Nusantara",
+  "deviceType": "DESKTOP",
+  "Last Sync Time": "2026-08-06T09:15:00.000Z",
+  "screens": {
+    "01-landing-page": {
+      "id": "446558fdbe3d454ab5e717b5ca7a7bd8",
+      "label": "Home Private Nusantara Landing Page",
+      "sourceScreen": "projects/10991291023562948498/screens/446558fdbe3d454ab5e717b5ca7a7bd8",
+      "dimensions": { "width": 2560, "height": 2854 },
+      "route": "/"
+    },
+    "02-auth-hub": {
+      "id": "ce298adf6f754068a0f2443d29a1c70f",
+      "label": "Authentication Portal - Home Private Nusantara",
+      "sourceScreen": "projects/10991291023562948498/screens/ce298adf6f754068a0f2443d29a1c70f",
+      "dimensions": { "width": 2560, "height": 2048 },
+      "routes": ["/auth/login", "/auth/register-student", "/auth/register-tutor"]
+    },
+    "03-tutor-portal-pending": {
+      "id": "fa87ab8225db4b39ad3dd6533ca905e1",
+      "label": "Tutor Portal - Pending Verification",
+      "sourceScreen": "projects/10991291023562948498/screens/fa87ab8225db4b39ad3dd6533ca905e1",
+      "dimensions": { "width": 2560, "height": 2278 },
+      "route": "/tutor/pending"
+    },
+    "03-tutor-portal-verified": {
+      "id": "d2ce4db42f3d4c6ab9bebd3f1a06be87",
+      "label": "Tutor Portal - Verified Dashboard",
+      "sourceScreen": "projects/10991291023562948498/screens/d2ce4db42f3d4c6ab9bebd3f1a06be87",
+      "dimensions": { "width": 2560, "height": 2218 },
+      "route": "/tutor/dashboard"
+    },
+    "04-tutor-availability": {
+      "id": "c73823cd35f1437893d3302b42b99a16",
+      "label": "Tutor Configuration - Teaching Levels & Availability",
+      "sourceScreen": "projects/10991291023562948498/screens/c73823cd35f1437893d3302b42b99a16",
+      "dimensions": { "width": 2560, "height": 2382 },
+      "route": "/tutor/availability"
+    },
+    "05-tutor-schedule": {
+      "id": "00f52263e3134f89bf065da4074dfe86",
+      "label": "Calendar & Teaching Schedule - Home Private Nusantara",
+      "sourceScreen": "projects/10991291023562948498/screens/00f52263e3134f89bf065da4074dfe86",
+      "dimensions": { "width": 3440, "height": 2048 },
+      "route": "/tutor/schedule"
+    },
+    "06-student-search-booking": {
+      "id": "88f76ad6c41441848f3cc4af6b0b89cf",
+      "label": "Student Search & Booking - Home Private Nusantara",
+      "sourceScreen": "projects/10991291023562948498/screens/88f76ad6c41441848f3cc4af6b0b89cf",
+      "dimensions": { "width": 2560, "height": 3086 },
+      "routes": ["/student/search", "/student/booking/confirm"]
+    },
+    "07-student-portal": {
+      "id": "8f939a87f55c4eedbddc648f02c6be2c",
+      "label": "Student Activity & Bookings Dashboard - Home Private Nusantara",
+      "sourceScreen": "projects/10991291023562948498/screens/8f939a87f55c4eedbddc648f02c6be2c",
+      "dimensions": { "width": 2560, "height": 2062 },
+      "routes": ["/student/dashboard", "/student/my-bookings"]
+    },
+    "08-admin-dashboard": {
+      "id": "a9988e7ce5044c7c91b56290420ae66e",
+      "label": "Admin Operations Dashboard - Home Private Nusantara",
+      "sourceScreen": "projects/10991291023562948498/screens/a9988e7ce5044c7c91b56290420ae66e",
+      "dimensions": { "width": 2560, "height": 2470 },
+      "route": "/admin/dashboard"
+    },
+    "09-admin-tutor-management": {
+      "id": "0ea75d2ae9c9435eae4e208585c41f14",
+      "label": "Tutor Management & Curation Dashboard",
+      "sourceScreen": "projects/10991291023562948498/screens/0ea75d2ae9c9435eae4e208585c41f14",
+      "dimensions": { "width": 2560, "height": 2048 },
+      "routes": ["/admin/tutors", "/admin/tutors/[id]"]
+    },
+    "10-admin-students-bookings": {
+      "id": "e2c04ecd95ef42a685a527cf559cef15",
+      "label": "Direktori Siswa & Pemantauan Jadwal Belajar",
+      "sourceScreen": "projects/10991291023562948498/screens/e2c04ecd95ef42a685a527cf559cef15",
+      "dimensions": { "width": 2560, "height": 2048 },
+      "routes": ["/admin/students", "/admin/bookings"]
+    }
+  }
+}

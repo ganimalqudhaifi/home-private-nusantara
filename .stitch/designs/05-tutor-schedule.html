@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kalender &amp; Jadwal Sesi Mengajar - Academia Premium</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Geist+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "inverse-primary": "#b1c7f0",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#002109",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#0b2545",
+                        "on-primary-container": "#778db2",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "on-background": "#191c1e",
+                        "on-secondary-fixed": "#410002",
+                        "secondary-fixed-dim": "#ffb4ab",
+                        "on-surface": "#191c1e",
+                        "secondary-fixed": "#ffdad6",
+                        "outline": "#74777f",
+                        "text-primary": "#0F172A",
+                        "text-muted": "#64748B",
+                        "outline-variant": "#c4c6cf",
+                        "on-secondary-fixed-variant": "#93000b",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-fixed": "#7ffc97",
+                        "tertiary": "#001404",
+                        "on-tertiary-container": "#12a148",
+                        "inverse-surface": "#2d3133",
+                        "secondary-container": "#e02928",
+                        "tertiary-fixed-dim": "#62df7d",
+                        "on-primary-fixed-variant": "#314769",
+                        "surface-dim": "#d8dadc",
+                        "primary": "#001026",
+                        "surface-container": "#eceef0",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b1c7f0",
+                        "tertiary-container": "#002c0e",
+                        "surface-emerald": "#F0FDF4",
+                        "on-error": "#ffffff",
+                        "status-warning": "#D97706",
+                        "on-primary-fixed": "#001c3b",
+                        "primary-fixed": "#d5e3ff",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "secondary": "#bb0112",
+                        "on-tertiary-fixed-variant": "#005320",
+                        "primary-hover": "#133E72",
+                        "surface-tint": "#495f82",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#44474e",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e6e8ea",
+                        "secondary-hover": "#B91C1C",
+                        "border-whisper": "#E2E8F0",
+                        "surface-bright": "#f7f9fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "1.5rem",
+                        "container-max": "1280px",
+                        "margin-desktop": "2.5rem",
+                        "stack-sm": "0.5rem",
+                        "stack-lg": "2rem",
+                        "stack-md": "1rem",
+                        "margin-mobile": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Outfit"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "data-mono": ["Geist Mono"],
+                        "display": ["Outfit"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "data-mono": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(7, minmax(0, 1fr));
+            grid-auto-rows: 60px;
+        }
+        .calendar-header-row {
+            display: grid;
+            grid-template-columns: 60px repeat(7, minmax(0, 1fr));
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-text-primary font-body-md font-body-md min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<nav class="bg-surface-container-lowest border-b border-border-whisper shadow-sm sticky top-0 w-full z-40">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-20">
+<div class="font-headline-md text-headline-md font-bold text-primary">
+                AcademiaPremium
+            </div>
+<div class="hidden md:flex gap-8">
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Tentang Kami</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Program SD &amp; SMP</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Alur Kurasi</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200" href="#">Testimoni</a>
+</div>
+<div class="flex items-center gap-4">
+<a class="text-secondary font-medium font-body-md text-body-md hover:text-secondary-hover transition-colors" href="#">Masuk Portal</a>
+<button class="bg-primary-container text-on-primary hover:bg-primary-hover transition-colors duration-200 rounded-xl px-4 py-2 font-body-sm text-body-sm font-semibold active:scale-95 flex items-center gap-2">
+                    Cari Guru Privat
+                </button>
+</div>
+</div>
+</nav>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col gap-stack-lg relative overflow-hidden">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-stack-md w-full">
+<div>
+<h1 class="font-headline-lg text-headline-lg md:font-headline-lg text-primary-container mb-2">Kalender &amp; Jadwal Sesi Mengajar</h1>
+<p class="font-body-md text-body-md text-text-muted">Kelola jadwal sesi privat dan ketersediaan waktu Anda.</p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+<!-- Date Navigator -->
+<div class="flex items-center bg-surface-container-lowest border border-border-whisper rounded-xl p-1 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<button class="p-2 text-text-muted hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-low active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">chevron_left</span>
+</button>
+<div class="px-4 font-headline-sm text-headline-sm text-primary-container whitespace-nowrap">
+                        10 - 16 Agustus 2026
+                    </div>
+<button class="p-2 text-text-muted hover:text-primary-container transition-colors rounded-lg hover:bg-surface-container-low active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">chevron_right</span>
+</button>
+</div>
+<!-- View Toggle -->
+<div class="flex bg-surface-container-low p-1 rounded-xl w-full sm:w-auto border border-border-whisper">
+<button class="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-surface-container-lowest text-primary-container font-semibold font-body-sm text-body-sm shadow-sm">
+                        Kalender Mingguan
+                    </button>
+<button class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-text-muted hover:text-primary-container font-medium font-body-sm text-body-sm transition-colors">
+                        Daftar Sesi
+                    </button>
+</div>
+</div>
+</header>
+<!-- Main Content Area: Calendar Grid -->
+<div class="flex-grow bg-surface-container-lowest rounded-2xl border border-border-whisper shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col relative">
+<!-- Days Header -->
+<div class="calendar-header-row border-b border-border-whisper bg-surface-container-lowest sticky top-0 z-10">
+<div class="border-r border-border-whisper p-3 flex items-end justify-end text-text-muted font-label-caps text-label-caps">WIB</div>
+<div class="border-r border-border-whisper p-3 text-center">
+<div class="font-body-sm text-body-sm text-text-muted mb-1">Sen</div>
+<div class="font-headline-md text-headline-md text-primary-container">10</div>
+</div>
+<div class="border-r border-border-whisper p-3 text-center">
+<div class="font-body-sm text-body-sm text-text-muted mb-1">Sel</div>
+<div class="font-headline-md text-headline-md text-text-primary">11</div>
+</div>
+<div class="border-r border-border-whisper p-3 text-center">
+<div class="font-body-sm text-body-sm text-text-muted mb-1">Rab</div>
+<div class="font-headline-md text-headline-md text-text-primary">12</div>
+</div>
+<div class="border-r border-border-whisper p-3 text-center">
+<div class="font-body-sm text-body-sm text-text-muted mb-1">Kam</div>
+<div class="font-headline-md text-headline-md text-text-primary">13</div>
+</div>
+<div class="border-r border-border-whisper p-3 text-center">
+<div class="font-body-sm text-body-sm text-text-muted mb-1">Jum</div>
+<div class="font-headline-md text-headline-md text-text-primary">14</div>
+</div>
+<div class="border-r border-border-whisper p-3 text-center">
+<div class="font-body-sm text-body-sm text-text-muted mb-1">Sab</div>
+<div class="font-headline-md text-headline-md text-text-primary">15</div>
+</div>
+<div class="p-3 text-center">
+<div class="font-body-sm text-body-sm text-text-muted mb-1">Min</div>
+<div class="font-headline-md text-headline-md text-text-primary">16</div>
+</div>
+</div>
+<!-- Scrollable Grid Body -->
+<div class="overflow-y-auto hide-scrollbar flex-grow relative bg-surface-bright" style="height: 600px;">
+<!-- Grid Lines Background -->
+<div class="absolute inset-0 w-full calendar-grid" style="pointer-events: none;">
+<!-- Rows for 08:00 to 21:00 (14 hours) -->
+<!-- 08:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">08:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 09:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">09:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed bg-slate-50"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 10:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">10:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed bg-slate-50"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 11:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">11:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 12:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">12:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 13:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">13:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 14:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">14:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 15:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">15:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 16:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">16:00</div>
+<div class="border-b border-r border-border-whisper border-dashed bg-blue-50/30"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed bg-indigo-50/30"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 17:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">17:00</div>
+<div class="border-b border-r border-border-whisper border-dashed bg-blue-50/30"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed bg-indigo-50/30"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+<!-- 18:00 -->
+<div class="border-b border-r border-border-whisper text-right pr-2 py-2 font-data-mono text-data-mono text-text-muted">18:00</div>
+<div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-r border-border-whisper border-dashed"></div><div class="border-b border-border-whisper border-dashed"></div>
+</div>
+<!-- Session Blocks Container (Positioned absolutely over the grid) -->
+<div class="absolute top-0 left-[60px] right-0 bottom-0 pointer-events-none">
+<!-- Monday 16:00-18:00 Block -->
+<div class="absolute bg-surface-container-lowest border border-blue-200 rounded-lg shadow-sm overflow-hidden flex flex-col cursor-pointer pointer-events-auto hover:-translate-y-0.5 transition-transform duration-200" onclick="document.getElementById('student-drawer').classList.remove('translate-x-full'); document.getElementById('drawer-backdrop').classList.remove('opacity-0', 'pointer-events-none');" style="top: calc(8 * 60px + 2px); left: calc((100%/7) * 0 + 4px); width: calc((100%/7) - 8px); height: calc(2 * 60px - 4px);">
+<div class="w-1 h-full bg-blue-500 absolute left-0 top-0"></div>
+<div class="p-2 pl-3 flex flex-col h-full">
+<div class="flex justify-between items-start mb-1">
+<span class="bg-blue-50 text-blue-900 px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wider font-label-caps">SD KELAS 5</span>
+<span class="material-symbols-outlined text-blue-500 text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="font-headline-sm text-[14px] leading-tight font-semibold text-primary-container mb-0.5 truncate">Fajar Pratama</div>
+<div class="font-body-sm text-[12px] text-text-muted truncate">Matematika Dasar</div>
+<div class="mt-auto flex items-center gap-1 text-text-muted text-[11px]">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span class="truncate">Tebet Barat, Jaksel</span>
+</div>
+</div>
+</div>
+<!-- Thursday 16:00-18:00 Block -->
+<div class="absolute bg-surface-container-lowest border border-indigo-200 rounded-lg shadow-sm overflow-hidden flex flex-col cursor-pointer pointer-events-auto hover:-translate-y-0.5 transition-transform duration-200" style="top: calc(8 * 60px + 2px); left: calc((100%/7) * 3 + 4px); width: calc((100%/7) - 8px); height: calc(2 * 60px - 4px);">
+<div class="w-1 h-full bg-indigo-500 absolute left-0 top-0"></div>
+<div class="p-2 pl-3 flex flex-col h-full">
+<div class="mb-1">
+<span class="bg-indigo-50 text-indigo-900 px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wider font-label-caps">SMP KELAS 8</span>
+</div>
+<div class="font-headline-sm text-[14px] leading-tight font-semibold text-primary-container mb-0.5 truncate">Rizky Ramadhan</div>
+<div class="font-body-sm text-[12px] text-text-muted truncate">IPA Terpadu</div>
+</div>
+</div>
+<!-- Saturday 09:00-11:00 Block -->
+<div class="absolute bg-surface-container-lowest border border-blue-200 rounded-lg shadow-sm overflow-hidden flex flex-col cursor-pointer pointer-events-auto hover:-translate-y-0.5 transition-transform duration-200" style="top: calc(1 * 60px + 2px); left: calc((100%/7) * 5 + 4px); width: calc((100%/7) - 8px); height: calc(2 * 60px - 4px);">
+<div class="w-1 h-full bg-blue-500 absolute left-0 top-0"></div>
+<div class="p-2 pl-3 flex flex-col h-full">
+<div class="mb-1">
+<span class="bg-blue-50 text-blue-900 px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wider font-label-caps">SD KELAS 3</span>
+</div>
+<div class="font-headline-sm text-[14px] leading-tight font-semibold text-primary-container mb-0.5 truncate">Alya Zahra</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Slide-over Drawer Backdrop -->
+<div class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300" id="drawer-backdrop" onclick="document.getElementById('student-drawer').classList.add('translate-x-full'); document.getElementById('drawer-backdrop').classList.add('opacity-0', 'pointer-events-none');"></div>
+<!-- Slide-over Student Detail Drawer -->
+<aside class="fixed top-0 right-0 h-full w-full max-w-[440px] bg-surface-container-lowest shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-l border-border-whisper" id="student-drawer">
+<!-- Drawer Header -->
+<div class="flex items-center justify-between p-6 border-b border-border-whisper">
+<h2 class="font-headline-sm text-headline-sm text-primary-container">Rincian Sesi Belajar <span class="text-text-muted font-normal text-body-md ml-1">#HPN-0810</span></h2>
+<button class="p-2 text-text-muted hover:text-primary-container rounded-full hover:bg-surface-container-low transition-colors" onclick="document.getElementById('student-drawer').classList.add('translate-x-full'); document.getElementById('drawer-backdrop').classList.add('opacity-0', 'pointer-events-none');">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Drawer Content Scrollable Area -->
+<div class="flex-grow overflow-y-auto p-6 flex flex-col gap-8">
+<!-- Student Profile Summary -->
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden border border-border-whisper bg-surface-container flex-shrink-0">
+<img alt="Fajar Pratama Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2lJrIfyN3Q5Ck73bo0522hIIf6jPe1IvR_qc-K7GVGLd8lgrITwr2wjlVXAzpkQ2pi7tMZ41Q6DJ_n2e7LNlKjKbVeL0IvGWyGisHzhjo98BBEvWYzd1-0sjcEvhiUYOV8-ld4yolUa3yUIG7ISmnzU8dCPR-AS3DE_fOZm8IArON9EfMhZ_bwikyxsh9VkxQ7V9SMiBsjB8Z-TPWZD3m4qbYkakRzkTJ0WBWl7pdpMuvoxaPARDbi4VtA_DWpYHQHqLNZBt_6OO-"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary-container mb-1">Fajar Pratama</h3>
+<div class="flex items-center gap-2">
+<span class="bg-blue-50 text-blue-900 px-2 py-1 rounded text-[12px] font-semibold tracking-wider font-label-caps">SD KELAS 5</span>
+<span class="bg-surface-emerald text-emerald-800 px-2 py-1 rounded text-[12px] font-semibold tracking-wider font-label-caps flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Terkonfirmasi
+                        </span>
+</div>
+</div>
+</div>
+<!-- Session Time Card -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<div class="text-text-muted font-label-caps text-label-caps mb-2">JADWAL SESI</div>
+<div class="flex items-center gap-3 text-primary-container font-medium font-body-md text-body-md">
+<span class="material-symbols-outlined text-text-muted">calendar_today</span>
+                    Senin, 10 Agustus 2026 • 16:00 - 18:00 WIB
+                </div>
+<div class="mt-4 pt-4 border-t border-border-whisper flex justify-between items-center">
+<div>
+<div class="text-text-muted font-label-caps text-[10px] mb-1">MATA PELAJARAN</div>
+<div class="font-semibold text-primary-container">Matematika Dasar</div>
+</div>
+<div class="h-8 w-px bg-border-whisper"></div>
+<div>
+<div class="text-text-muted font-label-caps text-[10px] mb-1">DURASI</div>
+<div class="font-semibold text-primary-container">120 Menit</div>
+</div>
+</div>
+</div>
+<!-- Location Details -->
+<div>
+<div class="text-text-muted font-label-caps text-label-caps mb-3">LOKASI MENGAJAR</div>
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<div class="flex gap-3 mb-4">
+<span class="material-symbols-outlined text-primary-container mt-0.5">location_on</span>
+<div>
+<div class="font-semibold text-primary-container font-body-md text-body-md mb-1">Kediaman Siswa</div>
+<p class="text-text-muted font-body-sm text-body-sm">
+                                Jl. Tebet Barat Dalam Raya No. 45, RT.4/RW.5, Tebet Barat, Kec. Tebet, Kota Jakarta Selatan, DKI Jakarta 12810.
+                            </p>
+<div class="mt-2 text-primary-container bg-surface-container p-2 rounded-lg text-body-sm text-body-sm font-medium">
+<span class="font-semibold">Catatan Lokasi:</span> Pagar hitam besar, sebelah minimarket.
+                            </div>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-border-whisper rounded-xl text-primary-container font-semibold font-body-sm text-body-sm hover:bg-surface-container-low transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[18px]">map</span>
+                        Buka Google Maps
+                    </button>
+</div>
+</div>
+<!-- Parent Contact -->
+<div>
+<div class="text-text-muted font-label-caps text-label-caps mb-3">KONTAK WALI MURID</div>
+<div class="flex items-center justify-between bg-surface-container-lowest border border-border-whisper rounded-2xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<div class="font-semibold text-primary-container font-body-md text-body-md">Ibu Rina Kartika</div>
+<div class="text-text-muted font-body-sm text-body-sm">Wali Murid</div>
+</div>
+</div>
+<button class="flex items-center gap-2 bg-[#25D366] text-white px-3 py-2 rounded-lg font-semibold font-body-sm text-body-sm hover:bg-[#20bd5a] transition-colors active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">chat</span>
+                        WhatsApp
+                    </button>
+</div>
+</div>
+<!-- Special Notes -->
+<div>
+<div class="text-text-muted font-label-caps text-label-caps mb-3">CATATAN KHUSUS</div>
+<div class="bg-surface-emerald border border-green-200 rounded-2xl p-4 shadow-sm flex gap-3">
+<span class="material-symbols-outlined text-emerald-600">info</span>
+<p class="text-emerald-900 font-body-sm text-body-sm">
+                        Siswa sedang kesulitan memahami materi pecahan campuran. Mohon dibimbing perlahan dan perbanyak latihan soal cerita bergambar.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Drawer Footer / Actions -->
+<div class="p-6 border-t border-border-whisper bg-surface-container-lowest mt-auto flex flex-col gap-3">
+<button class="w-full py-3.5 bg-emerald-600 text-white rounded-xl font-headline-sm text-[16px] font-semibold hover:bg-emerald-700 transition-colors active:scale-95 flex justify-center items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                Tandai Sesi Selesai
+            </button>
+<button class="w-full py-3.5 bg-transparent border border-border-whisper text-text-muted rounded-xl font-headline-sm text-[16px] font-semibold hover:bg-surface-container-low transition-colors active:scale-95">
+                Hubungi Admin
+            </button>
+</div>
+</aside>
+</body></html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cari Guru - Lumina Academy</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&amp;family=Outfit:wght@600;700&amp;family=Plus+Jakarta+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#d5e3ff",
+                    "background": "#f7f9fb",
+                    "on-secondary-fixed-variant": "#93000b",
+                    "surface-container-low": "#f2f4f6",
+                    "text-muted": "#64748B",
+                    "on-secondary-container": "#fffbff",
+                    "on-primary-container": "#778db2",
+                    "tertiary": "#001404",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-tint": "#495f82",
+                    "on-background": "#191c1e",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#001026",
+                    "on-surface": "#191c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#74777f",
+                    "tertiary-fixed-dim": "#62df7d",
+                    "surface-variant": "#e0e3e5",
+                    "surface-container-high": "#e6e8ea",
+                    "secondary": "#bb0112",
+                    "inverse-primary": "#b1c7f0",
+                    "secondary-fixed": "#ffdad6",
+                    "on-primary-fixed-variant": "#314769",
+                    "inverse-surface": "#2d3133",
+                    "on-tertiary-fixed-variant": "#005320",
+                    "primary-fixed-dim": "#b1c7f0",
+                    "secondary-hover": "#B91C1C",
+                    "on-surface-variant": "#44474e",
+                    "outline-variant": "#c4c6cf",
+                    "secondary-container": "#e02928",
+                    "status-warning": "#D97706",
+                    "border-whisper": "#E2E8F0",
+                    "text-primary": "#0F172A",
+                    "surface-container": "#eceef0",
+                    "on-primary-fixed": "#001c3b",
+                    "tertiary-fixed": "#7ffc97",
+                    "surface-container-highest": "#e0e3e5",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#12a148",
+                    "surface": "#f7f9fb",
+                    "primary-hover": "#133E72",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "surface-emerald": "#F0FDF4",
+                    "secondary-fixed-dim": "#ffb4ab",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#410002",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-fixed": "#002109",
+                    "tertiary-container": "#002c0e",
+                    "primary-container": "#0b2545"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "2.5rem",
+                    "gutter": "1.5rem",
+                    "stack-lg": "2rem",
+                    "margin-mobile": "1rem",
+                    "stack-sm": "0.5rem",
+                    "stack-md": "1rem",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "label-caps": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-lg-mobile": [
+                            "Outfit"
+                    ],
+                    "body-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "data-mono": [
+                            "Geist Mono"
+                    ],
+                    "headline-md": [
+                            "Outfit"
+                    ],
+                    "display": [
+                            "Outfit"
+                    ],
+                    "headline-sm": [
+                            "Outfit"
+                    ],
+                    "headline-lg": [
+                            "Outfit"
+                    ]
+            },
+            "fontSize": {
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "data-mono": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-surface text-text-primary min-h-screen flex flex-col md:flex-row">
+<!-- JSON: SideNavBar (Desktop) -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-surface-container-low font-body-md text-body-md border-r border-border-whisper docked left-0 h-full w-64 flex flex-col h-full p-stack-md gap-stack-sm sticky top-0">
+<div class="mb-8 px-4 py-4">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Lumina Academy</h1>
+<p class="text-text-muted font-body-sm text-body-sm">Premium Tutoring</p>
+</div>
+<div class="flex-1 space-y-2">
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active (Search Page) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-fixed text-on-primary-fixed font-bold rounded-xl scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined icon-fill" data-icon="search">search</span>
+                Cari Guru
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                Jadwal Saya
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+                Riwayat
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+                Pusat Bantuan
+            </a>
+</div>
+<div class="mt-auto space-y-2 border-t border-border-whisper pt-4">
+<button class="w-full bg-secondary-container text-on-secondary-container py-3 rounded-xl font-bold hover:opacity-90 transition-opacity">Booking Sekarang</button>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Pengaturan
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Keluar
+            </a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<main class="flex-1 flex flex-col min-h-screen">
+<!-- JSON: TopAppBar (Visible mostly on mobile in this responsive setup, but kept structurally sound) -->
+<header class="bg-surface dark:bg-surface-dim font-headline-sm text-headline-sm docked full-width top-0 border-b border-border-whisper shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16 sticky top-0 z-40 bg-opacity-90 backdrop-blur-md">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed md:hidden">
+                Lumina Academy
+            </div>
+<!-- Search & Actions (Right aligned) -->
+<div class="flex items-center gap-4 ml-auto">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border border-border-whisper bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none font-body-sm text-body-sm w-48" placeholder="Cari..." type="text"/>
+</div>
+<button class="text-text-muted dark:text-on-surface-variant hover:text-primary-hover transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-text-muted dark:text-on-surface-variant hover:text-primary-hover transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-margin-mobile md:p-margin-desktop max-w-container-max mx-auto w-full flex-1 pb-24 md:pb-8">
+<!-- 1. TOP FILTER BAR -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-6">Cari Guru Les Privat SD &amp; SMP</h2>
+<div class="flex flex-col md:flex-row gap-gutter bg-surface-container-lowest p-6 rounded-2xl border border-border-whisper shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<!-- Segmented Control -->
+<div class="flex bg-surface-container-high rounded-xl p-1 shrink-0 h-fit">
+<button class="flex-1 px-6 py-2 bg-surface-container-lowest text-primary font-bold rounded-lg shadow-sm font-body-md text-body-md">Jenjang SD</button>
+<button class="flex-1 px-6 py-2 text-text-muted font-body-md text-body-md hover:text-primary transition-colors">Jenjang SMP</button>
+</div>
+<!-- Sub-class Pills -->
+<div class="flex-1">
+<p class="font-label-caps text-label-caps text-text-muted mb-3">PILIH KELAS</p>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-full border border-border-whisper bg-surface-container-lowest text-text-muted font-body-sm text-body-sm hover:border-primary transition-colors">Kelas 1</button>
+<button class="px-4 py-2 rounded-full border border-border-whisper bg-surface-container-lowest text-text-muted font-body-sm text-body-sm hover:border-primary transition-colors">Kelas 2</button>
+<button class="px-4 py-2 rounded-full border border-border-whisper bg-surface-container-lowest text-text-muted font-body-sm text-body-sm hover:border-primary transition-colors">Kelas 3</button>
+<button class="px-4 py-2 rounded-full border border-border-whisper bg-surface-container-lowest text-text-muted font-body-sm text-body-sm hover:border-primary transition-colors">Kelas 4</button>
+<!-- Active Pill -->
+<button class="px-4 py-2 rounded-full bg-[#EFF6FF] text-[#1E3A8A] font-bold font-body-sm text-body-sm ring-1 ring-[#1E3A8A]">Kelas 5</button>
+<button class="px-4 py-2 rounded-full border border-border-whisper bg-surface-container-lowest text-text-muted font-body-sm text-body-sm hover:border-primary transition-colors">Kelas 6</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. CONTENT AREA: Two-column layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- LEFT COLUMN: Sticky Calendar Sidebar -->
+<aside class="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary">Agustus 2026</h3>
+<div class="flex gap-2">
+<button class="p-1 text-text-muted hover:text-primary"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>
+<button class="p-1 text-text-muted hover:text-primary"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+<!-- Calendar Grid -->
+<div class="grid grid-cols-7 gap-1 text-center font-body-sm text-body-sm mb-6">
+<div class="text-text-muted font-label-caps text-label-caps py-2">M</div>
+<div class="text-text-muted font-label-caps text-label-caps py-2">S</div>
+<div class="text-text-muted font-label-caps text-label-caps py-2">S</div>
+<div class="text-text-muted font-label-caps text-label-caps py-2">R</div>
+<div class="text-text-muted font-label-caps text-label-caps py-2">K</div>
+<div class="text-text-muted font-label-caps text-label-caps py-2">J</div>
+<div class="text-text-muted font-label-caps text-label-caps py-2">S</div>
+<!-- Empty slots -->
+<div></div><div></div><div></div><div></div><div></div>
+<!-- Dates -->
+<div class="py-2 text-text-muted opacity-50">1</div>
+<div class="py-2 text-text-muted opacity-50">2</div>
+<div class="py-2 text-text-muted opacity-50">3</div>
+<div class="py-2 text-text-muted opacity-50">4</div>
+<div class="py-2 text-text-muted opacity-50">5</div>
+<div class="py-2 text-text-muted opacity-50">6</div>
+<div class="py-2 text-text-muted opacity-50">7</div>
+<div class="py-2 text-text-muted opacity-50">8</div>
+<div class="py-2 text-text-muted opacity-50">9</div>
+<!-- Selected Date (10) -->
+<div class="py-2 bg-primary-container text-on-primary font-bold rounded-full cursor-pointer">10</div>
+<!-- Available Dates (Green dot indicator) -->
+<div class="py-2 text-text-primary cursor-pointer relative">11<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#16A34A] rounded-full"></span></div>
+<div class="py-2 text-text-primary cursor-pointer relative">12<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#16A34A] rounded-full"></span></div>
+<div class="py-2 text-text-primary cursor-pointer relative">13<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#16A34A] rounded-full"></span></div>
+<div class="py-2 text-text-muted opacity-50">14</div>
+<div class="py-2 text-text-primary cursor-pointer relative">15<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#16A34A] rounded-full"></span></div>
+<div class="py-2 text-text-primary cursor-pointer relative">16<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#16A34A] rounded-full"></span></div>
+<div class="py-2 text-text-muted opacity-50">17</div>
+<div class="py-2 text-text-muted opacity-50">18</div>
+<div class="py-2 text-text-muted opacity-50">19</div>
+<div class="py-2 text-text-muted opacity-50">20</div>
+</div>
+<!-- Legend -->
+<div class="flex flex-col gap-3 font-body-sm text-body-sm border-t border-border-whisper pt-4">
+<div class="flex items-center gap-2"><span class="w-3 h-3 bg-primary-container rounded-full"></span> Terpilih (10 Ags)</div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 bg-[#16A34A] rounded-full"></span> Tersedia</div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 bg-surface-variant rounded-full"></span> Tidak Tersedia</div>
+</div>
+</aside>
+<!-- RIGHT COLUMN: Tutor Results -->
+<div class="lg:col-span-8 xl:col-span-9 space-y-6">
+<h3 class="font-headline-sm text-headline-sm text-primary border-b border-border-whisper pb-4">3 Pengajar Tersedia untuk SD Kelas 5 pada Senin, 10 Agustus 2026</h3>
+<!-- Tutor Card 1 -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 transition-transform duration-300 flex flex-col md:flex-row gap-6">
+<div class="w-24 h-24 rounded-full overflow-hidden shrink-0 bg-surface-variant ring-4 ring-surface">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a female Indonesian teacher in her late 20s, wearing a neat navy blue blazer over a light blouse. She has a warm, welcoming smile and is standing in a brightly lit modern library with soft natural daylight. High fidelity, light mode aesthetic, corporate professional portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtYQo_SisuQfQjLkJF87q-5sJPjOwxpx6AST32pQ0lvzbvXfCX5zLbqNghHnjiO7oJPnBHeqYF5J2JGa6vfFPIMqhHWElXQDE-CnfoPMG2XBET2WdFpxo__YoHMrFm47TCu531MUCTJVHpe-GaC5X2Vm1aCkpLlL7r6Uo_YBIvy_rmrFZjpugr8fIk9PNBXbESq8D0jkAVPGkF7Ir0Ll7W5TUzjh5-FSdc4WSBX1SvNbgNrYXm4lBSuEiU8DIiRQLopMnMHv1l53bJ"/>
+</div>
+<div class="flex-1 flex flex-col">
+<div class="flex flex-wrap items-start justify-between gap-4 mb-2">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-1">Sarah Amanda, S.Pd.</h4>
+<div class="inline-flex items-center gap-1 bg-surface-emerald text-[#12a148] px-2 py-1 rounded-md font-label-caps text-label-caps mb-2">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+                                        Terverifikasi Admin
+                                    </div>
+<p class="text-text-muted font-body-sm text-body-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="school">school</span>
+                                        S1 Pendidikan Matematika - Universitas Indonesia
+                                    </p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-[#EFF6FF] text-[#1E3A8A] text-xs font-bold rounded-full">SD Kelas 1-6</span>
+<span class="px-3 py-1 bg-[#EEF2FF] text-[#3730A3] text-xs font-bold rounded-full">SMP Kelas 7-8</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-status-warning font-body-sm text-body-sm font-bold mb-6">
+<span class="material-symbols-outlined icon-fill text-[18px]" data-icon="star">star</span>
+                                4.9/5.0
+                            </div>
+<div class="mt-auto border-t border-border-whisper pt-4">
+<p class="font-label-caps text-label-caps text-text-muted mb-3">PILIH JAM (10 AGS 2026)</p>
+<div class="flex flex-wrap items-center gap-3">
+<button class="px-4 py-2 border border-border-whisper rounded-lg text-text-primary font-data-mono text-data-mono hover:border-primary transition-colors">14:00 - 16:00</button>
+<button class="px-4 py-2 bg-primary-container text-on-primary rounded-lg font-data-mono text-data-mono font-bold shadow-md">16:00 - 18:00</button>
+<button class="px-4 py-2 border border-border-whisper rounded-lg text-text-primary font-data-mono text-data-mono hover:border-primary transition-colors">19:00 - 21:00</button>
+<button class="ml-auto mt-4 md:mt-0 px-6 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold font-body-md text-body-md shadow-sm hover:opacity-90 active:scale-98 transition-all w-full md:w-auto">
+                                        Konek / Booking Jadwal Ini
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Tutor Card 2 (Simplified for mock) -->
+<div class="bg-surface-container-lowest border border-border-whisper rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col md:flex-row gap-6 opacity-75">
+<div class="w-24 h-24 rounded-full overflow-hidden shrink-0 bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a male Indonesian teacher in his 30s, wearing a crisp white shirt and subtle patterned tie. He looks intelligent and approachable, posed against a soft gray studio backdrop. High fidelity, light mode aesthetic, corporate professional portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmWGpM6ZmMcvY2fYw79TGE8uFZErNFdONZaFf_Q1G-jWhGYEt1FFizz0CMMrg5nultlQ3EKuWvxGdcWVM_mltsk8Aa7on3ebdXXkS7sg71J1c0o0CD0dGXL23lQHrRrK_yARIA80zQCEQXSShUo91yi1qdzQYHShEEHlg924TmNwGRL2vdVpsf7VwnuoPcyutR-oI5zHY6_D6U7mi445tdwVBdDUgZU23iWdI5HEvuJ3TDJ2Rhnl1_MFgzaRIyS2RZ8_800SkEexy0"/>
+</div>
+<div class="flex-1">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-1">Budi Santoso, M.Pd.</h4>
+<p class="text-text-muted font-body-sm text-body-sm flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px]" data-icon="school">school</span>
+                                S2 Pendidikan IPA - Universitas Gadjah Mada
+                            </p>
+<div class="flex gap-3">
+<button class="px-4 py-2 border border-border-whisper rounded-lg text-text-primary font-data-mono text-data-mono hover:border-primary transition-colors">09:00 - 11:00</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Overlays represented as static sections for demonstration -->
+<section class="mt-16 pt-8 border-t-2 border-dashed border-border-whisper">
+<h2 class="font-headline-md text-headline-md text-text-muted mb-8 text-center">--- Modal Previews ---</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Booking Review Modal -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-border-whisper relative">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-6">Review Booking</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between items-center border-b border-border-whisper pb-3">
+<span class="text-text-muted font-body-sm text-body-sm">Pengajar</span>
+<span class="font-bold text-primary font-body-sm text-body-sm">Sarah Amanda, S.Pd.</span>
+</div>
+<div class="flex justify-between items-center border-b border-border-whisper pb-3">
+<span class="text-text-muted font-body-sm text-body-sm">Siswa &amp; Kelas</span>
+<span class="font-bold text-primary font-body-sm text-body-sm">Fajar Pratama - SD Kelas 5</span>
+</div>
+<div class="flex justify-between items-center border-b border-border-whisper pb-3">
+<span class="text-text-muted font-body-sm text-body-sm">Jadwal</span>
+<span class="font-bold text-primary font-body-sm text-body-sm">Senin, 10 Ags 2026, 16:00 WIB</span>
+</div>
+</div>
+<button class="w-full px-6 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold font-body-md text-body-md shadow-sm hover:opacity-90">
+                            Konfirmasi &amp; Konek Sekarang
+                        </button>
+</div>
+<!-- Success Modal -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-border-whisper text-center flex flex-col items-center">
+<div class="w-16 h-16 bg-surface-emerald rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-[#16A34A] text-4xl" data-icon="check_circle">check_circle</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Booking Berhasil Dibuat!</h3>
+<p class="text-text-muted font-body-sm text-body-sm mb-6">Kode Booking: <span class="font-data-mono text-primary font-bold">#HPN-BOOK-2026-0810</span></p>
+<div class="bg-surface p-4 rounded-xl mb-6 text-left w-full text-sm">
+<p class="text-text-muted mb-2">Instruksi selanjutnya:</p>
+<p class="text-primary font-body-sm">Admin kami akan segera menghubungi Anda via WhatsApp ke nomor yang terdaftar untuk konfirmasi lokasi dan detail pembelajaran.</p>
+</div>
+<button class="w-full px-6 py-3 bg-primary-container text-on-primary rounded-xl font-bold font-body-md text-body-md shadow-sm hover:opacity-90">
+                            Buka Dashboard Siswa
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- JSON: BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:hidden bg-surface dark:bg-surface-dim font-label-caps text-label-caps rounded-t-xl border-t border-border-whisper shadow-lg pb-safe">
+<!-- Inactive -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+            Beranda
+        </a>
+<!-- Active (Search Page) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-2xl px-4 py-1 scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined icon-fill mb-1" data-icon="explore">explore</span>
+            Eksplor
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="event_upcoming">event_upcoming</span>
+            Jadwal
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+            Profil
+        </a>
+</nav>
+<style>
+        /* Safe area padding for mobile bottom nav */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    </style>
+</body></html>
