@@ -52,7 +52,7 @@ export function BentoValueProps({ className ='' }: BentoValuePropsProps) {
  return (
  <div
  key={idx}
- className="bg-white p-7 rounded-2xl border border-border-whisper shadow-[0_2px_8px_rgb(0,0,0,0.04)] hover:-translate-y-1 transition-transform duration-200 flex flex-col gap-4"
+ className="bg-white p-7 rounded-2xl border border-border-whisper shadow-[0_2px_8px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col gap-4 animate-fade-up"
  >
  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.iconBg}`}>
  <Icon className="w-6 h-6" />

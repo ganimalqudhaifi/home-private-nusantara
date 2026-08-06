@@ -20,7 +20,7 @@ export function TopNavBar({
  userBadge,
 }: TopNavBarProps) {
  return (
- <header className="bg-surface-container-lowest sticky top-0 w-full border-b border-border-whisper shadow-sm z-50 transition-colors">
+ <header className="bg-surface-container-lowest sticky top-0 w-full border-b border-border-whisper shadow-sm z-50 animate-fade-in">
  <div className="flex justify-between items-center w-full px-4 md:px-8 max-w-7xl mx-auto h-20">
  {/* Brand Logo & Name - Always Links to Home */}
  <Link
@@ -57,7 +57,7 @@ export function TopNavBar({
  <Link
  key={link.href}
  href={link.href}
- className={`font-body text-sm font-medium transition-colors hover:text-secondary px-2 py-1 rounded-md ${
+ className={`font-body text-sm font-medium transition-colors hover:text-secondary px-2 py-1 rounded-md relative after:absolute after:left-2 after:right-2 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-secondary after:transition-transform hover:after:scale-x-100 ${
  isActive
  ?'text-primary font-semibold'
  :'text-text-muted'

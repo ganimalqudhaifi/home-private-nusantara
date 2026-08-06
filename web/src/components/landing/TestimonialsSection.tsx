@@ -23,7 +23,7 @@ export function TestimonialsSection({ className ='' }: TestimonialsSectionProps)
  {TESTIMONIALS.map((t, idx) => (
  <div
  key={idx}
- className="bg-white border border-border-whisper p-6 rounded-2xl shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow"
+ className="bg-white border border-border-whisper p-6 rounded-2xl shadow-xs flex flex-col justify-between hover:-translate-y-1 hover:shadow-md transition-all duration-300 animate-fade-up"
  >
  <div>
  <div className="flex items-center justify-between mb-4">

@@ -61,7 +61,7 @@ export function TutorMetricsGrid({
  return (
  <div
  key={idx}
- className="bg-white rounded-2xl p-6 border border-border-whisper shadow-sm flex flex-col justify-between hover:-translate-y-0.5 transition-transform"
+ className="bg-white rounded-2xl p-6 border border-border-whisper shadow-sm flex flex-col justify-between hover:-translate-y-1 hover:shadow-md transition-all duration-300 animate-fade-up"
  >
  <div className="flex items-center justify-between mb-3">
  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${m.iconColor}`}>

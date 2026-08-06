@@ -46,7 +46,7 @@ export function Drawer({
  <>
  {/* Backdrop */}
  <div
- className={`fixed inset-0 bg-slate-900/30 backdrop-blur-xs z-50 transition-opacity duration-300 ${
+ className={`fixed inset-0 bg-slate-900/30 backdrop-blur-xs z-50 transition-opacity duration-300 ease-out ${
  isOpen ?'opacity-100' :'opacity-0 pointer-events-none'
  }`}
  onClick={onClose}
@@ -55,7 +55,7 @@ export function Drawer({
  {/* Slide-over Drawer */}
  <aside
  className={`fixed top-0 right-0 h-full w-full ${widthStyles[width]} bg-surface-container-lowest shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-border-whisper ${
- isOpen ?'translate-x-0' :'translate-x-full'
+ isOpen ?'translate-x-0 animate-slide-in-right' :'translate-x-full'
  }`}
  >
  {/* Header */}

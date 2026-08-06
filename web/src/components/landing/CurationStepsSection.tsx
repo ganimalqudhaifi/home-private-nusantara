@@ -40,7 +40,7 @@ export function CurationStepsSection({ className ='' }: CurationStepsSectionProp
  return (
  <div
  key={step.step}
- className="bg-white p-6 rounded-2xl border border-border-whisper shadow-xs flex flex-col justify-between hover:-translate-y-1 transition-transform"
+ className="bg-white p-6 rounded-2xl border border-border-whisper shadow-xs flex flex-col justify-between hover:-translate-y-1 hover:shadow-md transition-all duration-300 animate-fade-up"
  >
  <div>
  <div className="flex items-center justify-between mb-4">

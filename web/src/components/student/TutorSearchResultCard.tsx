@@ -22,7 +22,7 @@ export function TutorSearchResultCard({
 
  return (
  <div
- className={`bg-white rounded-2xl border border-border-whisper p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-6 items-start ${className}`}
+ className={`bg-white rounded-2xl border border-border-whisper p-6 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col md:flex-row gap-6 items-start animate-fade-up ${className}`}
  >
  {/* Avatar & Verification Pillar */}
  <div className="flex flex-col items-center shrink-0">

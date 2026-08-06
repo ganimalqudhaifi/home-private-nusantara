@@ -11,7 +11,7 @@ export function AdminKPICards({ stats, className ='' }: AdminKPICardsProps) {
  return (
  <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 ${className}`}>
  {/* Stat 1: Active Tutors */}
- <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform flex flex-col justify-between">
+ <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col justify-between animate-fade-up">
  <div className="flex justify-between items-start mb-4">
  <div>
  <p className="text-xs text-text-muted font-medium mb-1">Pengajar Aktif</p>
@@ -32,7 +32,7 @@ export function AdminKPICards({ stats, className ='' }: AdminKPICardsProps) {
  </div>
 
  {/* Stat 2: Pending Tutors */}
- <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform flex flex-col justify-between">
+ <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col justify-between animate-fade-up">
  <div className="flex justify-between items-start mb-4">
  <div>
  <p className="text-xs text-text-muted font-medium mb-1">Pengajar Pending</p>
@@ -53,7 +53,7 @@ export function AdminKPICards({ stats, className ='' }: AdminKPICardsProps) {
  </div>
 
  {/* Stat 3: Registered Students */}
- <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform flex flex-col justify-between">
+ <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col justify-between animate-fade-up">
  <div className="flex justify-between items-start mb-4">
  <div>
  <p className="text-xs text-text-muted font-medium mb-1">Siswa Terdaftar</p>
@@ -76,7 +76,7 @@ export function AdminKPICards({ stats, className ='' }: AdminKPICardsProps) {
  </div>
 
  {/* Stat 4: Total Bookings */}
- <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform flex flex-col justify-between">
+ <div className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col justify-between animate-fade-up">
  <div className="flex justify-between items-start mb-4">
  <div>
  <p className="text-xs text-text-muted font-medium mb-1">Total Booking Sesi</p>

@@ -15,7 +15,7 @@ export function HeroSection({ featuredTutor }: HeroSectionProps) {
  return (
  <section className="w-full px-4 md:px-8 max-w-7xl mx-auto py-12 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
  {/* Left: Asymmetrical Copy */}
- <div className="flex flex-col items-start gap-6">
+ <div className="flex flex-col items-start gap-6 animate-fade-up">
  {/* Verification Badge */}
  <div className="inline-flex items-center gap-2 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200 shadow-xs">
  <ShieldCheck className="text-[#16A34A] w-4 h-4" />
@@ -72,11 +72,11 @@ export function HeroSection({ featuredTutor }: HeroSectionProps) {
  {/* Right: Interactive Preview */}
  <div className="relative w-full aspect-square md:aspect-[4/3] rounded-3xl bg-surface-container-low border border-border-whisper p-6 md:p-8 flex items-center justify-center overflow-hidden shadow-sm">
  {/* Decorative Gradients */}
- <div className="absolute top-0 right-0 w-72 h-72 bg-blue-200/50 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
+ <div className="absolute top-0 right-0 w-72 h-72 bg-blue-200/50 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none animate-float" />
  <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-100/40 rounded-full blur-2xl translate-y-1/4 -translate-x-1/4 pointer-events-none" />
 
  {/* Glassmorphism Card Container */}
- <div className="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] p-5 flex flex-col gap-4">
+ <div className="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] p-5 flex flex-col gap-4 animate-scale-in">
  <InteractiveTutorPreviewCard tutor={featuredTutor} />
  <MiniDatePicker selectedDate={10} />
  </div>

@@ -52,13 +52,13 @@ export function Modal({
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
  {/* Backdrop */}
  <div
- className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+ className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs animate-fade-in"
  onClick={onClose}
  />
 
  {/* Modal Dialog */}
  <div
- className={`relative w-full ${maxWidthStyles[maxWidth]} bg-surface-container-lowest border border-border-whisper rounded-2xl shadow-2xl p-6 md:p-8 z-10 animate-in zoom-in-95 duration-200 overflow-hidden max-h-[90vh] flex flex-col`}
+ className={`relative w-full ${maxWidthStyles[maxWidth]} bg-surface-container-lowest border border-border-whisper rounded-2xl shadow-2xl p-6 md:p-8 z-10 animate-scale-in overflow-hidden max-h-[90vh] flex flex-col`}
  >
  {/* Header */}
  {(title || showCloseButton) && (

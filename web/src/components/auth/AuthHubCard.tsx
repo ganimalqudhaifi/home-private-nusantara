@@ -19,7 +19,7 @@ export function AuthHubCard({
 
  return (
  <div
- className={`w-full max-w-2xl bg-white rounded-2xl border border-border-whisper shadow-[0_4px_20px_rgba(0,0,0,0.06)] overflow-hidden ${className}`}
+ className={`w-full max-w-2xl bg-white rounded-2xl border border-border-whisper shadow-[0_4px_20px_rgba(0,0,0,0.06)] overflow-hidden animate-scale-in ${className}`}
  >
  <div className="p-6 md:p-8">
  {/* Title Header */}
