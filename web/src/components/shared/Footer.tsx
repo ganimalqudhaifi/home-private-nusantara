@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
+import { ShieldCheck, Mail, Phone, MapPin, Share2, Video, Globe } from 'lucide-react';
 import { BRAND_INFO } from '../../data/mockData';
 
 export interface FooterProps {
@@ -25,17 +25,49 @@ export function Footer({ className = '' }: FooterProps) {
                 unoptimized
               />
             </div>
-            <span className="font-headline text-xl font-bold text-white tracking-tight">
-              {BRAND_INFO.name}
-            </span>
+            <div>
+              <span className="font-headline text-xl font-bold text-white tracking-tight block">
+                {BRAND_INFO.name}
+              </span>
+              <span className="text-[11px] text-gray-300 font-medium">
+                {BRAND_INFO.tagline}
+              </span>
+            </div>
           </Link>
           <p className="text-gray-300 text-sm max-w-md leading-relaxed">
-            Platform les privat terkurasi 100% seleksi offline untuk Calistung, SD & SMP.
-            Melayani Kota Makassar & Kabupaten Gowa.
+            Platform bimbingan belajar privat terpercaya di rumah untuk Calistung, SD & SMP.
+            Melayani Kota Makassar & Kabupaten Gowa. Berpengalaman sejak {BRAND_INFO.contact.sinceYear}.
           </p>
-          <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full w-fit text-xs font-semibold text-emerald-400">
-            <ShieldCheck className="w-4 h-4" />
-            <span>Berpengalaman Sejak 2018</span>
+
+          {/* Social Media Links */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <a
+              href={BRAND_INFO.contact.instagramUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-pink-300 hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-xl"
+            >
+              <Globe className="w-4 h-4" />
+              <span>{BRAND_INFO.contact.instagram}</span>
+            </a>
+            <a
+              href={BRAND_INFO.contact.tiktokUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-teal-300 hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-xl"
+            >
+              <Video className="w-4 h-4" />
+              <span>{BRAND_INFO.contact.tiktok}</span>
+            </a>
+            <a
+              href={BRAND_INFO.contact.facebookUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-blue-300 hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-xl"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>{BRAND_INFO.contact.facebook}</span>
+            </a>
           </div>
         </div>
 
@@ -51,23 +83,23 @@ export function Footer({ className = '' }: FooterProps) {
               </Link>
             </li>
             <li>
+              <Link href="/#keunggulan" className="hover:text-white transition-colors">
+                6 Alasan Pilih Kami
+              </Link>
+            </li>
+            <li>
               <Link href="/#programs" className="hover:text-white transition-colors">
-                Program & Biaya
+                Biaya & Paket
               </Link>
             </li>
             <li>
-              <Link href="/#curation" className="hover:text-white transition-colors">
-                Alur Kurasi Tutor
-              </Link>
-            </li>
-            <li>
-              <a href="#daftar" className="hover:text-white transition-colors">
-                Daftar / Konsultasi
+              <a href="#daftar" className="hover:text-white transition-colors font-semibold text-amber-300">
+                Formulir Pendaftaran
               </a>
             </li>
             <li>
               <Link href="/auth" className="hover:text-white transition-colors">
-                Portal Masuk
+                Portal Pengajar & Admin
               </Link>
             </li>
           </ul>
@@ -78,14 +110,14 @@ export function Footer({ className = '' }: FooterProps) {
           <h4 className="font-headline text-sm font-semibold text-white uppercase tracking-wider">
             Hubungi Kami
           </h4>
-          <ul className="space-y-2 text-sm text-gray-300">
+          <ul className="space-y-2.5 text-sm text-gray-300">
             <li className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
               <a
                 href={`https://wa.me/${BRAND_INFO.contact.whatsappRaw}`}
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-white transition-colors font-medium"
+                className="hover:text-white transition-colors font-bold text-emerald-300"
               >
                 {BRAND_INFO.contact.whatsapp}
               </a>
@@ -108,7 +140,7 @@ export function Footer({ className = '' }: FooterProps) {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10 py-6 px-4 md:px-8 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-400">
-        <p>© 2026 Home Private Nusantara. Seluruh Hak Cipta Dilindungi.</p>
+        <p>© 2026 Home Private Nusantara. &quot;Belajar Lebih Mudah, Prestasi Lebih Baik!&quot;</p>
         <div className="flex gap-6">
           <Link href="/#privacy" className="hover:text-white transition-colors">
             Kebijakan Privasi
