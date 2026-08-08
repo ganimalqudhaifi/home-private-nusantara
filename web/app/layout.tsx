@@ -13,11 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
- title:"Home Private Nusantara",
- description:"Bimbingan belajar privat terbaik untuk siswa SD dan SMP.",
- icons: {
- icon: "/logo.jpg",
- },
+  title: "Home Private Nusantara",
+  description: "Bimbingan belajar privat terbaik untuk siswa SD dan SMP.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
