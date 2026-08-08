@@ -1,23 +1,69 @@
-import { Tutor, StudentSession, Student, AdminKPI } from'../types';
+import { Tutor, StudentSession, Student, AdminKPI } from '../types';
 
 export const BRAND_INFO = {
- name:'Home Private Nusantara',
- tagline:'Bimbingan Belajar Privat Terbaik untuk Siswa SD & SMP di Rumah Anda',
- logoUrl:'https://lh3.googleusercontent.com/aida/AP1WRLsxkn09jrtYCONWn3M8G6wDCXqfdSjQYtaPvHmU0RnbNz7YFTtKBb79f1YPyPk7Epaf5GNf7WltXRC4NLkOJiJo0Zj8NhF10kzr7OARLqUJKAViV6XMEMZGluvVbLzZyHWFgwq84ksn8A1oEWfO5LG4VBUAa4bb0JjuMSZm48OrwN_zFV8JgeCfRxT6SV0kldFJL7p1hXs1LJKs8PYs4d0UnuZqupVnK_04QCzjzv8HS06DnGcxvm4SHc3-',
- contact: {
- whatsapp:'6281234567890',
- email:'bantuan@homeprivatenusantara.id',
- address:'Jakarta Selatan, DKI Jakarta',
- },
+  name: 'Home Private Nusantara',
+  tagline: 'Belajar Lebih Mudah, Prestasi Lebih Baik! Bimbingan Belajar Privat Terbaik di Rumah Anda',
+  logoUrl: 'https://lh3.googleusercontent.com/aida/AP1WRLsxkn09jrtYCONWn3M8G6wDCXqfdSjQYtaPvHmU0RnbNz7YFTtKBb79f1YPyPk7Epaf5GNf7WltXRC4NLkOJiJo0Zj8NhF10kzr7OARLqUJKAViV6XMEMZGluvVbLzZyHWFgwq84ksn8A1oEWfO5LG4VBUAa4bb0JjuMSZm48OrwN_zFV8JgeCfRxT6SV0kldFJL7p1hXs1LJKs8PYs4d0UnuZqupVnK_04QCzjzv8HS06DnGcxvm4SHc3-',
+  contact: {
+    whatsapp: '0851-8303-0246',
+    whatsappRaw: '6285183030246',
+    email: 'bantuan@homeprivatenusantara.id',
+    serviceArea: 'Kota Makassar & Kabupaten Gowa',
+    instagram: '@home_privatnusantara',
+    tiktok: '@home.privat.nusantara',
+    since: 2018,
+  },
 } as const;
 
 export const NAV_LINKS = [
- { label:'Tentang Kami', href:'/#about' },
- { label:'Program SD & SMP', href:'/#programs' },
- { label:'Alur Kurasi', href:'/#curation' },
- { label:'Testimoni', href:'/#testimonials' },
- { label:'Cari Guru', href:'/student/search' },
+  { label: 'Tentang Kami', href: '/#about' },
+  { label: 'Program & Biaya', href: '/#programs' },
+  { label: 'Alur Kurasi', href: '/#curation' },
+  { label: 'Testimoni', href: '/#testimonials' },
+  { label: 'Daftar / Konsultasi', href: '/#daftar' },
 ] as const;
+
+export const PRICING_PACKAGES = [
+  {
+    levelId: 'calistung',
+    levelName: 'CALISTUNG',
+    levelBadge: 'TK & Pra-SD',
+    description: 'Membaca, Menulis, dan Berhitung menyenangkan dengan metode ramah anak.',
+    rates: {
+      twoDays: { oneStudent: 400000, twoStudents: 500000 },
+      threeDays: { oneStudent: 500000, twoStudents: 600000 },
+    },
+  },
+  {
+    levelId: 'sd',
+    levelName: 'SD (Kelas 1 - 6)',
+    levelBadge: 'SD Kelas 1-6',
+    description: 'Pendampingan PR, Matematika Dasar, IPA Tematik, dan persiapan ujian sekolah.',
+    rates: {
+      twoDays: { oneStudent: 400000, twoStudents: 550000 },
+      threeDays: { oneStudent: 600000, twoStudents: 700000 },
+    },
+  },
+  {
+    levelId: 'smp',
+    levelName: 'SMP (Kelas 7 - 9)',
+    levelBadge: 'SMP Kelas 7-9',
+    description: 'Penguatan konsep Matematika Aljabar, Sains (IPA Fisika/Biologi), dan Bahasa Inggris.',
+    rates: {
+      twoDays: { oneStudent: 500000, twoStudents: 600000 },
+      threeDays: { oneStudent: 600000, twoStudents: 700000 },
+    },
+  },
+] as const;
+
+export const PACKAGE_BENEFITS = [
+  { title: 'Guru Berkualitas & Terseleksi', desc: '100% lolos wawancara dan uji pedagogik offline.', icon: 'user-check' },
+  { title: 'Pendampingan Belajar 1-on-1', desc: 'Fokus intensif sesuai kecepatan belajar anak.', icon: 'book-open' },
+  { title: 'Konsultasi PR & Tugas Sekolah', desc: 'Bebas konsultasi materi harian sekolah.', icon: 'clipboard-list' },
+  { title: 'Laporan Perkembangan Belajar', desc: 'Evaluasi berkala langsung ke orang tua.', icon: 'trending-up' },
+  { title: 'Jadwal Fleksibel', desc: 'Pilihan hari dan waktu sesuai kesepakatan keluarga.', icon: 'clock' },
+] as const;
+
 
 export const CURRICULUM_PROGRAMS = [
  {

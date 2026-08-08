@@ -96,23 +96,23 @@ export function TopNavBar({
   {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
   </button>
   )}
-  <div className="hidden md:flex items-center gap-3">
- {role ==='guest' ? (
- <>
- <Link
- href="/auth"
- className="hidden sm:inline-flex text-xs md:text-sm font-semibold text-primary hover:text-primary-hover px-3 py-2 rounded-xl transition-colors"
- >
- Masuk Portal
- </Link>
- <Link
- href="/student/search"
- className="bg-primary-container hover:bg-primary-hover text-white text-xs md:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm active:scale-95 transition-all duration-150 inline-flex items-center gap-1.5"
- >
- Cari Guru Privat
- </Link>
- </>
- ) : (
+        <div className="hidden md:flex items-center gap-3">
+          {role === 'guest' ? (
+            <>
+              <Link
+                href="/auth"
+                className="hidden sm:inline-flex text-xs md:text-sm font-semibold text-primary hover:text-primary-hover px-3 py-2 rounded-xl transition-colors"
+              >
+                Masuk Portal
+              </Link>
+              <a
+                href="#daftar"
+                className="bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs md:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm active:scale-95 transition-all duration-150 inline-flex items-center gap-1.5"
+              >
+                Daftar Sekarang
+              </a>
+            </>
+          ) : (
  <div className="flex items-center gap-3">
  {userBadge && (
  <div className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs px-2.5 py-1 rounded-full font-medium">
@@ -169,14 +169,14 @@ export function TopNavBar({
   </Link>
   );
   })}
-  <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border-whisper pt-3">
-  <Link href="/auth" onClick={closeMobileMenu} className="rounded-xl border border-border-whisper px-3 py-2.5 text-center text-xs font-bold text-primary hover:bg-surface-container-low">
-  Masuk Portal
-  </Link>
-  <Link href="/student/search" onClick={closeMobileMenu} className="rounded-xl bg-primary-container px-3 py-2.5 text-center text-xs font-bold text-white hover:bg-primary-hover">
-  Cari Guru Privat
-  </Link>
-  </div>
+            <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border-whisper pt-3">
+              <Link href="/auth" onClick={closeMobileMenu} className="rounded-xl border border-border-whisper px-3 py-2.5 text-center text-xs font-bold text-primary hover:bg-surface-container-low">
+                Masuk Portal
+              </Link>
+              <a href="#daftar" onClick={closeMobileMenu} className="rounded-xl bg-[#DC2626] px-3 py-2.5 text-center text-xs font-bold text-white hover:bg-[#B91C1C]">
+                Daftar Sekarang
+              </a>
+            </div>
   </div>
   </nav>
   </>

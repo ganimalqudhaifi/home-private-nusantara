@@ -53,13 +53,13 @@ export function HeroSection({ featuredTutor }: HeroSectionProps) {
 
         {/* Actions CTA */}
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-2">
-          <Link
-            href="/student/search"
+          <a
+            href="#daftar"
             className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-7 py-3.5 rounded-xl font-semibold shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 text-sm md:text-base"
           >
-            <span>Cari Guru & Konsultasi</span>
+            <span>Pilih Paket & Jadwal</span>
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
           <Link
             href="/auth?tab=tutor"
             className="bg-transparent hover:bg-surface-container-low text-primary border border-border-whisper px-7 py-3.5 rounded-xl font-semibold active:scale-95 transition-all flex items-center justify-center text-sm md:text-base"
