@@ -48,7 +48,6 @@ export function Footer({ className = '' }: FooterProps) {
                 width={36}
                 height={36}
                 className="object-contain w-full h-full"
-                unoptimized
               />
             </div>
             <div>

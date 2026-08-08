@@ -65,9 +65,8 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
  width={32}
  height={32}
  className="object-contain w-full h-full"
- priority
- unoptimized
- />
+  priority
+  />
  </div>
  <div className="flex flex-col">
  <h1 className="font-headline text-base font-bold text-primary tracking-tight">

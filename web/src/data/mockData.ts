@@ -4,7 +4,7 @@ export const BRAND_INFO = {
   name: 'Home Private Nusantara',
   tagline: 'Pendamping Belajar Terbaik untuk Prestasi yang Lebih Baik!',
   subTagline: 'Belajar Lebih Mudah, Prestasi Lebih Baik! Fokus Belajar • Hasil Nyata • Prestasi Meningkat',
-  logoUrl: 'https://lh3.googleusercontent.com/aida/AP1WRLsxkn09jrtYCONWn3M8G6wDCXqfdSjQYtaPvHmU0RnbNz7YFTtKBb79f1YPyPk7Epaf5GNf7WltXRC4NLkOJiJo0Zj8NhF10kzr7OARLqUJKAViV6XMEMZGluvVbLzZyHWFgwq84ksn8A1oEWfO5LG4VBUAa4bb0JjuMSZm48OrwN_zFV8JgeCfRxT6SV0kldFJL7p1hXs1LJKs8PYs4d0UnuZqupVnK_04QCzjzv8HS06DnGcxvm4SHc3-',
+  logoUrl: '/logo.jpg',
   contact: {
     whatsapp: '0851-8303-0246',
     whatsappRaw: '6285183030246',

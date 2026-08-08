@@ -47,9 +47,8 @@ export function TopNavBar({
  width={40}
  height={40}
  className="object-contain w-full h-full"
- priority
- unoptimized
- />
+  priority
+  />
  </div>
  <div className="flex flex-col">
  <span className="font-headline text-lg md:text-xl font-bold text-primary tracking-tight group-hover:text-primary-hover transition-colors">
