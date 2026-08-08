@@ -7,9 +7,9 @@ export interface CurriculumSectionProps {
  readonly className?: string;
 }
 
-export function CurriculumSection({ className ='' }: CurriculumSectionProps) {
- return (
- <section id="programs" className={`w-full py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto ${className}`}>
+export function CurriculumSection({ className = '' }: CurriculumSectionProps) {
+  return (
+    <section id="curriculum" className={`w-full py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto ${className}`}>
  <div className="text-center mb-12">
  <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary">
  Program Belajar Berjenjang SD & SMP
@@ -56,13 +56,13 @@ export function CurriculumSection({ className ='' }: CurriculumSectionProps) {
  </div>
  </div>
 
- <Link
- href={`/student/search?level=${isSD ?'SD' :'SMP'}`}
- className="w-full bg-surface-container-low hover:bg-primary-container hover:text-white text-primary font-semibold py-3 px-4 rounded-xl text-center text-sm transition-all flex items-center justify-center gap-2"
- >
- <span>Cari Guru {isSD ?'SD' :'SMP'}</span>
- <ArrowRight className="w-4 h-4" />
- </Link>
+          <a
+            href="#daftar"
+            className="w-full bg-surface-container-low hover:bg-primary-container hover:text-white text-primary font-semibold py-3 px-4 rounded-xl text-center text-sm transition-all flex items-center justify-center gap-2"
+          >
+            <span>Daftar Bimbingan {isSD ? 'SD' : 'SMP'}</span>
+            <ArrowRight className="w-4 h-4" />
+          </a>
  </div>
  );
  })}

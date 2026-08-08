@@ -7,9 +7,9 @@ export interface TestimonialsSectionProps {
  readonly className?: string;
 }
 
-export function TestimonialsSection({ className ='' }: TestimonialsSectionProps) {
- return (
- <section id="testimonials" className={`w-full py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto ${className}`}>
+export function TestimonialsSection({ className = '' }: TestimonialsSectionProps) {
+  return (
+    <section id="testimonials" className={`w-full py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto ${className}`}>
  <div className="text-center mb-12">
  <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary">
  Dipercaya oleh Ribuan Orang Tua & Siswa

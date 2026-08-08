@@ -6,19 +6,19 @@ export interface CurationStepsSectionProps {
  readonly className?: string;
 }
 
-export function CurationStepsSection({ className ='' }: CurationStepsSectionProps) {
- const iconMap: Record<string, React.ElementType> = {
-'clipboard-check': ClipboardCheck,
- presentation: Presentation,
-'user-check': UserCheck,
-'shield-check': ShieldCheck,
- };
+export function CurationStepsSection({ className = '' }: CurationStepsSectionProps) {
+  const iconMap: Record<string, React.ElementType> = {
+    'clipboard-check': ClipboardCheck,
+    presentation: Presentation,
+    'user-check': UserCheck,
+    'shield-check': ShieldCheck,
+  };
 
- return (
- <section
- id="curation"
- className={`w-full bg-surface-container-low py-16 md:py-24 border-y border-border-whisper ${className}`}
- >
+  return (
+    <section
+      id="curation"
+      className={`w-full bg-surface-container-low py-16 md:py-24 border-y border-border-whisper ${className}`}
+    >
  <div className="px-4 md:px-8 max-w-7xl mx-auto">
  <div className="text-center mb-16">
  <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-3 border border-emerald-200">
