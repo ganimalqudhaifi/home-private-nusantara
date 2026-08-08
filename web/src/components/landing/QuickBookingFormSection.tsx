@@ -1,16 +1,14 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { BRAND_INFO, PRICING_PACKAGES } from '../../data/mockData';
 import { Button } from '../shared/Button';
 import {
   MessageCircle,
   CalendarCheck,
-  Users,
-  Clock,
-  Sparkles,
-  MapPin,
   Check,
+  BookOpen,
+  GraduationCap,
 } from 'lucide-react';
 
 const DAYS_OF_WEEK = [
@@ -30,6 +28,66 @@ const TIME_OPTIONS = [
   { label: 'Malam (19.00 - 21.00)', value: 'Malam (19.00 - 21.00)' },
 ] as const;
 
+interface LevelOptionConfig {
+  readonly grades: readonly string[];
+  readonly subjects: readonly string[];
+  readonly placeholderNote: string;
+}
+
+const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
+  calistung: {
+    grades: [
+      'TK A (4-5 Tahun)',
+      'TK B (5-6 Tahun)',
+      'Pra-SD / Persiapan Masuk SD',
+      'Kelas 1 SD (Remedial Membaca)',
+    ],
+    subjects: [
+      'Mengenal Huruf & Mengeja',
+      'Menulis Kata & Kalimat',
+      'Berhitung Dasar (Angka & Tambah/Kurang)',
+      'Paket Komplit Calistung',
+    ],
+    placeholderNote:
+      'Contoh: Anak belum lancar mengeja 2 suku kata, butuh metode belajar visual yang menyenangkan.',
+  },
+  sd: {
+    grades: [
+      'Kelas 1 SD',
+      'Kelas 2 SD',
+      'Kelas 3 SD',
+      'Kelas 4 SD',
+      'Kelas 5 SD',
+      'Kelas 6 SD (Persiapan Ujian)',
+    ],
+    subjects: [
+      'Tematik Lengkap & PR Harian',
+      'Matematika SD',
+      'IPA / Sains Tematik',
+      'Bahasa Inggris Dasar',
+      'Bahasa Indonesia',
+    ],
+    placeholderNote:
+      'Contoh: Butuh bimbingan intensif materi pecahan campuran dan persiapan ulangan harian matematika.',
+  },
+  smp: {
+    grades: [
+      'Kelas 7 SMP (Fase D)',
+      'Kelas 8 SMP',
+      'Kelas 9 SMP (Persiapan Masuk SMA)',
+    ],
+    subjects: [
+      'Matematika SMP (Aljabar & Geometri)',
+      'IPA Fisika',
+      'IPA Biologi',
+      'Bahasa Inggris SMP',
+      'Semua Mapel Utama & PR',
+    ],
+    placeholderNote:
+      'Contoh: Fokus pendalaman rumus fisika gerak dan aljabar matematika untuk persiapan PTS.',
+  },
+};
+
 export function QuickBookingFormSection() {
   const [levelId, setLevelId] = useState<'calistung' | 'sd' | 'smp'>('sd');
   const [frequency, setFrequency] = useState<'2x' | '3x'>('2x');
@@ -37,15 +95,38 @@ export function QuickBookingFormSection() {
   const [selectedDays, setSelectedDays] = useState<string[]>(['Senin', 'Kamis']);
   const [preferredTime, setPreferredTime] = useState<string>(TIME_OPTIONS[2].value);
 
+  // Dynamic Class & Subjects state
+  const [selectedGrade, setSelectedGrade] = useState<string>(LEVEL_CONFIGS.sd.grades[3]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0]]);
+
   const [parentName, setParentName] = useState('');
   const [parentPhone, setParentPhone] = useState('');
   const [studentName, setStudentName] = useState('');
-  const [grade, setGrade] = useState('Kelas 4 SD');
   const [cityArea, setCityArea] = useState<'Makassar' | 'Gowa'>('Makassar');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
 
   const requiredDayCount = frequency === '2x' ? 2 : 3;
+  const currentConfig = LEVEL_CONFIGS[levelId];
+
+  // When user changes program level, synchronize grade and subjects defaults
+  const handleLevelChange = (newLevel: 'calistung' | 'sd' | 'smp') => {
+    setLevelId(newLevel);
+    const config = LEVEL_CONFIGS[newLevel];
+    setSelectedGrade(config.grades[0]);
+    setSelectedSubjects([config.subjects[0]]);
+  };
+
+  // Toggle Subject selection
+  const handleToggleSubject = (subject: string) => {
+    if (selectedSubjects.includes(subject)) {
+      if (selectedSubjects.length > 1) {
+        setSelectedSubjects(selectedSubjects.filter((s) => s !== subject));
+      }
+    } else {
+      setSelectedSubjects([...selectedSubjects, subject]);
+    }
+  };
 
   // Toggle Day Selection with Limit
   const handleToggleDay = (day: string) => {
@@ -55,7 +136,6 @@ export function QuickBookingFormSection() {
       if (selectedDays.length < requiredDayCount) {
         setSelectedDays([...selectedDays, day]);
       } else {
-        // Replace oldest
         setSelectedDays([...selectedDays.slice(1), day]);
       }
     }
@@ -86,11 +166,14 @@ export function QuickBookingFormSection() {
 
     const selectedPkg = PRICING_PACKAGES.find((p) => p.levelId === levelId);
     const daysStr = selectedDays.join(', ') || 'Belum dipilih';
+    const subjectsStr = selectedSubjects.join(', ') || 'Semua Materi';
 
     const message = `Halo Admin Home Private Nusantara, saya ingin mendaftar/konsultasi les privat di rumah dengan formulir berikut:
 
 *Rincian Paket & Jadwal:*
-- Program / Jenjang: ${selectedPkg?.levelName || levelId.toUpperCase()}
+- Program: ${selectedPkg?.levelName || levelId.toUpperCase()}
+- Tingkatan / Kelas: ${selectedGrade}
+- Mata Pelajaran / Fokus: ${subjectsStr}
 - Frekuensi: ${frequency} seminggu (${studentCount} Siswa)
 - Estimasi Biaya: Rp ${estimatedPrice.toLocaleString('id-ID')} / bulan
 - Pilihan Hari Belajar: ${daysStr}
@@ -99,7 +182,7 @@ export function QuickBookingFormSection() {
 *Data Siswa & Orang Tua:*
 - Nama Orang Tua/Wali: ${parentName || '-'}
 - No. WhatsApp: ${parentPhone || '-'}
-- Nama Siswa & Kelas: ${studentName || '-'} (${grade})
+- Nama Siswa: ${studentName || '-'}
 - Wilayah Layanan: Kota/Kab. ${cityArea}
 - Alamat Lengkap: ${address || '-'}
 - Catatan / Kebutuhan Belajar: ${notes || '-'}
@@ -124,7 +207,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
             Formulir Pemesanan Guru Les Privat
           </h2>
           <p className="text-sm text-text-muted">
-            Tanpa perlu login. Isi preferensi hari dan data bimbingan, lalu klik untuk terhubung langsung ke WhatsApp Admin ({BRAND_INFO.contact.whatsapp}).
+            Tanpa perlu login. Pilih paket dan preferensi hari, lalu klik untuk konsultasi via WhatsApp Admin ({BRAND_INFO.contact.whatsapp}).
           </p>
         </div>
 
@@ -146,25 +229,28 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
 
             {/* Level Selector */}
             <div className="grid grid-cols-3 gap-3">
-              {PRICING_PACKAGES.map((pkg) => (
-                <button
-                  key={pkg.levelId}
-                  type="button"
-                  onClick={() => setLevelId(pkg.levelId as 'calistung' | 'sd' | 'smp')}
-                  className={`p-3.5 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1 ${
-                    levelId === pkg.levelId
-                      ? 'border-primary-container bg-primary-container text-white shadow-xs'
-                      : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
-                  }`}
-                >
-                  <span className="font-headline text-xs sm:text-sm font-bold">
-                    {pkg.levelName.split(' ')[0]}
-                  </span>
-                  <span className={`text-[10px] ${levelId === pkg.levelId ? 'text-white/80' : 'text-text-muted'}`}>
-                    {pkg.levelBadge}
-                  </span>
-                </button>
-              ))}
+              {PRICING_PACKAGES.map((pkg) => {
+                const isCurrent = levelId === pkg.levelId;
+                return (
+                  <button
+                    key={pkg.levelId}
+                    type="button"
+                    onClick={() => handleLevelChange(pkg.levelId as 'calistung' | 'sd' | 'smp')}
+                    className={`p-3.5 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1 ${
+                      isCurrent
+                        ? 'border-primary-container bg-primary-container text-white shadow-xs'
+                        : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
+                    }`}
+                  >
+                    <span className="font-headline text-xs sm:text-sm font-bold">
+                      {pkg.levelName.split(' ')[0]}
+                    </span>
+                    <span className={`text-[10px] ${isCurrent ? 'text-white/80' : 'text-text-muted'}`}>
+                      {pkg.levelBadge}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Frequency & Student Count Grid */}
@@ -298,18 +384,74 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
             </div>
           </div>
 
-          {/* Step 3: Student & Parent Info */}
-          <div className="space-y-4">
+          {/* Step 3: Dynamic Class, Subject & Student Info */}
+          <div className="space-y-5">
             <div className="flex items-center gap-2 pb-2 border-b border-border-whisper">
               <span className="w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">
                 3
               </span>
               <h3 className="font-headline text-sm font-bold text-primary uppercase tracking-wider">
-                Data Murid & Domisili (Makassar / Gowa)
+                Tingkatan Kelas, Mata Pelajaran & Data Murid
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Dynamic Class Chips */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                <GraduationCap className="w-4 h-4 text-primary-container" />
+                <span>Pilih Tingkatan Kelas ({levelId.toUpperCase()}):</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {currentConfig.grades.map((gr) => {
+                  const isSelected = selectedGrade === gr;
+                  return (
+                    <button
+                      key={gr}
+                      type="button"
+                      onClick={() => setSelectedGrade(gr)}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${
+                        isSelected
+                          ? 'border-primary-container bg-primary-container text-white shadow-xs'
+                          : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
+                      }`}
+                    >
+                      {gr}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Dynamic Subject Tags */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4 text-primary-container" />
+                <span>Pilih Mata Pelajaran / Fokus Bimbingan (Bisa pilih lebih dari satu):</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {currentConfig.subjects.map((sub) => {
+                  const isSelected = selectedSubjects.includes(sub);
+                  return (
+                    <button
+                      key={sub}
+                      type="button"
+                      onClick={() => handleToggleSubject(sub)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                        isSelected
+                          ? 'border-[#DC2626] bg-red-50 text-[#DC2626] font-bold shadow-xs'
+                          : 'border-border-whisper bg-surface-container-lowest text-text-muted hover:text-text-primary'
+                      }`}
+                    >
+                      <span>{sub}</span>
+                      {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Student & Parent Form Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   Nama Orang Tua / Wali
@@ -356,22 +498,6 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                  Jenjang / Kelas
-                </label>
-                <input
-                  required
-                  type="text"
-                  placeholder="Contoh: Kelas 5 SD"
-                  value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   Wilayah Layanan
                 </label>
                 <select
@@ -383,31 +509,31 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                   <option value="Gowa">Kabupaten Gowa</option>
                 </select>
               </div>
-
-              <div className="space-y-1 sm:col-span-2">
-                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                  Alamat Lengkap / Patokan Rumah
-                </label>
-                <input
-                  required
-                  type="text"
-                  placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-xs"
-                />
-              </div>
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                Catatan / Fokus Materi Yang Diinginkan
+                Alamat Lengkap / Patokan Rumah
+              </label>
+              <input
+                required
+                type="text"
+                placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-xs"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                Catatan / Kebutuhan Belajar Siswa
               </label>
               <textarea
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Contoh: Butuh guru matematika sabar untuk persiapan ulangan harian dan pendampingan PR."
+                placeholder={currentConfig.placeholderNote}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-xs resize-none"
               />
             </div>
@@ -426,7 +552,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                 <span className="text-xs text-text-muted">/ bulan (4 pertemuan)</span>
               </div>
               <p className="text-[11px] text-emerald-700 font-semibold mt-1">
-                *Guru berkualitas disiapkan oleh Admin sesuai hari & jam yang Anda pilih.
+                *Program: {selectedGrade} • {selectedSubjects.join(', ')}
               </p>
             </div>
 
