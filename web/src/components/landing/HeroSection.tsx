@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   ShieldCheck,
   Star,
@@ -10,10 +9,36 @@ import {
   MapPin,
   Sparkles,
   Phone,
-  CheckCircle2,
   Award,
+  House,
+  Trophy,
+  Rocket,
+  CalendarDays,
+  Tag,
+  CircleCheckBig,
 } from 'lucide-react';
-import { BRAND_INFO, TOP_PILLARS } from '../../data/mockData';
+import { BRAND_INFO } from '../../data/mockData';
+
+const PILLAR_ICONS = [
+  House,
+  Trophy,
+  Rocket,
+];
+
+const PILLAR_DETAILS = [
+  {
+    title: 'BELAJAR NYAMAN',
+    desc: 'Lingkungan belajar kondusif & privat langsung di rumah Anda',
+  },
+  {
+    title: 'PRESTASI GEMILANG',
+    desc: 'Bersama meraih nilai akademik terbaik dan juara kelas',
+  },
+  {
+    title: 'MASA DEPAN TERANG',
+    desc: 'Fondasi konsep kuat untuk jenjang sekolah berikutnya',
+  },
+];
 
 export function HeroSection() {
   return (
@@ -119,21 +144,21 @@ export function HeroSection() {
                 </div>
               </div>
 
-              {/* Quick Feature Highlights */}
+              {/* Contextual Feature Highlights */}
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-border-whisper">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-4 h-4" />
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-whisper">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <House className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-primary">Belajar Nyaman di Rumah</h4>
-                    <p className="text-[11px] text-text-muted">Guru datang langsung, aman & kondusif.</p>
+                    <h4 className="text-xs font-bold text-primary">Guru Datang ke Rumah</h4>
+                    <p className="text-[11px] text-text-muted">Lebih aman, hemat waktu tanpa macet.</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-border-whisper">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-4 h-4" />
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-whisper">
+                  <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                    <CalendarDays className="w-4.5 h-4.5" />
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-primary">Jadwal Sangat Fleksibel</h4>
@@ -141,9 +166,9 @@ export function HeroSection() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-border-whisper">
-                  <div className="w-8 h-8 rounded-lg bg-red-100 text-[#DC2626] flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-4 h-4" />
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-whisper">
+                  <div className="w-9 h-9 rounded-xl bg-red-100 text-[#DC2626] flex items-center justify-center shrink-0">
+                    <Tag className="w-4.5 h-4.5" />
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-primary">Mulai Rp 400.000 / Bulan</h4>
@@ -155,7 +180,7 @@ export function HeroSection() {
               {/* CTA link in card */}
               <a
                 href="#programs"
-                className="w-full py-3 px-4 rounded-xl bg-surface-container-high hover:bg-primary hover:text-white text-primary text-xs font-bold text-center block transition-colors"
+                className="w-full py-3.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary hover:text-white text-primary text-xs font-bold text-center block transition-colors"
               >
                 Lihat Rincian Biaya & Fasilitas →
               </a>
@@ -165,24 +190,27 @@ export function HeroSection() {
 
         {/* 3 Value Pillars Strip from Top of Brochure */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-          {TOP_PILLARS.map((pillar, i) => (
-            <div
-              key={pillar.title}
-              className="p-5 rounded-2xl bg-white border border-border-whisper shadow-xs flex items-center gap-4"
-            >
-              <div className="w-10 h-10 rounded-xl bg-red-50 text-[#DC2626] flex items-center justify-center shrink-0 font-extrabold text-sm">
-                0{i + 1}
+          {PILLAR_DETAILS.map((pillar, i) => {
+            const Icon = PILLAR_ICONS[i] || House;
+            return (
+              <div
+                key={pillar.title}
+                className="p-5 rounded-2xl bg-white border border-border-whisper shadow-xs flex items-center gap-4 hover:border-primary/20 transition-colors"
+              >
+                <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#DC2626] flex items-center justify-center shrink-0 shadow-2xs">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-headline text-xs font-extrabold text-primary uppercase tracking-wider">
+                    {pillar.title}
+                  </h4>
+                  <p className="text-xs text-text-muted leading-tight mt-0.5">
+                    {pillar.desc}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-headline text-xs font-extrabold text-primary uppercase tracking-wider">
-                  {pillar.title}
-                </h4>
-                <p className="text-xs text-text-muted leading-tight mt-0.5">
-                  {pillar.desc}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

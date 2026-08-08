@@ -1,11 +1,37 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShieldCheck, Mail, Phone, MapPin, Share2, Video, Globe } from 'lucide-react';
+import { ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
 import { BRAND_INFO } from '../../data/mockData';
 
 export interface FooterProps {
   readonly className?: string;
+}
+
+function InstagramIcon({ className = 'w-4 h-4' }: { readonly className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function TikTokIcon({ className = 'w-4 h-4' }: { readonly className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.87-4.49v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.87-.09z" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ className = 'w-4 h-4' }: { readonly className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.704 0-1.634.246-1.634 1.428v2.552h4.544l-.459 3.667h-4.085v7.98c-1.333.155-2.689.155-4.022 0z" />
+    </svg>
+  );
 }
 
 export function Footer({ className = '' }: FooterProps) {
@@ -39,33 +65,33 @@ export function Footer({ className = '' }: FooterProps) {
             Melayani Kota Makassar & Kabupaten Gowa. Berpengalaman sejak {BRAND_INFO.contact.sinceYear}.
           </p>
 
-          {/* Social Media Links */}
+          {/* Social Media Links with Authentic Icons */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <a
               href={BRAND_INFO.contact.instagramUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-pink-300 hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-xl"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-pink-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl"
             >
-              <Globe className="w-4 h-4" />
+              <InstagramIcon className="w-4 h-4" />
               <span>{BRAND_INFO.contact.instagram}</span>
             </a>
             <a
               href={BRAND_INFO.contact.tiktokUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-teal-300 hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-xl"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-teal-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl"
             >
-              <Video className="w-4 h-4" />
+              <TikTokIcon className="w-4 h-4" />
               <span>{BRAND_INFO.contact.tiktok}</span>
             </a>
             <a
               href={BRAND_INFO.contact.facebookUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-blue-300 hover:text-white transition-colors bg-white/10 px-3 py-1.5 rounded-xl"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-blue-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl"
             >
-              <Share2 className="w-4 h-4" />
+              <FacebookIcon className="w-4 h-4" />
               <span>{BRAND_INFO.contact.facebook}</span>
             </a>
           </div>
