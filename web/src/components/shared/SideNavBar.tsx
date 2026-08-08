@@ -1,64 +1,55 @@
 'use client';
 
-import React from'react';
-import Link from'next/link';
-import Image from'next/image';
-import { usePathname } from'next/navigation';
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import {
- LayoutDashboard,
- Search,
- Calendar,
- Clock,
- HelpCircle,
- Settings,
- LogOut,
- Users,
- CheckCircle,
- GraduationCap,
- CalendarDays,
-} from'lucide-react';
-import { BRAND_INFO } from'../../data/mockData';
+  LayoutDashboard,
+  Clock,
+  HelpCircle,
+  Settings,
+  LogOut,
+  Users,
+  CheckCircle,
+  GraduationCap,
+  CalendarDays,
+} from 'lucide-react';
+import { BRAND_INFO } from '../../data/mockData';
 
 export interface SideNavBarProps {
- readonly role:'student' |'tutor' |'admin';
- readonly className?: string;
+  readonly role: 'tutor' | 'admin';
+  readonly className?: string;
 }
 
-export function SideNavBar({ role, className ='' }: SideNavBarProps) {
- const pathname = usePathname();
+export function SideNavBar({ role, className = '' }: SideNavBarProps) {
+  const pathname = usePathname();
 
- const getNavItems = () => {
- switch (role) {
- case'student':
- return [
- { label:'Dashboard', href:'/student/dashboard', icon: LayoutDashboard },
- { label:'Cari Guru', href:'/student/search', icon: Search },
- { label:'Jadwal Saya', href:'/student/dashboard', icon: Calendar },
- { label:'Riwayat Sesi', href:'/student/my-bookings', icon: Clock },
- { label:'Pusat Bantuan', href:'/#contact', icon: HelpCircle },
- ];
- case'tutor':
- return [
- { label:'Dashboard', href:'/tutor/dashboard', icon: LayoutDashboard },
- { label:'Jadwal Mengajar', href:'/tutor/schedule', icon: CalendarDays },
- { label:'Atur Ketersediaan', href:'/tutor/availability', icon: Clock },
- { label:'Status Akun', href:'/tutor/pending', icon: CheckCircle },
- { label:'Bantuan', href:'/#contact', icon: HelpCircle },
- ];
- case'admin':
- return [
- { label:'Control Hub', href:'/admin/dashboard', icon: LayoutDashboard },
- { label:'Kurasi Pengajar', href:'/admin/tutors', icon: Users },
- { label:'Direktori Siswa', href:'/admin/students', icon: GraduationCap },
- { label:'Monitoring Jadwal', href:'/admin/bookings', icon: CalendarDays },
- { label:'Pengaturan Sistem', href:'/admin/dashboard', icon: Settings },
- ];
- default:
- return [];
- }
- };
+  const getNavItems = () => {
+    switch (role) {
+      case 'tutor':
+        return [
+          { label: 'Dashboard', href: '/tutor/dashboard', icon: LayoutDashboard },
+          { label: 'Jadwal Mengajar', href: '/tutor/schedule', icon: CalendarDays },
+          { label: 'Atur Ketersediaan', href: '/tutor/availability', icon: Clock },
+          { label: 'Status Akun', href: '/tutor/pending', icon: CheckCircle },
+          { label: 'Bantuan', href: '/#contact', icon: HelpCircle },
+        ];
+      case 'admin':
+        return [
+          { label: 'Control Hub', href: '/admin/dashboard', icon: LayoutDashboard },
+          { label: 'Kurasi Pengajar', href: '/admin/tutors', icon: Users },
+          { label: 'Direktori Klien/Siswa', href: '/admin/students', icon: GraduationCap },
+          { label: 'Monitoring Jadwal', href: '/admin/bookings', icon: CalendarDays },
+          { label: 'Pengaturan Sistem', href: '/admin/dashboard', icon: Settings },
+        ];
+      default:
+        return [];
+    }
+  };
 
- const navItems = getNavItems();
+  const navItems = getNavItems();
+
 
  return (
  <aside
@@ -112,32 +103,24 @@ export function SideNavBar({ role, className ='' }: SideNavBarProps) {
  })}
  </nav>
 
- {/* Footer / CTA Actions */}
- <div className="mt-auto pt-4 border-t border-border-whisper space-y-2">
- {role ==='student' && (
- <Link
- href="/student/search"
- className="w-full bg-[#DC2626] hover:bg-[#B91C1C] text-white py-2.5 px-4 rounded-xl text-xs font-bold text-center block shadow-xs transition-colors"
- >
- Booking Sesi Baru
- </Link>
- )}
- {role ==='tutor' && (
- <Link
- href="/tutor/availability"
- className="w-full bg-primary-container hover:bg-primary-hover text-white py-2.5 px-4 rounded-xl text-xs font-bold text-center block shadow-xs transition-colors"
- >
- Atur Jam Mengajar
- </Link>
- )}
- <Link
- href="/auth"
- className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-text-muted hover:text-[#DC2626] hover:bg-red-50 text-xs font-medium transition-colors"
- >
- <LogOut className="w-4 h-4" />
- <span>Keluar Portal</span>
- </Link>
- </div>
+      {/* Footer / CTA Actions */}
+      <div className="mt-auto pt-4 border-t border-border-whisper space-y-2">
+        {role === 'tutor' && (
+          <Link
+            href="/tutor/availability"
+            className="w-full bg-primary-container hover:bg-primary-hover text-white py-2.5 px-4 rounded-xl text-xs font-bold text-center block shadow-xs transition-colors"
+          >
+            Atur Jam Mengajar
+          </Link>
+        )}
+        <Link
+          href="/auth"
+          className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-text-muted hover:text-[#DC2626] hover:bg-red-50 text-xs font-medium transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Keluar Portal</span>
+        </Link>
+      </div>
  </aside>
  );
 }

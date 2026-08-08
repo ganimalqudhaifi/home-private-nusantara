@@ -10,11 +10,9 @@ export interface AuthPageProps {
 
 export default async function AuthPage({ searchParams }: AuthPageProps) {
  const resolvedParams = searchParams ? await searchParams : {};
- const tabParam = resolvedParams.tab as AuthTabType | undefined;
- const initialTab: AuthTabType =
- tabParam ==='student' || tabParam ==='tutor' || tabParam ==='login'
- ? tabParam
- :'login';
+  const tabParam = resolvedParams.tab as AuthTabType | undefined;
+  const initialTab: AuthTabType =
+    tabParam === 'tutor' || tabParam === 'login' ? tabParam : 'login';
 
  return (
  <div className="bg-surface text-text-primary min-h-screen flex flex-col">

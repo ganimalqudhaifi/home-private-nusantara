@@ -24,10 +24,9 @@ Pasar pendidikan non-formal dan bimbingan belajar privat di Indonesia menghadapi
 ### 1.2 Ruang Lingkup Proyek (Project Scope)
 Pengembangan portal web **Home Private Nusantara** mencakup:
 - **Landing Page Publik**: Memperkenalkan profil bisnis, keunggulan, alur kerja, dan katalog layanan program SD dan SMP.
-- **Modul Registrasi & Profil Siswa**: Pendaftaran siswa dengan segmentasi berjenjang (SD 1-6 dan SMP 7-9) beserta data nama orang tua/wali dan alamat domisili.
+- **Pencarian Publik & Konsultasi WhatsApp Cepat**: Filter pencarian guru berdasarkan jenjang (SD 1-6 & SMP 7-9), mata pelajaran, dan kalender ketersediaan hari/jam. Orang tua/wali dapat langsung mengisi formulir ringkas konsultasi yang diteruskan secara instan ke WhatsApp Admin/CS (Zero-Friction Conversion tanpa perlu login/register siswa).
 - **Modul Registrasi & Manajemen Pengajar**: Pendaftaran tutor baru dengan status awal tertahan (*pending*), pengelolaan kompetensi jenjang/kelas yang diampu (SD dan/atau SMP), serta pengaturan slot hari dan jam ketersediaan mengajar.
-- **Modul Panel Admin Terpusat**: Manajemen akun pengajar, proses verifikasi status akun (dari *pending* menjadi *verified* setelah proses wawancara/seleksi *offline* selesai), serta monitoring platform.
-- **Modul Pencarian, Date Picker & Booking**: Fitur bagi siswa/orang tua untuk memfilter jenjang/kelas (SD/SMP), memilih tanggal ketersediaan (*date picker*), melihat daftar pengajar yang siap mengajar pada jadwal tersebut, dan melakukan reservasi/koneksi.
+- **Modul Panel Admin Terpusat**: Manajemen akun pengajar, proses verifikasi status akun (dari *pending* menjadi *verified* setelah proses wawancara/seleksi *offline* selesai), direktori data klien/siswa hasil konsultasi, serta monitoring platform.
 
 ### 1.3 Konteks Bisnis
 Home Private Nusantara memposisikan diri sebagai penyedia layanan les privat premium terpercaya dengan model bisnis *curated marketplace* yang berfokus pada fondasi pendidikan dasar (SD) dan menengah pertama (SMP). Kunci pembeda platform ini adalah proses verifikasi *hybrid*: pendaftaran dilakukan secara digital melalui web, proses seleksi/wawancara dilakukan oleh tim operasional secara mendalam di luar sistem (*offline-to-online verification*), dan aktivasi akun dilakukan secara terpusat oleh Admin melalui panel kontrol.
