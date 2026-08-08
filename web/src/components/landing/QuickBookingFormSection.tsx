@@ -22,10 +22,11 @@ const DAYS_OF_WEEK = [
 ] as const;
 
 const TIME_OPTIONS = [
-  { label: 'Pagi (08.00 - 11.30)', value: 'Pagi (08.00 - 11.30)' },
-  { label: 'Siang (13.30 - 15.30)', value: 'Siang (13.30 - 15.30)' },
-  { label: 'Sore (16.00 - 18.00)', value: 'Sore (16.00 - 18.00)' },
-  { label: 'Malam (19.00 - 21.00)', value: 'Malam (19.00 - 21.00)' },
+  { label: '08:00 - 09:30', value: '08:00 - 09:30' },
+  { label: '10:00 - 11:30', value: '10:00 - 11:30' },
+  { label: '13:00 - 14:30', value: '13:00 - 14:30' },
+  { label: '16:00 - 17:30', value: '16:00 - 17:30' },
+  { label: '18:30 - 20:00', value: '18:30 - 20:00' },
 ] as const;
 
 interface LevelOptionConfig {
