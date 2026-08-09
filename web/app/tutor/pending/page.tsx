@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { TopNavBar } from '../../../src/components/shared/TopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
 import { TutorPendingAlert } from '../../../src/components/tutor/TutorPendingAlert';
@@ -14,6 +15,7 @@ export interface TutorPendingPageProps {
 }
 
 export default function TutorPendingPage({ searchParams }: TutorPendingPageProps) {
+  const router = useRouter();
   const [userName, setUserName] = useState('Calon Pengajar');
   const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
 
@@ -28,10 +30,13 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
           if (data.user.avatar_url || data.user.image) {
             setUserAvatar(data.user.avatar_url || data.user.image);
           }
+          if (data.user.status === 'verified') {
+            router.push('/tutor/dashboard');
+          }
         }
       })
       .catch((err) => console.error('Error fetching tutor profile:', err));
-  }, []);
+  }, [router]);
 
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">

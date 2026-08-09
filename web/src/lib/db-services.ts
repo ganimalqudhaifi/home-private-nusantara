@@ -18,19 +18,21 @@ export async function saveQuickConsultation(input: CreateConsultationInput) {
 export async function getUserById(userId: string, email?: string) {
   if (email) {
     const rows = await sql`
-      SELECT id, email, full_name, phone, role, avatar_url, created_at
-      FROM users
-      WHERE id = ${userId} OR (LOWER(email) = LOWER(${email}) AND email IS NOT NULL)
-      ORDER BY CASE WHEN id = ${userId} THEN 1 ELSE 2 END
+      SELECT u.id, u.email, u.full_name, u.phone, u.role, u.avatar_url, u.created_at, t.status
+      FROM users u
+      LEFT JOIN tutors t ON u.id = t.id
+      WHERE u.id = ${userId} OR (LOWER(u.email) = LOWER(${email}) AND u.email IS NOT NULL)
+      ORDER BY CASE WHEN u.id = ${userId} THEN 1 ELSE 2 END
       LIMIT 1;
     `;
     return rows[0] || null;
   }
 
   const rows = await sql`
-    SELECT id, email, full_name, phone, role, avatar_url, created_at
-    FROM users
-    WHERE id = ${userId}
+    SELECT u.id, u.email, u.full_name, u.phone, u.role, u.avatar_url, u.created_at, t.status
+    FROM users u
+    LEFT JOIN tutors t ON u.id = t.id
+    WHERE u.id = ${userId}
     LIMIT 1;
   `;
   return rows[0] || null;
