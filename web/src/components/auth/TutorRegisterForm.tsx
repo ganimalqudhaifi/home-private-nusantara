@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, School, Phone, Upload, CheckCircle2, Check } from 'lucide-react';
+import { User, School, Phone, Link as LinkIcon, CheckCircle2, Check } from 'lucide-react';
 import { Button } from '../shared/Button';
 import { authClient } from '@/src/lib/auth-client';
 
@@ -29,7 +29,7 @@ export function TutorRegisterForm({
   const [major, setMajor] = useState('');
   const [phone, setPhone] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>(['Matematika SD']);
-  const [cvFileName, setCvFileName] = useState('');
+  const [portfolioUrl, setPortfolioUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -52,7 +52,7 @@ export function TutorRegisterForm({
         major,
         phone,
         selectedSubjects,
-        cvFileName,
+        portfolioUrl,
       };
 
       if (typeof window !== 'undefined') {
@@ -205,27 +205,24 @@ export function TutorRegisterForm({
         </div>
       </div>
 
-      {/* CV / Document Upload Box */}
+      {/* Portfolio / CV Link Input Box */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
-          Unggah CV & Dokumen Ijazah / Transkrip (PDF / Gambar)
+          Link CV / Ijazah / Google Drive / LinkedIn (Opsional)
         </label>
-        <label className="border-2 border-dashed border-border-whisper hover:border-primary-container rounded-xl p-4 text-center cursor-pointer bg-surface-container-low transition-colors flex flex-col items-center justify-center gap-1.5">
-          <Upload className="w-5 h-5 text-primary-container" />
-          <span className="text-xs font-semibold text-text-primary">
-            {cvFileName || 'Klik untuk memilih file CV / Ijazah'}
-          </span>
-          <span className="text-[11px] text-text-muted">Maksimal file 10MB (PDF, JPG, PNG)</span>
+        <div className="relative">
+          <LinkIcon className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
-            type="file"
-            className="hidden"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                setCvFileName(e.target.files[0].name);
-              }
-            }}
+            type="url"
+            value={portfolioUrl}
+            onChange={(e) => setPortfolioUrl(e.target.value)}
+            placeholder="https://drive.google.com/... atau linkedin.com/in/..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-text-primary text-sm focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 outline-none"
           />
-        </label>
+        </div>
+        <span className="text-[11px] text-text-muted">
+          Pastikan akses file di Google Drive diatur ke publik agar dapat ditinjau oleh Admin.
+        </span>
       </div>
 
       <button

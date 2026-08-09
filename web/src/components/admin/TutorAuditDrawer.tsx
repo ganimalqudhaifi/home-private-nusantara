@@ -15,6 +15,7 @@ import {
  XCircle,
  Clock,
  Eye,
+ ExternalLink,
 } from'lucide-react';
 
 export interface TutorAuditDrawerProps {
@@ -97,47 +98,45 @@ export function TutorAuditDrawer({
  </div>
  </div>
 
- {/* Submitted Documents Checklist */}
- <div className="p-4 rounded-2xl border border-border-whisper space-y-3 text-xs">
- <h4 className="font-bold text-text-muted uppercase tracking-wider">
- Dokumen Verifikasi yang Diunggah
- </h4>
+  {/* Submitted Documents Checklist */}
+  <div className="p-4 rounded-2xl border border-border-whisper space-y-3 text-xs">
+  <h4 className="font-bold text-text-muted uppercase tracking-wider">
+  Dokumen & Berkas Kualifikasi Pengajar
+  </h4>
 
- <div className="space-y-2">
- <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
- <div className="flex items-center gap-2">
- <FileText className="w-4 h-4 text-blue-600" />
- <span className="font-medium">Curriculum Vitae (CV_Sarah_Amanda.pdf)</span>
- </div>
- <span className="text-emerald-600 font-bold flex items-center gap-1">
- <CheckCircle2 className="w-3.5 h-3.5" />
- <span>Valid</span>
- </span>
- </div>
+  <div className="space-y-2">
+  <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
+  <div className="flex items-center gap-2 overflow-hidden">
+  <FileText className="w-4 h-4 text-blue-600 shrink-0" />
+  <span className="font-medium truncate">Link CV / Portfolio / Drive</span>
+  </div>
+  {tutor.portfolioUrl ? (
+  <a
+  href={tutor.portfolioUrl.startsWith('http') ? tutor.portfolioUrl : `https://${tutor.portfolioUrl}`}
+  target="_blank"
+  rel="noreferrer"
+  className="text-primary-container font-bold hover:underline flex items-center gap-1 shrink-0 ml-2"
+  >
+  <span>Buka Link</span>
+  <ExternalLink className="w-3.5 h-3.5" />
+  </a>
+  ) : (
+  <span className="text-text-muted italic shrink-0">Tidak dilampirkan</span>
+  )}
+  </div>
 
- <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
- <div className="flex items-center gap-2">
- <FileText className="w-4 h-4 text-indigo-600" />
- <span className="font-medium">Ijazah & Transkrip Nilai (Ijazah_UNJ.pdf)</span>
- </div>
- <span className="text-emerald-600 font-bold flex items-center gap-1">
- <CheckCircle2 className="w-3.5 h-3.5" />
- <span>Valid</span>
- </span>
- </div>
-
- <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
- <div className="flex items-center gap-2">
- <FileText className="w-4 h-4 text-amber-600" />
- <span className="font-medium">Catatan Wawancara Tatap Muka & Microteaching</span>
- </div>
- <span className="text-status-warning font-bold flex items-center gap-1">
- <Clock className="w-3.5 h-3.5" />
- <span>Siap Diaktivasi</span>
- </span>
- </div>
- </div>
- </div>
+  <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
+  <div className="flex items-center gap-2">
+  <FileText className="w-4 h-4 text-amber-600" />
+  <span className="font-medium">Catatan Wawancara Tatap Muka & Microteaching</span>
+  </div>
+  <span className="text-status-warning font-bold flex items-center gap-1">
+  <Clock className="w-3.5 h-3.5" />
+  <span>Siap Diaktivasi</span>
+  </span>
+  </div>
+  </div>
+  </div>
 
  {/* Action Decision Buttons */}
  <div className="pt-2 space-y-2.5">

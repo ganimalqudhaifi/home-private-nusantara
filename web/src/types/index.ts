@@ -19,26 +19,27 @@ export type TimeSlot = {
  readonly subject?: string;
 };
 
-export type Tutor = {
- readonly id: string;
- readonly name: string;
- readonly title: string;
- readonly avatar: string;
- readonly university: string;
- readonly rating: number;
- readonly reviewCount: number;
- readonly hourlyRate: number;
- readonly subjects: readonly string[];
- readonly grades: readonly string[];
- readonly bio: string;
- readonly isVerified: boolean;
- readonly status: TutorStatus;
- readonly registerDate: string;
- readonly phone: string;
- readonly experienceYears: number;
- readonly availableDays: readonly string[];
- readonly availableSlots: readonly TimeSlot[];
-};
+ export type Tutor = {
+  readonly id: string;
+  readonly name: string;
+  readonly title: string;
+  readonly avatar: string;
+  readonly university: string;
+  readonly rating: number;
+  readonly reviewCount: number;
+  readonly hourlyRate: number;
+  readonly subjects: readonly string[];
+  readonly grades: readonly string[];
+  readonly bio: string;
+  readonly isVerified: boolean;
+  readonly status: TutorStatus;
+  readonly registerDate: string;
+  readonly phone: string;
+  readonly experienceYears: number;
+  readonly availableDays: readonly string[];
+  readonly availableSlots: readonly TimeSlot[];
+  readonly portfolioUrl?: string;
+ };
 
 export type StudentSession = {
  readonly id: string;

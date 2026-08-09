@@ -85,6 +85,7 @@ export interface RegisterTutorInput {
   university: string;
   major: string;
   selectedSubjects: string[];
+  portfolioUrl?: string;
   cvFileName?: string;
   avatarUrl?: string;
 }
@@ -115,7 +116,7 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
       ${input.major},
       ${input.university},
       ${input.major},
-      ${input.cvFileName || null},
+      ${input.portfolioUrl || input.cvFileName || null},
       'pending',
       NOW()
     )

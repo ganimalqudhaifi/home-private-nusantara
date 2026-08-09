@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, phone, university, major, selectedSubjects, cvFileName, draftId } = body;
+    const { name, phone, university, major, selectedSubjects, portfolioUrl, cvFileName, draftId } = body;
 
     const userId = sessionUser?.id || body.userId || draftId || crypto.randomUUID();
     const email =
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       university: university || '-',
       major: major || '-',
       selectedSubjects: selectedSubjects || [],
-      cvFileName,
+      portfolioUrl: portfolioUrl || cvFileName,
       avatarUrl: sessionUser?.image || undefined,
     });
 
