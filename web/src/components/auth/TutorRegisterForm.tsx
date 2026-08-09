@@ -10,20 +10,13 @@ export interface TutorRegisterFormProps {
   readonly className?: string;
 }
 
-const SUBJECT_OPTIONS: { level: string; name: string; desc: string }[] = [
-  { level: 'SD',        name: 'Matematika',    desc: 'Memahami konsep, logika, dan pemecahan masalah' },
-  { level: 'SD',        name: 'Bahasa Inggris', desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami' },
-  { level: 'SMP',       name: 'Matematika',    desc: 'Memahami konsep, logika, dan pemecahan masalah' },
-  { level: 'SMP',       name: 'Bahasa Inggris', desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami' },
-  { level: 'Calistung', name: 'Calistung',     desc: 'Membaca, menulis dan menghitung dengan menyenangkan' },
-];
-
-const SUBJECT_GROUPS = ['SD', 'SMP', 'Calistung'] as const;
-
-// Key: "{name} {level}", e.g. "Matematika SD"
-function subjectKey(sub: { level: string; name: string }) {
-  return `${sub.name} ${sub.level}`;
-}
+const SUBJECT_OPTIONS = [
+  'Matematika SD',
+  'Bahasa Inggris SD',
+  'Matematika SMP',
+  'Bahasa Inggris SMP',
+  'Calistung',
+] as const;
 
 export function TutorRegisterForm({
   onSuccess,
@@ -150,46 +143,28 @@ export function TutorRegisterForm({
         </div>
       </div>
 
-      {/* Teaching Subjects — grouped by level */}
+      {/* Teaching Subjects */}
       <div className="flex flex-col gap-2">
         <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
           Pilihan Bidang & Mata Pelajaran yang Diampu (Bisa pilih lebih dari satu)
         </label>
-        <div className="space-y-3">
-          {SUBJECT_GROUPS.map((group) => {
-            const items = SUBJECT_OPTIONS.filter((s) => s.level === group);
+        <div className="flex flex-wrap gap-2">
+          {SUBJECT_OPTIONS.map((subject) => {
+            const isSelected = selectedSubjects.includes(subject);
             return (
-              <div key={group} className="space-y-1.5">
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
-                  {group}
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {items.map((sub) => {
-                    const key = subjectKey(sub);
-                    const isSelected = selectedSubjects.includes(key);
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => toggleSubject(key)}
-                        className={`px-3.5 py-2.5 rounded-xl text-left border transition-all flex flex-col gap-0.5 ${
-                          isSelected
-                            ? 'border-primary-container bg-primary-container/10 shadow-xs'
-                            : 'border-border-whisper bg-surface-container-lowest hover:border-primary-container/50'
-                        }`}
-                      >
-                        <span className={`text-xs font-bold flex items-center gap-1.5 ${isSelected ? 'text-primary-container' : 'text-text-primary'}`}>
-                          {sub.name}
-                          {isSelected && <Check className="w-3 h-3 text-primary-container" />}
-                        </span>
-                        <span className={`text-[10px] leading-tight ${isSelected ? 'text-primary-container/70' : 'text-text-muted'}`}>
-                          {sub.desc}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              <button
+                key={subject}
+                type="button"
+                onClick={() => toggleSubject(subject)}
+                className={`px-3.5 py-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'border-primary-container bg-primary-container/10 text-primary-container shadow-xs'
+                    : 'border-border-whisper bg-surface-container-lowest text-text-primary hover:border-primary-container/50'
+                }`}
+              >
+                <span>{subject}</span>
+                {isSelected && <Check className="w-3.5 h-3.5 text-primary-container" />}
+              </button>
             );
           })}
         </div>
