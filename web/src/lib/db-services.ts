@@ -253,3 +253,150 @@ export async function syncUserRoleWithAuth(
 
   return user;
 }
+
+export async function getAllBookingsFromDB() {
+  try {
+    const rows = await sql`
+      SELECT 
+        b.id,
+        b.booking_code as code,
+        b.student_id as "studentId",
+        COALESCE(s.student_name, u_st.full_name, 'Siswa Nusantara') as "studentName",
+        b.tutor_id as "tutorId",
+        COALESCE(u_tu.full_name, 'Pengajar') as "tutorName",
+        b.level,
+        b.grade,
+        b.subject,
+        TO_CHAR(b.booking_date, 'YYYY-MM-DD') as date,
+        b.day,
+        CONCAT(TO_CHAR(b.start_time, 'HH24:MI'), ' - ', TO_CHAR(b.end_time, 'HH24:MI')) as time,
+        b.address,
+        b.district,
+        b.city,
+        b.notes,
+        b.status,
+        b.amount
+      FROM bookings b
+      LEFT JOIN tutors t ON b.tutor_id = t.id
+      LEFT JOIN users u_tu ON t.id = u_tu.id
+      LEFT JOIN students s ON b.student_id = s.id
+      LEFT JOIN users u_st ON s.id = u_st.id
+      ORDER BY b.booking_date DESC, b.start_time ASC;
+    `;
+    return rows;
+  } catch (err) {
+    console.error('Error fetching bookings from database:', err);
+    return [];
+  }
+}
+
+export interface CreateBookingInput {
+  studentName?: string;
+  parentName?: string;
+  parentPhone?: string;
+  studentId?: string;
+  tutorId?: string;
+  tutorName?: string;
+  subject?: string;
+  date?: string;
+  time?: string;
+  address?: string;
+  city?: string;
+  amount?: number;
+}
+
+export async function createBatchBookings(sessions: CreateBookingInput[]) {
+  if (!sessions || sessions.length === 0) return [];
+
+  let defaultTutorId: string | null = null;
+  const tutorRows = await sql`SELECT id FROM tutors LIMIT 1;`;
+  if (tutorRows[0]?.id) {
+    defaultTutorId = tutorRows[0].id;
+  }
+
+  let defaultStudentId: string | null = null;
+  const studentRows = await sql`SELECT id FROM students LIMIT 1;`;
+  if (studentRows[0]?.id) {
+    defaultStudentId = studentRows[0].id;
+  } else {
+    try {
+      const newStudent = await sql`
+        INSERT INTO students (parent_name, parent_phone, student_name, level, grade, school_name, address, district, city)
+        VALUES ('Wali Murid', '08123456789', 'Siswa Nusantara', 'SD', 4, 'SD Nusantara', 'Jl. Hertasning', 'Rappocini', 'Kota Makassar')
+        RETURNING id;
+      `;
+      defaultStudentId = newStudent[0]?.id || null;
+    } catch (e) {
+      console.warn('Fallback student creation notice:', e);
+    }
+  }
+
+  const createdBookings = [];
+
+  for (const s of sessions) {
+    const tutorIdToUse = s.tutorId && s.tutorId.length === 36 ? s.tutorId : defaultTutorId;
+    const studentIdToUse = s.studentId && s.studentId.length === 36 ? s.studentId : defaultStudentId;
+
+    if (!tutorIdToUse || !studentIdToUse) continue;
+
+    const code = `SES-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const bookingDateStr = s.date || new Date().toISOString().split('T')[0];
+    const timeRange = s.time || '16:00 - 17:30';
+    const [startTimeRaw, endTimeRaw] = timeRange.split(' - ');
+    const startTime = (startTimeRaw || '16:00').trim();
+    const endTime = (endTimeRaw || '17:30').trim();
+
+    const isSMP = (s.subject || '').toLowerCase().includes('smp');
+    const level = isSMP ? 'SMP' : 'SD';
+    const grade = isSMP ? 7 : 4;
+
+    try {
+      const inserted = await sql`
+        INSERT INTO bookings (
+          booking_code,
+          student_id,
+          tutor_id,
+          level,
+          grade,
+          subject,
+          booking_date,
+          day,
+          start_time,
+          end_time,
+          address,
+          district,
+          city,
+          amount,
+          status,
+          created_at,
+          updated_at
+        ) VALUES (
+          ${code},
+          ${studentIdToUse},
+          ${tutorIdToUse},
+          ${level},
+          ${grade},
+          ${s.subject || 'Matematika SD'},
+          ${bookingDateStr}::date,
+          'Senin'::day_of_week,
+          ${startTime}::time,
+          ${endTime}::time,
+          ${s.address || 'Jl. Hertasning No. 25'},
+          ${'Rappocini'},
+          ${s.city || 'Kota Makassar'},
+          ${s.amount || 150000},
+          'scheduled',
+          NOW(),
+          NOW()
+        )
+        RETURNING *;
+      `;
+      if (inserted[0]) createdBookings.push(inserted[0]);
+    } catch (err) {
+      console.warn('Notice creating booking row:', err);
+    }
+  }
+
+  return createdBookings;
+}
