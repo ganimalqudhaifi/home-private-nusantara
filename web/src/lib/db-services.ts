@@ -76,3 +76,66 @@ export async function updateTutorVerification(
     RETURNING *;
   `;
 }
+
+export interface RegisterTutorInput {
+  userId: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  university: string;
+  major: string;
+  selectedSubjects: string[];
+  cvFileName?: string;
+  avatarUrl?: string;
+}
+
+export async function registerTutorProfile(input: RegisterTutorInput) {
+  await sql`
+    INSERT INTO users (id, email, full_name, phone, role, avatar_url, updated_at)
+    VALUES (
+      ${input.userId},
+      ${input.email},
+      ${input.fullName},
+      ${input.phone},
+      'tutor',
+      ${input.avatarUrl || null},
+      NOW()
+    )
+    ON CONFLICT (id) DO UPDATE SET
+      full_name = EXCLUDED.full_name,
+      phone = EXCLUDED.phone,
+      role = 'tutor',
+      updated_at = NOW();
+  `;
+
+  await sql`
+    INSERT INTO tutors (id, title, university, degree, portfolio_url, status, updated_at)
+    VALUES (
+      ${input.userId},
+      ${input.major},
+      ${input.university},
+      ${input.major},
+      ${input.cvFileName || null},
+      'pending',
+      NOW()
+    )
+    ON CONFLICT (id) DO UPDATE SET
+      title = EXCLUDED.title,
+      university = EXCLUDED.university,
+      degree = EXCLUDED.degree,
+      portfolio_url = EXCLUDED.portfolio_url,
+      updated_at = NOW();
+  `;
+
+  if (input.selectedSubjects && input.selectedSubjects.length > 0) {
+    for (const subjectName of input.selectedSubjects) {
+      await sql`
+        INSERT INTO tutor_subjects (tutor_id, subject_name)
+        VALUES (${input.userId}, ${subjectName})
+        ON CONFLICT (tutor_id, subject_name) DO NOTHING;
+      `;
+    }
+  }
+
+  return { success: true, tutorId: input.userId };
+}

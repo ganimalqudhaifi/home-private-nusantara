@@ -1,10 +1,11 @@
-import React from'react';
-import Link from'next/link';
-import { TopNavBar } from'../../../src/components/shared/TopNavBar';
-import { Footer } from'../../../src/components/shared/Footer';
-import { TutorPendingAlert } from'../../../src/components/tutor/TutorPendingAlert';
-import { TutorVerificationSteps } from'../../../src/components/tutor/TutorVerificationSteps';
-import { Lock, ArrowRight } from'lucide-react';
+import React from 'react';
+import Link from 'next/link';
+import { TopNavBar } from '../../../src/components/shared/TopNavBar';
+import { Footer } from '../../../src/components/shared/Footer';
+import { TutorPendingAlert } from '../../../src/components/tutor/TutorPendingAlert';
+import { TutorPendingSync } from '../../../src/components/tutor/TutorPendingSync';
+import { TutorVerificationSteps } from '../../../src/components/tutor/TutorVerificationSteps';
+import { Lock, ArrowRight } from 'lucide-react';
 
 export interface TutorPendingPageProps {
  readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -24,11 +25,12 @@ export default async function TutorPendingPage({ searchParams }: TutorPendingPag
 
  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
- {/* Left Column: Alerts & Steps */}
- <div className="lg:col-span-8 flex flex-col gap-6">
- <TutorPendingAlert />
- <TutorVerificationSteps currentStep={2} />
- </div>
+        {/* Left Column: Alerts & Steps */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          <TutorPendingSync />
+          <TutorPendingAlert />
+          <TutorVerificationSteps currentStep={2} />
+        </div>
 
  {/* Right Column: Locked Settings Preview & Quick Help */}
  <div className="lg:col-span-4 flex flex-col gap-6">
