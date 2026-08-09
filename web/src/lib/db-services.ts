@@ -74,7 +74,7 @@ export async function getAdminStats() {
 export async function updateTutorVerification(
   tutorId: string,
   status: 'verified' | 'rejected' | 'suspended',
-  adminId: string,
+  adminId?: string | null,
   rejectionReason?: string
 ) {
   return await sql`
@@ -83,7 +83,7 @@ export async function updateTutorVerification(
       status = ${status},
       rejection_reason = ${rejectionReason || null},
       verified_at = CASE WHEN ${status} = 'verified' THEN NOW() ELSE verified_at END,
-      verified_by = ${adminId},
+      verified_by = ${adminId || null},
       updated_at = NOW()
     WHERE id = ${tutorId}
     RETURNING *;
