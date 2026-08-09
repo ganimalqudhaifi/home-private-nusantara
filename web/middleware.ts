@@ -12,9 +12,20 @@ export async function middleware(request: NextRequest) {
           cookie: request.headers.get('cookie') || '',
         },
       });
+
+      if (!userRes.ok) {
+        const loginUrl = new URL('/auth', request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+
       const userData = await userRes.json();
 
-      if (!userData?.authenticated || userData?.user?.role !== 'admin') {
+      if (!userData?.authenticated) {
+        const loginUrl = new URL('/auth', request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      if (userData?.user?.role !== 'admin') {
         const loginUrl = new URL('/auth', request.url);
         loginUrl.searchParams.set('error', 'unregistered_admin');
         return NextResponse.redirect(loginUrl);
@@ -22,7 +33,6 @@ export async function middleware(request: NextRequest) {
     } catch (err) {
       console.error('Middleware admin check error:', err);
       const loginUrl = new URL('/auth', request.url);
-      loginUrl.searchParams.set('error', 'unregistered_admin');
       return NextResponse.redirect(loginUrl);
     }
   }
