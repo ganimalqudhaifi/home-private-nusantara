@@ -798,7 +798,9 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                 <p className="font-headline text-2xl sm:text-3xl font-extrabold text-[#DC2626]">
                   Rp {estimatedPrice.toLocaleString('id-ID')}
                 </p>
-                <span className="text-xs text-text-muted">/ bulan (4 pertemuan)</span>
+                <span className="text-xs text-text-muted">
+                  / bulan ({frequency === '2x' ? '8' : '12'} pertemuan)
+                </span>
               </div>
               <p className="text-[11px] text-emerald-700 font-semibold mt-1">
                 {studentCount === 1
