@@ -263,7 +263,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
           <div className="flex justify-between items-center pb-3 border-b border-border-whisper">
             <h3 className="font-headline text-base font-bold text-primary flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary-container" />
-              <span>Monitoring Sesi Belajar Minggu Ini (Senin – Minggu)</span>
+              <span>Monitoring Sesi Belajar Minggu Ini & Mendatang</span>
             </h3>
             <div className="flex items-center gap-3">
               <button

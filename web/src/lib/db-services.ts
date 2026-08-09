@@ -317,8 +317,8 @@ export async function getWeeklySessionsFromDB() {
       LEFT JOIN users u_tu ON t.id = u_tu.id
       LEFT JOIN students s ON b.student_id = s.id
       LEFT JOIN users u_st ON s.id = u_st.id
-      WHERE b.booking_date >= DATE_TRUNC('week', CURRENT_DATE) 
-        AND b.booking_date <= DATE_TRUNC('week', CURRENT_DATE) + INTERVAL '6 days'
+      WHERE b.booking_date >= CURRENT_DATE - INTERVAL '1 day'
+        AND b.booking_date <= CURRENT_DATE + INTERVAL '14 days'
       ORDER BY b.booking_date ASC, b.start_time ASC
       LIMIT 6;
     `;
