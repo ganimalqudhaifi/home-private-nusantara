@@ -50,9 +50,9 @@ export function TutorAuditDrawer({
  {/* Profile Card */}
  <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper flex items-center gap-4">
  <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-emerald-500 shrink-0 bg-gray-100">
- <Image
- src={tutor.avatar}
- alt={tutor.name}
+  <Image
+  src={tutor.avatar && tutor.avatar.trim() !== '' ? tutor.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+  alt={tutor.name}
  width={56}
  height={56}
  className="object-cover w-full h-full"

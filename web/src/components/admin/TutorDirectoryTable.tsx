@@ -159,9 +159,9 @@ export function TutorDirectoryTable({
  <td className="px-6 py-4">
  <div className="flex items-center gap-3">
  <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-border-whisper shrink-0 bg-gray-100">
- <Image
- src={tutor.avatar}
- alt={tutor.name}
+  <Image
+  src={tutor.avatar && tutor.avatar.trim() !== '' ? tutor.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+  alt={tutor.name}
  width={40}
  height={40}
  className="object-cover w-full h-full"

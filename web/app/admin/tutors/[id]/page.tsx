@@ -36,9 +36,9 @@ export default async function AdminTutorDetailPage({ params }: AdminTutorDetailP
  <div className="bg-white rounded-2xl border border-border-whisper p-6 md:p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
  <div className="flex items-center gap-5">
  <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-emerald-500 shrink-0 bg-gray-100">
- <Image
- src={tutor.avatar}
- alt={tutor.name}
+  <Image
+  src={tutor.avatar && tutor.avatar.trim() !== '' ? tutor.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+  alt={tutor.name}
  width={80}
  height={80}
  className="object-cover w-full h-full"

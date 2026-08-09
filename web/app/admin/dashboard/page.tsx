@@ -55,6 +55,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
             name: t.name || 'Pengajar',
             phone: t.phone || '-',
             portfolioUrl: t.portfolioUrl,
+            avatar: t.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
             degree: t.major || t.degree || 'S1',
             university: t.university || '-',
             gpa: 3.8,
