@@ -174,9 +174,26 @@ export async function syncUserRoleWithAuth(userId: string, authRole?: string) {
   const user = await getUserById(userId);
   if (!user) return null;
 
-  const isAuthAdmin = authRole === 'admin' || authRole === 'ADMIN';
+  let isAuthAdmin = authRole === 'admin' || authRole === 'ADMIN';
 
-  // If Auth payload explicitly states admin and DB role isn't admin yet, promote user
+  // Automatically check Neon Auth internal user table (neon_auth.user / neon_auth.users) if not yet identified as admin
+  if (!isAuthAdmin && user.role !== 'admin') {
+    try {
+      const neonAuthRows = await sql`
+        SELECT role FROM neon_auth.user WHERE id = ${userId}
+        UNION ALL
+        SELECT role FROM neon_auth.users WHERE id = ${userId}
+        LIMIT 1;
+      `;
+      if (neonAuthRows[0]?.role && String(neonAuthRows[0].role).toLowerCase() === 'admin') {
+        isAuthAdmin = true;
+      }
+    } catch (err) {
+      console.warn('Neon auth role lookup notice:', err);
+    }
+  }
+
+  // Automatically promote user role to admin in public.users if neon_auth specifies admin
   if (isAuthAdmin && user.role !== 'admin') {
     await sql`
       UPDATE users
@@ -186,6 +203,5 @@ export async function syncUserRoleWithAuth(userId: string, authRole?: string) {
     user.role = 'admin';
   }
 
-  // Database 'users.role' remains the Single Source of Truth
   return user;
 }
