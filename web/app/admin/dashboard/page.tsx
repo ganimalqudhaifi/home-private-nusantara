@@ -60,6 +60,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
             university: t.university || '-',
             gpa: 3.8,
             subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
+            grades: Array.isArray(t.grades) && t.grades.length > 0 ? t.grades : ['SD (1-6)', 'SMP (7-9)'],
             teachingArea: 'Makassar & Gowa',
             rating: Number(t.rating || 5.0),
             reviewCount: Number(t.reviewCount || 0),

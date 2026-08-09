@@ -28,15 +28,15 @@ export function TutorDirectoryTable({
  (filterStatus ==='verified' && tutor.status ==='verified') ||
  (filterStatus ==='suspended' && tutor.status ==='suspended');
 
- const matchesLevel =
- filterLevel ==='all' ||
- tutor.grades.some((g) => g.includes(filterLevel));
+  const matchesLevel =
+  filterLevel ==='all' ||
+  (tutor.grades || []).some((g) => g.includes(filterLevel));
 
- const matchesSearch =
- searchQuery.trim() ==='' ||
- tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
- tutor.university.toLowerCase().includes(searchQuery.toLowerCase()) ||
- tutor.subjects.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
+  const matchesSearch =
+  searchQuery.trim() ==='' ||
+  tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  tutor.university.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  (tutor.subjects || []).some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
 
  return matchesStatus && matchesLevel && matchesSearch;
  });
@@ -180,23 +180,23 @@ export function TutorDirectoryTable({
  <p className="font-medium">{tutor.university}</p>
  <p className="text-[11px] text-text-muted">{tutor.title}</p>
  </td>
- <td className="px-6 py-4">
- <div className="flex flex-wrap gap-1">
- {tutor.grades.slice(0, 2).map((g) => (
- <span
- key={g}
- className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-900"
- >
- {g}
- </span>
- ))}
- {tutor.grades.length > 2 && (
- <span className="text-[10px] text-text-muted">
- +{tutor.grades.length - 2}
- </span>
- )}
- </div>
- </td>
+  <td className="px-6 py-4">
+  <div className="flex flex-wrap gap-1">
+  {(tutor.grades || []).slice(0, 2).map((g) => (
+  <span
+  key={g}
+  className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-900"
+  >
+  {g}
+  </span>
+  ))}
+  {(tutor.grades || []).length > 2 && (
+  <span className="text-[10px] text-text-muted">
+  +{(tutor.grades || []).length - 2}
+  </span>
+  )}
+  </div>
+  </td>
  <td className="px-6 py-4 text-text-muted font-mono">{tutor.registerDate}</td>
  <td className="px-6 py-4">{getStatusBadge(tutor.status)}</td>
  <td className="px-6 py-4 text-right">
