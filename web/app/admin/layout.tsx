@@ -18,11 +18,21 @@ export default async function AdminLayout({
 
     const authRole = (data.user as any).role;
     const userEmail = data.user.email;
+    const userName = data.user.name;
+    const userImage = data.user.image;
+
     const dbUser =
-      (await syncUserRoleWithAuth(data.user.id, userEmail, authRole)) ||
+      (await syncUserRoleWithAuth(data.user.id, userEmail, authRole, userName, userImage)) ||
       (await getUserById(data.user.id, userEmail));
 
     const userRole = dbUser?.role || authRole;
+
+    console.log('[Admin Access Audit]', {
+      email: userEmail,
+      userId: data.user.id,
+      dbRole: dbUser?.role,
+      userRole,
+    });
 
     if (userRole !== 'admin') {
       redirect('/auth?error=unregistered_admin');

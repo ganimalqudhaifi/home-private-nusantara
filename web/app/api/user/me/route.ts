@@ -11,7 +11,9 @@ export async function GET() {
 
     const authRole = (data.user as any).role;
     const userEmail = data.user.email;
-    const syncedUser = await syncUserRoleWithAuth(data.user.id, userEmail, authRole);
+    const userName = data.user.name;
+    const userImage = data.user.image;
+    const syncedUser = await syncUserRoleWithAuth(data.user.id, userEmail, authRole, userName, userImage);
     const dbUser = syncedUser || (await getUserById(data.user.id, userEmail));
 
     return NextResponse.json({

@@ -20,7 +20,7 @@ export async function getUserById(userId: string, email?: string) {
     const rows = await sql`
       SELECT id, email, full_name, phone, role, avatar_url, created_at
       FROM users
-      WHERE id = ${userId} OR email = ${email}
+      WHERE id = ${userId} OR (LOWER(email) = LOWER(${email}) AND email IS NOT NULL)
       ORDER BY CASE WHEN id = ${userId} THEN 1 ELSE 2 END
       LIMIT 1;
     `;
@@ -181,8 +181,43 @@ export async function getAllTutorsFromDB() {
   return rows;
 }
 
-export async function syncUserRoleWithAuth(userId: string, email?: string, authRole?: string) {
-  const user = await getUserById(userId, email);
+export async function syncUserRoleWithAuth(
+  userId: string,
+  email?: string,
+  authRole?: string,
+  fullName?: string | null,
+  avatarUrl?: string | null
+) {
+  let user = await getUserById(userId, email);
+
+  // If user is missing from public.users but authenticated via auth, auto-provision
+  if (!user && email) {
+    try {
+      const isInitialAdmin = authRole === 'admin' || authRole === 'ADMIN';
+      const initialRole = isInitialAdmin ? 'admin' : 'student';
+
+      const rows = await sql`
+        INSERT INTO users (id, email, full_name, phone, role, avatar_url, created_at, updated_at)
+        VALUES (
+          ${userId},
+          ${email},
+          ${fullName || 'Pengguna'},
+          '-',
+          ${initialRole},
+          ${avatarUrl || null},
+          NOW(),
+          NOW()
+        )
+        ON CONFLICT (email) DO UPDATE SET
+          updated_at = NOW()
+        RETURNING id, email, full_name, phone, role, avatar_url, created_at;
+      `;
+      user = rows[0] || null;
+    } catch (err) {
+      console.warn('Auto-provision user notice:', err);
+    }
+  }
+
   if (!user) return null;
 
   let isAuthAdmin = authRole === 'admin' || authRole === 'ADMIN';
@@ -209,7 +244,7 @@ export async function syncUserRoleWithAuth(userId: string, email?: string, authR
     await sql`
       UPDATE users
       SET role = 'admin', updated_at = NOW()
-      WHERE id = ${user.id} OR (email = ${email} AND email IS NOT NULL);
+      WHERE id = ${user.id} OR (LOWER(email) = LOWER(${email}) AND email IS NOT NULL);
     `;
     user.role = 'admin';
   }
