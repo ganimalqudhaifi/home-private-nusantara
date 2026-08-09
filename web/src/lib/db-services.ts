@@ -290,6 +290,45 @@ export async function getAllBookingsFromDB() {
   }
 }
 
+export async function getWeeklySessionsFromDB() {
+  try {
+    const rows = await sql`
+      SELECT 
+        b.id,
+        b.booking_code as code,
+        b.student_id as "studentId",
+        COALESCE(s.student_name, u_st.full_name, 'Siswa Nusantara') as "studentName",
+        b.tutor_id as "tutorId",
+        COALESCE(u_tu.full_name, 'Pengajar') as "tutorName",
+        b.level,
+        b.grade,
+        b.subject,
+        TO_CHAR(b.booking_date, 'YYYY-MM-DD') as date,
+        b.day,
+        CONCAT(TO_CHAR(b.start_time, 'HH24:MI'), ' - ', TO_CHAR(b.end_time, 'HH24:MI')) as time,
+        b.address,
+        b.district,
+        b.city,
+        b.notes,
+        b.status,
+        b.amount
+      FROM bookings b
+      LEFT JOIN tutors t ON b.tutor_id = t.id
+      LEFT JOIN users u_tu ON t.id = u_tu.id
+      LEFT JOIN students s ON b.student_id = s.id
+      LEFT JOIN users u_st ON s.id = u_st.id
+      WHERE b.booking_date >= DATE_TRUNC('week', CURRENT_DATE) 
+        AND b.booking_date <= DATE_TRUNC('week', CURRENT_DATE) + INTERVAL '6 days'
+      ORDER BY b.booking_date ASC, b.start_time ASC
+      LIMIT 6;
+    `;
+    return rows;
+  } catch (err) {
+    console.error('Error fetching weekly sessions from database:', err);
+    return [];
+  }
+}
+
 export interface CreateBookingInput {
   studentName?: string;
   parentName?: string;

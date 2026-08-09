@@ -8,11 +8,12 @@ import { AdminKPICards } from '../../../src/components/admin/AdminKPICards';
 import { UrgentTutorVerificationQueueTable } from '../../../src/components/admin/UrgentTutorVerificationQueueTable';
 import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
 import { TutorActionModal, ActionType } from '../../../src/components/admin/TutorActionModal';
+import { CreateScheduleRundownModal } from '../../../src/components/admin/CreateScheduleRundownModal';
 import { useDrawer } from '../../../src/hooks/useDrawer';
 import { useModal } from '../../../src/hooks/useModal';
-import { ADMIN_STATS, MOCK_TUTORS, MOCK_SESSIONS } from '../../../src/data/mockData';
-import { Tutor, TutorStatus } from '../../../src/types';
-import { Calendar, Users, GraduationCap, ShieldCheck, ArrowRight, Clock } from 'lucide-react';
+import { ADMIN_STATS } from '../../../src/data/mockData';
+import { Tutor, TutorStatus, StudentSession } from '../../../src/types';
+import { Calendar, Users, GraduationCap, ShieldCheck, ArrowRight, Clock, MapPin, Plus } from 'lucide-react';
 
 export interface AdminDashboardPageProps {
   readonly initialRole?: string;
@@ -21,30 +22,68 @@ export interface AdminDashboardPageProps {
 export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashboardPageProps) {
   const [tutorsList, setTutorsList] = useState<readonly Tutor[]>([]);
   const [isLoadingTutors, setIsLoadingTutors] = useState<boolean>(true);
+  const [isLoadingStats, setIsLoadingStats] = useState<boolean>(true);
+  const [isLoadingSessions, setIsLoadingSessions] = useState<boolean>(true);
   const [stats, setStats] = useState(ADMIN_STATS);
+  const [weeklySessions, setWeeklySessions] = useState<StudentSession[]>([]);
+  const [isRundownModalOpen, setIsRundownModalOpen] = useState(false);
+
   const pendingTutors = tutorsList.filter((t) => t.status === 'pending');
+
+  const fetchWeeklySessions = () => {
+    setIsLoadingSessions(true);
+    fetch('/api/admin/bookings?view=weekly')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.bookings)) {
+          const sessionsData: StudentSession[] = data.bookings.map((b: any) => ({
+            id: b.id,
+            code: b.code || `SES-${Math.floor(1000 + Math.random() * 9000)}`,
+            studentId: b.studentId || 'st-1',
+            studentName: b.studentName || 'Siswa Nusantara',
+            tutorId: b.tutorId || 'tu-1',
+            tutorName: b.tutorName || 'Pengajar',
+            level: b.level || 'SD',
+            grade: Number(b.grade || 4),
+            subject: b.subject || 'Matematika SD',
+            date: b.date || new Date().toISOString().split('T')[0],
+            day: b.day || 'Senin',
+            time: b.time || '16:00 - 17:30',
+            address: b.address || 'Jl. Hertasning No. 25',
+            district: b.district || 'Rappocini',
+            city: b.city || 'Kota Makassar',
+            status: b.status || 'scheduled',
+            amount: Number(b.amount || 150000),
+          }));
+          setWeeklySessions(sessionsData);
+        }
+      })
+      .catch((err) => console.error('Failed to fetch weekly sessions:', err))
+      .finally(() => setIsLoadingSessions(false));
+  };
 
   useEffect(() => {
     // Fetch real stats from database
+    setIsLoadingStats(true);
     fetch('/api/admin/stats')
       .then((res) => res.json())
       .then((data) => {
         if (data.stats) {
-          setStats((prev) => ({
-            ...prev,
-            activeTutors: data.stats.activeTutors || prev.activeTutors,
-            pendingTutors: data.stats.pendingTutors || prev.pendingTutors,
+          setStats({
+            activeTutors: Number(data.stats.activeTutors || 0),
+            pendingTutors: Number(data.stats.pendingTutors || 0),
             registeredStudents: {
-              ...prev.registeredStudents,
-              total: data.stats.registeredStudents?.total || prev.registeredStudents.total,
-              sd: data.stats.registeredStudents?.sd || prev.registeredStudents.sd,
-              smp: data.stats.registeredStudents?.smp || prev.registeredStudents.smp,
+              total: Number(data.stats.registeredStudents?.total || 0),
+              sd: Number(data.stats.registeredStudents?.sd || 0),
+              smp: Number(data.stats.registeredStudents?.smp || 0),
             },
-            totalBookings: data.stats.totalBookings || prev.totalBookings,
-          }));
+            totalBookings: Number(data.stats.totalBookings || 0),
+            doubleBookingRate: '0%',
+          });
         }
       })
-      .catch((err) => console.error('Failed to fetch admin stats:', err));
+      .catch((err) => console.error('Failed to fetch admin stats:', err))
+      .finally(() => setIsLoadingStats(false));
 
     // Fetch real tutors from database
     fetch('/api/admin/tutors')
@@ -82,7 +121,28 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
       })
       .catch((err) => console.error('Failed to fetch admin tutors:', err))
       .finally(() => setIsLoadingTutors(false));
+
+    fetchWeeklySessions();
   }, []);
+
+  const handleSaveRundownFromDashboard = async (newSessionsPayload: Partial<StudentSession>[]) => {
+    setIsLoadingSessions(true);
+    try {
+      const res = await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSessionsPayload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchWeeklySessions();
+      }
+    } catch (err) {
+      console.error('Error saving rundown from dashboard:', err);
+    } finally {
+      setIsLoadingSessions(false);
+    }
+  };
 
   const {
     isOpen: isAuditOpen,
@@ -148,125 +208,185 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
     );
   };
 
- return (
- <div className="bg-surface text-text-primary min-h-screen flex flex-col">
- {/* Top Navigation */}
- <TopNavBar
- activeRoute="/admin/dashboard"
- role="admin"
- userName="Administrator Pusat"
- userBadge="Admin Master"
- />
+  return (
+    <div className="bg-surface text-text-primary min-h-screen flex flex-col">
+      {/* Top Navigation */}
+      <TopNavBar
+        activeRoute="/admin/dashboard"
+        role="admin"
+        userName="Administrator Pusat"
+        userBadge="Admin Master"
+      />
 
- <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8">
- {/* Welcome Section */}
- <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-border-whisper">
- <div>
- <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
- Pusat Kendali Operasional (Admin Hub)
- </h1>
- <p className="text-sm text-text-muted mt-1">
- Pantau KPI pengajar, direktori siswa se-Indonesia, dan antrean verifikasi berkas hari ini.
- </p>
- </div>
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8">
+        {/* Welcome Section */}
+        <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-border-whisper">
+          <div>
+            <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
+              Pusat Kendali Operasional (Admin Hub)
+            </h1>
+            <p className="text-sm text-text-muted mt-1">
+              Pantau KPI pengajar, direktori siswa, dan antrean verifikasi berkas hari ini.
+            </p>
+          </div>
 
- <div className="flex items-center gap-3">
- <Link
- href="/admin/tutors"
- className="bg-primary-container hover:bg-primary-hover text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-colors"
- >
- Kelola Seluruh Tutor
- </Link>
- <Link
- href="/admin/students"
- className="bg-surface-container-low hover:bg-surface-container-highest text-primary text-xs font-bold px-4 py-2.5 rounded-xl border border-border-whisper transition-colors"
- >
- Direktori Siswa
- </Link>
- </div>
- </section>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/tutors"
+              className="bg-primary-container hover:bg-primary-hover text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-colors"
+            >
+              Kelola Seluruh Tutor
+            </Link>
+            <Link
+              href="/admin/students"
+              className="bg-surface-container-low hover:bg-surface-container-highest text-primary text-xs font-bold px-4 py-2.5 rounded-xl border border-border-whisper transition-colors"
+            >
+              Direktori Siswa
+            </Link>
+          </div>
+        </section>
 
-      {/* 1. Admin KPI Metrics Cards */}
-      <AdminKPICards stats={stats} />
+        {/* 1. Admin KPI Metrics Cards */}
+        <AdminKPICards stats={stats} isLoading={isLoadingStats} />
 
-  {/* 2. Urgent Verification Queue Table */}
-  <section>
-  <UrgentTutorVerificationQueueTable
-  pendingTutors={pendingTutors}
-  isLoading={isLoadingTutors}
-  onAuditTutor={handleAuditTutor}
-  />
-  </section>
+        {/* 2. Urgent Verification Queue Table */}
+        <section>
+          <UrgentTutorVerificationQueueTable
+            pendingTutors={pendingTutors}
+            isLoading={isLoadingTutors}
+            onAuditTutor={handleAuditTutor}
+          />
+        </section>
 
- {/* 3. Real-Time Sessions Monitoring Feed */}
- <section className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm space-y-4">
- <div className="flex justify-between items-center pb-3 border-b border-border-whisper">
- <h3 className="font-headline text-base font-bold text-primary flex items-center gap-2">
- <Clock className="w-4 h-4 text-primary-container" />
- <span>Monitoring Sesi Belajar Hari Ini</span>
- </h3>
- <Link
- href="/admin/bookings"
- className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
- >
-          <span>Kalender Sesi Bimbingan</span>
- <ArrowRight className="w-3.5 h-3.5" />
- </Link>
- </div>
+        {/* 3. Real-Time Weekly Sessions Monitoring Feed (Monday to Sunday) */}
+        <section className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center pb-3 border-b border-border-whisper">
+            <h3 className="font-headline text-base font-bold text-primary flex items-center gap-2">
+              <Clock className="w-4 h-4 text-primary-container" />
+              <span>Monitoring Sesi Belajar Minggu Ini (Senin – Minggu)</span>
+            </h3>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsRundownModalOpen(true)}
+                className="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Buat Jadwal Paket</span>
+              </button>
+              <Link
+                href="/admin/bookings"
+                className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+              >
+                <span>Kalender Sesi Bimbingan</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
- {MOCK_SESSIONS.slice(0, 3).map((ses) => (
- <div
- key={ses.id}
- className="p-4 rounded-xl border border-border-whisper bg-surface-container-low/40 flex flex-col justify-between gap-3"
- >
- <div>
- <div className="flex items-center justify-between mb-1">
- <span className="font-mono text-xs font-bold text-primary">
- #{ses.code}
- </span>
- <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800">
- Aktif
- </span>
- </div>
- <h4 className="font-headline text-sm font-bold text-primary">
- {ses.studentName} ({ses.level} {ses.grade})
- </h4>
- <p className="text-xs text-text-muted">{ses.subject}</p>
- </div>
+          {isLoadingSessions ? (
+            /* Skeleton Loading State */
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-pulse">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="p-4 rounded-xl border border-border-whisper bg-gray-50 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <div className="h-4 bg-gray-200 rounded w-16" />
+                    <div className="h-4 bg-gray-200 rounded w-12" />
+                  </div>
+                  <div className="h-5 bg-gray-200 rounded w-3/4" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  <div className="pt-2 border-t border-gray-200 flex justify-between">
+                    <div className="h-3 bg-gray-200 rounded w-24" />
+                    <div className="h-3 bg-gray-200 rounded w-16" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : weeklySessions.length === 0 ? (
+            /* Empty State */
+            <div className="p-8 text-center space-y-3 bg-surface-container-lowest rounded-xl border border-dashed border-border-whisper">
+              <Calendar className="w-8 h-8 text-text-muted mx-auto" />
+              <h4 className="font-headline text-sm font-bold text-primary">
+                Belum Ada Sesi Belajar Terjadwal Minggu Ini
+              </h4>
+              <p className="text-xs text-text-muted max-w-sm mx-auto">
+                Terbitkan rundown jadwal bimbingan baru untuk wali murid agar jadwal muncul di monitoring ini.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsRundownModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Buat Rundown Sesi Sekarang</span>
+              </button>
+            </div>
+          ) : (
+            /* Weekly Sessions Feed Grid */
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {weeklySessions.map((ses) => (
+                <div
+                  key={ses.id}
+                  className="p-4 rounded-xl border border-border-whisper bg-surface-container-low/40 flex flex-col justify-between gap-3"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-mono text-xs font-bold text-primary">
+                        #{ses.code}
+                      </span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800">
+                        {ses.status === 'completed' ? 'Selesai' : 'Terkonfirmasi'}
+                      </span>
+                    </div>
+                    <h4 className="font-headline text-sm font-bold text-primary">
+                      {ses.studentName} ({ses.level} {ses.grade})
+                    </h4>
+                    <p className="text-xs text-emerald-800 font-semibold">{ses.subject}</p>
+                    <p className="text-[11px] text-text-muted mt-0.5">
+                      {ses.day ? `${ses.day}, ` : ''}{ses.date}
+                    </p>
+                  </div>
 
- <div className="text-[11px] text-text-muted pt-2 border-t border-border-whisper flex justify-between items-center">
- <span>Tutor: {ses.tutorName}</span>
- <span className="font-mono font-semibold text-text-primary">
- {ses.time}
- </span>
- </div>
- </div>
- ))}
- </div>
- </section>
- </main>
+                  <div className="text-[11px] text-text-muted pt-2 border-t border-border-whisper flex justify-between items-center">
+                    <span className="truncate">Tutor: {ses.tutorName}</span>
+                    <span className="font-mono font-semibold text-text-primary shrink-0 ml-1">
+                      {ses.time}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
 
- {/* Tutor Audit Drawer */}
- <TutorAuditDrawer
- isOpen={isAuditOpen}
- onClose={closeAudit}
- tutor={auditTutor}
- onOpenActionModal={handleOpenActionModal}
- />
+      {/* Tutor Audit Drawer */}
+      <TutorAuditDrawer
+        isOpen={isAuditOpen}
+        onClose={closeAudit}
+        tutor={auditTutor}
+        onOpenActionModal={handleOpenActionModal}
+      />
 
- {/* Action Confirmation Modal */}
- {actionModalData && (
- <TutorActionModal
- isOpen={isActionOpen}
- onClose={closeAction}
- actionType={actionModalData.actionType}
- tutor={actionModalData.tutor}
- onConfirm={handleConfirmAction}
- />
- )}
+      {/* Action Confirmation Modal */}
+      {actionModalData && (
+        <TutorActionModal
+          isOpen={isActionOpen}
+          onClose={closeAction}
+          actionType={actionModalData.actionType}
+          tutor={actionModalData.tutor}
+          onConfirm={handleConfirmAction}
+        />
+      )}
 
- <Footer />
- </div>
- );
+      {/* Generator Rundown Modal from Dashboard */}
+      <CreateScheduleRundownModal
+        isOpen={isRundownModalOpen}
+        onClose={() => setIsRundownModalOpen(false)}
+        onSaveRundown={handleSaveRundownFromDashboard}
+      />
+
+      <Footer />
+    </div>
+  );
 }

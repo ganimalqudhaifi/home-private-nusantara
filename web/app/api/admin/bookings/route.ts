@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/src/lib/auth-server';
-import { getAllBookingsFromDB, createBatchBookings, getUserById } from '@/src/lib/db-services';
+import { getAllBookingsFromDB, getWeeklySessionsFromDB, createBatchBookings, getUserById } from '@/src/lib/db-services';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const { data: sessionData } = await auth.getSession();
     if (sessionData?.user?.id) {
@@ -15,7 +15,10 @@ export async function GET() {
       }
     }
 
-    const bookings = await getAllBookingsFromDB();
+    const { searchParams } = new URL(request.url);
+    const view = searchParams.get('view');
+
+    const bookings = view === 'weekly' ? await getWeeklySessionsFromDB() : await getAllBookingsFromDB();
     return NextResponse.json({ success: true, bookings });
   } catch (error: any) {
     console.error('Error fetching bookings:', error);

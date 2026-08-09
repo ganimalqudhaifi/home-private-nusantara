@@ -3,11 +3,35 @@ import { Users, Hourglass, GraduationCap, CalendarCheck, ShieldCheck, AlertCircl
 import { AdminKPI } from'../../types';
 
 export interface AdminKPICardsProps {
- readonly stats: AdminKPI;
- readonly className?: string;
+  readonly stats: AdminKPI;
+  readonly isLoading?: boolean;
+  readonly className?: string;
 }
 
-export function AdminKPICards({ stats, className ='' }: AdminKPICardsProps) {
+export function AdminKPICards({ stats, isLoading = false, className = '' }: AdminKPICardsProps) {
+  if (isLoading) {
+    return (
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 ${className}`}>
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm flex flex-col justify-between animate-pulse"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded w-24" />
+                <div className="h-7 bg-gray-200 rounded w-16" />
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-gray-200 shrink-0" />
+            </div>
+            <div className="pt-3 border-t border-border-whisper">
+              <div className="h-4 bg-gray-200 rounded w-28" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
  return (
  <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 ${className}`}>
  {/* Stat 1: Active Tutors */}
