@@ -5,24 +5,28 @@ import Image from'next/image';
 import { Drawer } from'../shared/Drawer';
 import { Button } from'../shared/Button';
 import { Tutor } from'../../types';
+import { ActionType } from './TutorActionModal';
 import {
- ShieldCheck,
- School,
- Calendar,
- Phone,
- FileText,
- CheckCircle2,
- XCircle,
- Clock,
- Eye,
- ExternalLink,
-} from'lucide-react';
+  ShieldCheck,
+  School,
+  Calendar,
+  Phone,
+  FileText,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Eye,
+  ExternalLink,
+  Coffee,
+  AlertTriangle,
+  UserX,
+} from 'lucide-react';
 
 export interface TutorAuditDrawerProps {
- readonly isOpen: boolean;
- readonly onClose: () => void;
- readonly tutor: Tutor | null;
- readonly onOpenActionModal: (actionType:'approve' |'reject' |'freeze', tutor: Tutor) => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly tutor: Tutor | null;
+  readonly onOpenActionModal: (actionType: ActionType, tutor: Tutor) => void;
 }
 
 export function TutorAuditDrawer({
@@ -138,46 +142,72 @@ export function TutorAuditDrawer({
   </div>
   </div>
 
- {/* Action Decision Buttons */}
- <div className="pt-2 space-y-2.5">
- <Button
- type="button"
- variant="primary"
- size="lg"
- onClick={() => {
- onClose();
- onOpenActionModal('approve', tutor);
- }}
- className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-bold"
- >
- <CheckCircle2 className="w-4 h-4" />
- <span>Setujui & Terbitkan Status Pengajar Terverifikasi</span>
- </Button>
+        {/* Action Decision Buttons */}
+        <div className="pt-2 space-y-2.5">
+          <Button
+            type="button"
+            variant="primary"
+            size="lg"
+            onClick={() => {
+              onClose();
+              onOpenActionModal('approve', tutor);
+            }}
+            className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-bold"
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            <span>Setujui & Terbitkan Status Pengajar Terverifikasi</span>
+          </Button>
 
- <div className="grid grid-cols-2 gap-2">
- <button
- type="button"
- onClick={() => {
- onClose();
- onOpenActionModal('reject', tutor);
- }}
- className="py-2.5 px-3 rounded-xl border border-red-200 text-red-600 text-xs font-bold hover:bg-red-50 transition-colors flex items-center justify-center gap-1.5"
- >
- <XCircle className="w-3.5 h-3.5" />
- <span>Tolak Berkas</span>
- </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenActionModal('leave', tutor);
+              }}
+              className="py-2.5 px-3 rounded-xl border border-amber-200 text-amber-800 bg-amber-50/50 text-xs font-bold hover:bg-amber-100 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <Coffee className="w-3.5 h-3.5 text-amber-600" />
+              <span>Set Cuti</span>
+            </button>
 
- <a
- href={`https://wa.me/${(tutor.phone || '').replace(/[^0-9]/g,'')}`}
- target="_blank"
- rel="noreferrer"
- className="py-2.5 px-3 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-primary border border-border-whisper text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
- >
- <Phone className="w-3.5 h-3.5" />
- <span>Hubungi Pengajar</span>
- </a>
- </div>
- </div>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenActionModal('freeze', tutor);
+              }}
+              className="py-2.5 px-3 rounded-xl border border-red-200 text-red-700 bg-red-50/50 text-xs font-bold hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+              <span>Bekukan (Suspend)</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenActionModal('deactivate', tutor);
+              }}
+              className="py-2.5 px-3 rounded-xl border border-gray-200 text-gray-700 bg-slate-50 text-xs font-bold hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <UserX className="w-3.5 h-3.5 text-gray-500" />
+              <span>Nonaktifkan</span>
+            </button>
+
+            <a
+              href={`https://wa.me/${(tutor.phone || '').replace(/[^0-9]/g, '')}`}
+              target="_blank"
+              rel="noreferrer"
+              className="py-2.5 px-3 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-primary border border-border-whisper text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+            >
+              <Phone className="w-3.5 h-3.5" />
+              <span>Hubungi Pengajar</span>
+            </a>
+          </div>
+        </div>
  </div>
  </Drawer>
  );

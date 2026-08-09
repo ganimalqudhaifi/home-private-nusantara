@@ -42,9 +42,10 @@ export async function PATCH(request: Request) {
     const body = await request.json();
     const { tutorId, status, rejectionReason, adminId } = body;
 
-    if (!tutorId || !status || !['verified', 'rejected', 'suspended'].includes(status)) {
+    const validStatuses = ['verified', 'active', 'on_leave', 'inactive', 'suspended', 'rejected'];
+    if (!tutorId || !status || !validStatuses.includes(status)) {
       return NextResponse.json(
-        { error: 'Parameter tutorId dan status (verified/rejected/suspended) wajib diisi.' },
+        { error: `Parameter tutorId dan status (${validStatuses.join('/')}) wajib diisi.` },
         { status: 400 }
       );
     }

@@ -7,11 +7,11 @@ import { Footer } from '../../../src/components/shared/Footer';
 import { AdminKPICards } from '../../../src/components/admin/AdminKPICards';
 import { UrgentTutorVerificationQueueTable } from '../../../src/components/admin/UrgentTutorVerificationQueueTable';
 import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
-import { TutorActionModal } from '../../../src/components/admin/TutorActionModal';
+import { TutorActionModal, ActionType } from '../../../src/components/admin/TutorActionModal';
 import { useDrawer } from '../../../src/hooks/useDrawer';
 import { useModal } from '../../../src/hooks/useModal';
 import { ADMIN_STATS, MOCK_TUTORS, MOCK_SESSIONS } from '../../../src/data/mockData';
-import { Tutor } from '../../../src/types';
+import { Tutor, TutorStatus } from '../../../src/types';
 import { Calendar, Users, GraduationCap, ShieldCheck, ArrowRight, Clock } from 'lucide-react';
 
 export interface AdminDashboardPageProps {
@@ -96,22 +96,29 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
     data: actionModalData,
     open: openAction,
     close: closeAction,
-  } = useModal<{ actionType: 'approve' | 'reject' | 'freeze'; tutor: Tutor }>();
+  } = useModal<{ actionType: ActionType; tutor: Tutor }>();
 
   const handleAuditTutor = (tutor: Tutor) => {
     openAudit(tutor);
   };
 
-  const handleOpenActionModal = (actionType: 'approve' | 'reject' | 'freeze', tutor: Tutor) => {
+  const handleOpenActionModal = (actionType: ActionType, tutor: Tutor) => {
     openAction({ actionType, tutor });
   };
 
   const handleConfirmAction = async (
     tutorId: string,
-    actionType: 'approve' | 'reject' | 'freeze',
+    actionType: ActionType,
     notes: string
   ) => {
-    const targetStatus = actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'rejected' : 'suspended';
+    const statusMap: Record<ActionType, TutorStatus> = {
+      approve: 'verified',
+      reject: 'rejected',
+      freeze: 'suspended',
+      leave: 'on_leave',
+      deactivate: 'inactive',
+    };
+    const targetStatus = statusMap[actionType] || 'verified';
 
     try {
       await fetch('/api/admin/tutors', {
@@ -132,8 +139,8 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
         if (t.id === tutorId) {
           return {
             ...t,
-            status: actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'pending' : 'suspended',
-            isVerified: actionType === 'approve',
+            status: targetStatus,
+            isVerified: targetStatus === 'verified' || targetStatus === 'active',
           };
         }
         return t;

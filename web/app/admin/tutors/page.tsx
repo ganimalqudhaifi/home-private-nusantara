@@ -5,10 +5,10 @@ import { TopNavBar } from '../../../src/components/shared/TopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
 import { TutorDirectoryTable } from '../../../src/components/admin/TutorDirectoryTable';
 import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
-import { TutorActionModal } from '../../../src/components/admin/TutorActionModal';
+import { TutorActionModal, ActionType } from '../../../src/components/admin/TutorActionModal';
 import { useDrawer } from '../../../src/hooks/useDrawer';
 import { useModal } from '../../../src/hooks/useModal';
-import { Tutor } from '../../../src/types';
+import { Tutor, TutorStatus } from '../../../src/types';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
@@ -70,22 +70,29 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
     data: actionModalData,
     open: openAction,
     close: closeAction,
-  } = useModal<{ actionType: 'approve' | 'reject' | 'freeze'; tutor: Tutor }>();
+  } = useModal<{ actionType: ActionType; tutor: Tutor }>();
 
   const handleAuditTutor = (tutor: Tutor) => {
     openAudit(tutor);
   };
 
-  const handleOpenActionModal = (actionType: 'approve' | 'reject' | 'freeze', tutor: Tutor) => {
+  const handleOpenActionModal = (actionType: ActionType, tutor: Tutor) => {
     openAction({ actionType, tutor });
   };
 
   const handleConfirmAction = async (
     tutorId: string,
-    actionType: 'approve' | 'reject' | 'freeze',
+    actionType: ActionType,
     notes: string
   ) => {
-    const targetStatus = actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'rejected' : 'suspended';
+    const statusMap: Record<ActionType, TutorStatus> = {
+      approve: 'verified',
+      reject: 'rejected',
+      freeze: 'suspended',
+      leave: 'on_leave',
+      deactivate: 'inactive',
+    };
+    const targetStatus = statusMap[actionType] || 'verified';
 
     try {
       await fetch('/api/admin/tutors', {
@@ -106,8 +113,8 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
         if (t.id === tutorId) {
           return {
             ...t,
-            status: actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'pending' : 'suspended',
-            isVerified: actionType === 'approve',
+            status: targetStatus,
+            isVerified: targetStatus === 'verified' || targetStatus === 'active',
           };
         }
         return t;

@@ -7,7 +7,7 @@ import { Footer } from '../../../src/components/shared/Footer';
 import { TutorMetricsGrid } from '../../../src/components/tutor/TutorMetricsGrid';
 import { TutorUpcomingSessionsCard } from '../../../src/components/tutor/TutorUpcomingSessionsCard';
 import { TutorRecentStudentsCard } from '../../../src/components/tutor/TutorRecentStudentsCard';
-import { CalendarPlus, ShieldCheck, Sparkles } from 'lucide-react';
+import { CalendarPlus, ShieldCheck, Coffee, AlertTriangle, UserX, PhoneCall } from 'lucide-react';
 import { MOCK_SESSIONS, MOCK_STUDENTS } from '../../../src/data/mockData';
 
 export interface TutorDashboardPageProps {
@@ -18,6 +18,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
   const [userName, setUserName] = useState('Pengajar Nusantara');
   const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
   const [isVerified, setIsVerified] = useState(true);
+  const [tutorStatus, setTutorStatus] = useState<string>('verified');
 
   useEffect(() => {
     fetch('/api/user/me')
@@ -31,12 +32,95 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
             setUserAvatar(data.user.avatar_url || data.user.image);
           }
           if (data.user.status) {
-            setIsVerified(data.user.status === 'verified');
+            setTutorStatus(data.user.status);
+            setIsVerified(data.user.status === 'verified' || data.user.status === 'active');
           }
         }
       })
       .catch((err) => console.error('Error fetching user profile:', err));
   }, []);
+
+  const renderStatusBanner = () => {
+    if (tutorStatus === 'on_leave') {
+      return (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <Coffee className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-headline text-sm font-bold">Status Akun: Sedang Cuti</h4>
+              <p className="text-xs text-amber-800 mt-0.5">
+                Akun Anda sedang dalam masa izin cuti. Slot jadwal baru dinonaktifkan sementara dan profil Anda disembunyikan dari katalog pencarian.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (tutorStatus === 'suspended') {
+      return (
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-900 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-headline text-sm font-bold">Status Akun: Dibekukan (Suspended)</h4>
+              <p className="text-xs text-red-800 mt-0.5">
+                Akun Anda dibekukan sementara oleh Tim Kurasi Admin. Hubungi helpdesk untuk klarifikasi dan pengaktifan kembali.
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://wa.me/6281234567890"
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0"
+          >
+            <PhoneCall className="w-3.5 h-3.5" />
+            <span>Hubungi Admin</span>
+          </a>
+        </div>
+      );
+    }
+
+    if (tutorStatus === 'inactive') {
+      return (
+        <div className="p-4 rounded-2xl bg-slate-100 border border-slate-300 text-slate-900 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
+              <UserX className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-headline text-sm font-bold">Status Akun: Nonaktif</h4>
+              <p className="text-xs text-slate-700 mt-0.5">
+                Akun Anda saat ini berstatus nonaktif (vakum mengajar). Pengaturan slot jadwal mengajar baru tidak aktif.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const getStatusBadgeText = () => {
+    switch (tutorStatus) {
+      case 'on_leave':
+        return 'Status: Sedang Cuti';
+      case 'suspended':
+        return 'Status: Akun Dibekukan';
+      case 'inactive':
+        return 'Status: Akun Nonaktif';
+      case 'verified':
+      case 'active':
+      default:
+        return isVerified ? 'Pengajar Terverifikasi Resmi' : 'Status: Dalam Antrean Verifikasi';
+    }
+  };
 
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
@@ -46,16 +130,29 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
         role="tutor"
         userName={userName}
         userAvatar={userAvatar}
-        userBadge={isVerified ? 'Pengajar Terverifikasi' : 'Menunggu Verifikasi'}
+        userBadge={
+          tutorStatus === 'on_leave'
+            ? 'Sedang Cuti'
+            : tutorStatus === 'suspended'
+            ? 'Dibekukan'
+            : tutorStatus === 'inactive'
+            ? 'Nonaktif'
+            : isVerified
+            ? 'Pengajar Terverifikasi'
+            : 'Menunggu Verifikasi'
+        }
       />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col gap-8">
+        {/* Status Notice Banner */}
+        {renderStatusBanner()}
+
         {/* Welcome Section */}
         <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-border-whisper">
           <div className="flex flex-col gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold w-fit border border-emerald-200">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{isVerified ? 'Pengajar Terverifikasi Resmi' : 'Status: Dalam Antrean Verifikasi'}</span>
+              <span>{getStatusBadgeText()}</span>
             </div>
             <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
               Halo, {userName}
@@ -66,13 +163,23 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
           </div>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/tutor/availability"
-              className="bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl px-5 py-3 text-sm font-bold active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
-            >
-              <CalendarPlus className="w-4 h-4" />
-              <span>Atur Slot Jadwal</span>
-            </Link>
+            {tutorStatus === 'verified' || tutorStatus === 'active' ? (
+              <Link
+                href="/tutor/availability"
+                className="bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl px-5 py-3 text-sm font-bold active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
+              >
+                <CalendarPlus className="w-4 h-4" />
+                <span>Atur Slot Jadwal</span>
+              </Link>
+            ) : (
+              <button
+                disabled
+                className="bg-gray-200 text-gray-400 cursor-not-allowed rounded-xl px-5 py-3 text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <CalendarPlus className="w-4 h-4" />
+                <span>Slot Jadwal Terkunci</span>
+              </button>
+            )}
           </div>
         </section>
 

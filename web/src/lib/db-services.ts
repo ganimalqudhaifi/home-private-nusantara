@@ -73,7 +73,7 @@ export async function getAdminStats() {
 
 export async function updateTutorVerification(
   tutorId: string,
-  status: 'verified' | 'rejected' | 'suspended',
+  status: 'verified' | 'active' | 'on_leave' | 'inactive' | 'suspended' | 'rejected',
   adminId?: string | null,
   rejectionReason?: string
 ) {
@@ -82,7 +82,7 @@ export async function updateTutorVerification(
     SET 
       status = ${status},
       rejection_reason = ${rejectionReason || null},
-      verified_at = CASE WHEN ${status} = 'verified' THEN NOW() ELSE verified_at END,
+      verified_at = CASE WHEN ${status} IN ('verified', 'active') THEN COALESCE(verified_at, NOW()) ELSE verified_at END,
       verified_by = ${adminId || null},
       updated_at = NOW()
     WHERE id = ${tutorId}

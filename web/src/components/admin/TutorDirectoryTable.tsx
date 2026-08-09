@@ -3,7 +3,7 @@
 import React, { useState } from'react';
 import Image from'next/image';
 import { Tutor, TutorStatus } from'../../types';
-import { ShieldCheck, Hourglass, XCircle, AlertTriangle, Phone, Eye, Search } from'lucide-react';
+import { ShieldCheck, Hourglass, XCircle, AlertTriangle, Phone, Eye, Search, Coffee, UserX } from 'lucide-react';
 import { Badge } from'../shared/Badge';
 
 export interface TutorDirectoryTableProps {
@@ -23,54 +23,77 @@ export function TutorDirectoryTable({
  const [filterLevel, setFilterLevel] = useState<string>('all');
  const [searchQuery, setSearchQuery] = useState<string>('');
 
- const filteredTutors = tutors.filter((tutor) => {
- const matchesStatus =
- filterStatus ==='all' ||
- (filterStatus ==='pending' && tutor.status ==='pending') ||
- (filterStatus ==='verified' && tutor.status ==='verified') ||
- (filterStatus ==='suspended' && tutor.status ==='suspended');
+  const filteredTutors = tutors.filter((tutor) => {
+    const matchesStatus =
+      filterStatus === 'all' ||
+      (filterStatus === 'pending' && tutor.status === 'pending') ||
+      (filterStatus === 'verified' && (tutor.status === 'verified' || tutor.status === 'active')) ||
+      (filterStatus === 'on_leave' && tutor.status === 'on_leave') ||
+      (filterStatus === 'inactive' && tutor.status === 'inactive') ||
+      (filterStatus === 'suspended' && tutor.status === 'suspended');
 
-  const matchesLevel =
-  filterLevel ==='all' ||
-  (tutor.grades || []).some((g) => g.includes(filterLevel));
+    const matchesLevel =
+      filterLevel === 'all' ||
+      (tutor.grades || []).some((g) => g.includes(filterLevel));
 
-  const matchesSearch =
-  searchQuery.trim() ==='' ||
-  tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  tutor.university.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  (tutor.subjects || []).some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesSearch =
+      searchQuery.trim() === '' ||
+      tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tutor.university.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (tutor.subjects || []).some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
 
- return matchesStatus && matchesLevel && matchesSearch;
- });
+    return matchesStatus && matchesLevel && matchesSearch;
+  });
 
- const getStatusBadge = (status: TutorStatus) => {
- switch (status) {
- case'verified':
- case'active':
- return (
- <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200">
- <ShieldCheck className="w-3.5 h-3.5" />
- <span>Terverifikasi</span>
- </span>
- );
- case'pending':
- return (
- <span className="inline-flex items-center gap-1 bg-amber-50 text-status-warning text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200">
- <Hourglass className="w-3.5 h-3.5" />
- <span>Pending Review</span>
- </span>
- );
- case'suspended':
- return (
- <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-gray-300">
- <AlertTriangle className="w-3.5 h-3.5" />
- <span>Dibekukan</span>
- </span>
- );
- default:
- return null;
- }
- };
+  const getStatusBadge = (status: TutorStatus) => {
+    switch (status) {
+      case 'verified':
+      case 'active':
+        return (
+          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Terverifikasi</span>
+          </span>
+        );
+      case 'pending':
+        return (
+          <span className="inline-flex items-center gap-1 bg-amber-50 text-status-warning text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200">
+            <Hourglass className="w-3.5 h-3.5" />
+            <span>Pending Review</span>
+          </span>
+        );
+      case 'on_leave':
+        return (
+          <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-300">
+            <Coffee className="w-3.5 h-3.5" />
+            <span>Sedang Cuti</span>
+          </span>
+        );
+      case 'inactive':
+        return (
+          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-slate-300">
+            <UserX className="w-3.5 h-3.5" />
+            <span>Nonaktif</span>
+          </span>
+        );
+      case 'suspended':
+        return (
+          <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-red-200">
+            <AlertTriangle className="w-3.5 h-3.5" />
+            <span>Dibekukan</span>
+          </span>
+        );
+      case 'rejected':
+        return (
+          <span className="inline-flex items-center gap-1 bg-red-100 text-red-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-red-300">
+            <XCircle className="w-3.5 h-3.5" />
+            <span>Ditolak</span>
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
 
  return (
  <div className={`space-y-4 ${className}`}>
@@ -100,17 +123,50 @@ export function TutorDirectoryTable({
  >
  Pending Verifikasi ({tutors.filter((t) => t.status ==='pending').length})
  </button>
- <button
- type="button"
- onClick={() => setFilterStatus('verified')}
- className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
- filterStatus ==='verified'
- ?'bg-primary-container text-white shadow-xs'
- :'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
- }`}
- >
- Terverifikasi ({tutors.filter((t) => t.status ==='verified').length})
- </button>
+          <button
+            type="button"
+            onClick={() => setFilterStatus('verified')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              filterStatus === 'verified'
+                ? 'bg-primary-container text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            Terverifikasi ({tutors.filter((t) => t.status === 'verified' || t.status === 'active').length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterStatus('on_leave')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              filterStatus === 'on_leave'
+                ? 'bg-primary-container text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            Cuti ({tutors.filter((t) => t.status === 'on_leave').length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterStatus('inactive')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              filterStatus === 'inactive'
+                ? 'bg-primary-container text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            Nonaktif ({tutors.filter((t) => t.status === 'inactive').length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterStatus('suspended')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              filterStatus === 'suspended'
+                ? 'bg-primary-container text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            Dibekukan ({tutors.filter((t) => t.status === 'suspended').length})
+          </button>
  </div>
 
  {/* Level Select & Search */}

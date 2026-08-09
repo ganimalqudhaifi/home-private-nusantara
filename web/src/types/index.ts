@@ -7,7 +7,7 @@ export type SubjectGrade = {
  readonly name: string;
 };
 
-export type TutorStatus ='pending' |'verified' |'active' |'suspended';
+export type TutorStatus = 'pending' | 'verified' | 'active' | 'on_leave' | 'inactive' | 'suspended' | 'rejected';
 
 export type TimeSlot = {
  readonly id: string;
