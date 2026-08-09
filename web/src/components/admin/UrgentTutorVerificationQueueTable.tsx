@@ -58,7 +58,7 @@ export function UrgentTutorVerificationQueueTable({
  <td className="py-4 text-text-muted font-mono">{tutor.registerDate}</td>
  <td className="py-4 text-center">
  <a
- href={`https://wa.me/${tutor.phone.replace(/[^0-9]/g,'')}?text=Halo%20${encodeURIComponent(
+ href={`https://wa.me/${(tutor.phone || '').replace(/[^0-9]/g,'')}?text=Halo%20${encodeURIComponent(
  tutor.name
  )},%20kami%20dari%20Admin%20Home%20Private%20Nusantara%20terkait%20proses%20verifikasi%20berkas%20tutor.`}
  target="_blank"

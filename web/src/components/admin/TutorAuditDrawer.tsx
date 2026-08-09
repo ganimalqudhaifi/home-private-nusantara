@@ -168,7 +168,7 @@ export function TutorAuditDrawer({
  </button>
 
  <a
- href={`https://wa.me/${tutor.phone.replace(/[^0-9]/g,'')}`}
+ href={`https://wa.me/${(tutor.phone || '').replace(/[^0-9]/g,'')}`}
  target="_blank"
  rel="noreferrer"
  className="py-2.5 px-3 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-primary border border-border-whisper text-xs font-bold transition-colors flex items-center justify-center gap-1.5"

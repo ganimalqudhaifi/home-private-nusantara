@@ -53,6 +53,8 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
           const dbTutors: Tutor[] = data.tutors.map((t: any) => ({
             id: t.id,
             name: t.name || 'Pengajar',
+            phone: t.phone || '-',
+            portfolioUrl: t.portfolioUrl,
             degree: t.major || t.degree || 'S1',
             university: t.university || '-',
             gpa: 3.8,
