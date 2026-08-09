@@ -29,8 +29,20 @@ export function StudentDirectoryTable({
  return matchesLevel && matchesSearch;
  });
 
- return (
- <div className={`space-y-4 ${className}`}>
+  const handleSaveRundownFromStudentsTable = async (sessionsPayload: any[]) => {
+    try {
+      await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sessionsPayload),
+      });
+    } catch (err) {
+      console.error('Error saving rundown from students directory:', err);
+    }
+  };
+
+  return (
+    <div className={`space-y-4 ${className}`}>
  {/* Search and Filters Header */}
  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-border-whisper shadow-xs">
  <div className="flex items-center gap-2">
@@ -182,6 +194,8 @@ export function StudentDirectoryTable({
       defaultStudentName={selectedStudentForRundown.name}
       defaultParentName={selectedStudentForRundown.parentName}
       defaultParentPhone={selectedStudentForRundown.parentPhone}
+      defaultAddress={selectedStudentForRundown.address}
+      onSaveRundown={handleSaveRundownFromStudentsTable}
     />
   )}
   </div>

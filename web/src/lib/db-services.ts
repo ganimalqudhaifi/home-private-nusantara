@@ -314,34 +314,65 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
     defaultTutorId = tutorRows[0].id;
   }
 
-  let defaultStudentId: string | null = null;
-  const studentRows = await sql`SELECT id FROM students LIMIT 1;`;
-  if (studentRows[0]?.id) {
-    defaultStudentId = studentRows[0].id;
-  } else {
+  // Student resolution
+  let studentIdToUse: string | null = null;
+  const firstSession = sessions[0];
+  if (firstSession?.studentId && firstSession.studentId.length === 36) {
+    studentIdToUse = firstSession.studentId;
+  } else if (firstSession?.studentName) {
     try {
-      const newStudent = await sql`
-        INSERT INTO students (parent_name, parent_phone, student_name, level, grade, school_name, address, district, city)
-        VALUES ('Wali Murid', '08123456789', 'Siswa Nusantara', 'SD', 4, 'SD Nusantara', 'Jl. Hertasning', 'Rappocini', 'Kota Makassar')
-        RETURNING id;
+      const existingStudent = await sql`
+        SELECT id FROM students WHERE LOWER(student_name) = LOWER(${firstSession.studentName}) LIMIT 1;
       `;
-      defaultStudentId = newStudent[0]?.id || null;
+      if (existingStudent[0]?.id) {
+        studentIdToUse = existingStudent[0].id;
+      } else {
+        const isSMP = (firstSession.subject || '').toLowerCase().includes('smp');
+        const level = isSMP ? 'SMP' : 'SD';
+        const grade = isSMP ? 7 : 4;
+        const newStudent = await sql`
+          INSERT INTO students (parent_name, parent_phone, student_name, level, grade, school_name, address, district, city)
+          VALUES (
+            ${firstSession.parentName || 'Wali Murid'},
+            ${firstSession.parentPhone || '08123456789'},
+            ${firstSession.studentName},
+            ${level},
+            ${grade},
+            ${isSMP ? 'SMP Nusantara' : 'SD Nusantara'},
+            ${firstSession.address || 'Jl. Hertasning'},
+            'Rappocini',
+            ${firstSession.city || 'Kota Makassar'}
+          )
+          RETURNING id;
+        `;
+        studentIdToUse = newStudent[0]?.id || null;
+      }
     } catch (e) {
-      console.warn('Fallback student creation notice:', e);
+      console.warn('Student provision notice:', e);
+    }
+  }
+
+  if (!studentIdToUse) {
+    const studentRows = await sql`SELECT id FROM students LIMIT 1;`;
+    if (studentRows[0]?.id) {
+      studentIdToUse = studentRows[0].id;
     }
   }
 
   const createdBookings = [];
+  const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
   for (const s of sessions) {
     const tutorIdToUse = s.tutorId && s.tutorId.length === 36 ? s.tutorId : defaultTutorId;
-    const studentIdToUse = s.studentId && s.studentId.length === 36 ? s.studentId : defaultStudentId;
-
     if (!tutorIdToUse || !studentIdToUse) continue;
 
     const code = `SES-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    const bookingDateStr = s.date || new Date().toISOString().split('T')[0];
+    const bookingDateStr = s.date && s.date.includes('-') ? s.date : new Date().toISOString().split('T')[0];
+    const [y, m, d] = bookingDateStr.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const dayName = dayNames[dateObj.getDay()] || 'Senin';
+
     const timeRange = s.time || '16:00 - 17:30';
     const [startTimeRaw, endTimeRaw] = timeRange.split(' - ');
     const startTime = (startTimeRaw || '16:00').trim();
@@ -379,7 +410,7 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
           ${grade},
           ${s.subject || 'Matematika SD'},
           ${bookingDateStr}::date,
-          'Senin'::day_of_week,
+          ${dayName}::day_of_week,
           ${startTime}::time,
           ${endTime}::time,
           ${s.address || 'Jl. Hertasning No. 25'},

@@ -254,10 +254,12 @@ export function CreateScheduleRundownModal({
         onSaveRundown(
           scheduleItems.map((item) => ({
             studentName,
+            parentName,
+            parentPhone,
             tutorId: item.tutorId,
             tutorName: item.tutorName,
             subject: item.subject,
-            date: formatIndonesianDate(item.date),
+            date: item.date, // ISO format YYYY-MM-DD
             time: item.time,
             address,
             city: locationArea,
