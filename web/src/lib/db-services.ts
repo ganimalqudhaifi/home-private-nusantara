@@ -168,3 +168,33 @@ export async function getAllTutorsFromDB() {
   `;
   return rows;
 }
+
+export async function syncUserRoleWithAuth(userId: string, authRole?: string) {
+  const user = await getUserById(userId);
+  if (!user) return null;
+
+  const isAuthAdmin = authRole === 'admin' || authRole === 'ADMIN';
+
+  if (isAuthAdmin && user.role !== 'admin') {
+    await sql`
+      UPDATE users
+      SET role = 'admin', updated_at = NOW()
+      WHERE id = ${userId};
+    `;
+    user.role = 'admin';
+  } else if (!isAuthAdmin && user.role === 'admin') {
+    const isTutor = await sql`
+      SELECT id FROM tutors WHERE id = ${userId} LIMIT 1;
+    `;
+    const targetRole = isTutor.length > 0 ? 'tutor' : 'student';
+
+    await sql`
+      UPDATE users
+      SET role = ${targetRole}, updated_at = NOW()
+      WHERE id = ${userId};
+    `;
+    user.role = targetRole;
+  }
+
+  return user;
+}

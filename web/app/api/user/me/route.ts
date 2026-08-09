@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/src/lib/auth-server';
-import { getUserById } from '@/src/lib/db-services';
+import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
 
 export async function GET() {
   try {
@@ -9,7 +9,9 @@ export async function GET() {
       return NextResponse.json({ authenticated: false, user: null }, { status: 401 });
     }
 
-    const dbUser = await getUserById(data.user.id);
+    const authRole = (data.user as any).role;
+    const syncedUser = await syncUserRoleWithAuth(data.user.id, authRole);
+    const dbUser = syncedUser || (await getUserById(data.user.id));
 
     return NextResponse.json({
       authenticated: true,
