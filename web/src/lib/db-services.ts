@@ -330,22 +330,43 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
         const isSMP = (firstSession.subject || '').toLowerCase().includes('smp');
         const level = isSMP ? 'SMP' : 'SD';
         const grade = isSMP ? 7 : 4;
-        const newStudent = await sql`
-          INSERT INTO students (parent_name, parent_phone, student_name, level, grade, school_name, address, district, city)
+        const studentEmail = `siswa_${Date.now()}_${Math.floor(Math.random() * 1000)}@homeprivatenusantara.com`;
+
+        // Create base user row for student to fulfill Foreign Key constraint
+        const userRow = await sql`
+          INSERT INTO users (id, email, full_name, phone, role, created_at, updated_at)
           VALUES (
-            ${firstSession.parentName || 'Wali Murid'},
-            ${firstSession.parentPhone || '08123456789'},
+            gen_random_uuid(),
+            ${studentEmail},
             ${firstSession.studentName},
-            ${level},
-            ${grade},
-            ${isSMP ? 'SMP Nusantara' : 'SD Nusantara'},
-            ${firstSession.address || 'Jl. Hertasning'},
-            'Rappocini',
-            ${firstSession.city || 'Kota Makassar'}
+            ${firstSession.parentPhone || '08123456789'},
+            'student',
+            NOW(),
+            NOW()
           )
           RETURNING id;
         `;
-        studentIdToUse = newStudent[0]?.id || null;
+        const newUserId = userRow[0]?.id;
+
+        if (newUserId) {
+          const newStudent = await sql`
+            INSERT INTO students (id, parent_name, parent_phone, student_name, level, grade, school_name, address, district, city)
+            VALUES (
+              ${newUserId},
+              ${firstSession.parentName || 'Wali Murid'},
+              ${firstSession.parentPhone || '08123456789'},
+              ${firstSession.studentName},
+              ${level},
+              ${grade},
+              ${isSMP ? 'SMP Nusantara' : 'SD Nusantara'},
+              ${firstSession.address || 'Jl. Hertasning'},
+              'Rappocini',
+              ${firstSession.city || 'Kota Makassar'}
+            )
+            RETURNING id;
+          `;
+          studentIdToUse = newStudent[0]?.id || newUserId;
+        }
       }
     } catch (e) {
       console.warn('Student provision notice:', e);
