@@ -209,7 +209,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
  href="/admin/bookings"
  className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
  >
- <span>Buka Kalender Pemantauan Nasional</span>
+          <span>Kalender Sesi Bimbingan</span>
  <ArrowRight className="w-3.5 h-3.5" />
  </Link>
  </div>

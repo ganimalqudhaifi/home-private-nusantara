@@ -32,12 +32,12 @@ export default async function AdminBookingsPage({ searchParams }: AdminBookingsP
  <span>Kembali ke Dashboard</span>
  </Link>
  </div>
- <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
- Monitoring Jadwal Sesi Belajar Nasional
- </h1>
- <p className="text-sm text-text-muted mt-0.5">
- Pemantauan real-time pelaksanaan sesi mengajar seluruh tutor dan siswa se-Indonesia.
- </p>
+          <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
+            Monitoring Jadwal Sesi Belajar
+          </h1>
+          <p className="text-sm text-text-muted mt-0.5">
+            Pemantauan real-time pelaksanaan sesi mengajar tutor dan siswa aktif.
+          </p>
  </div>
 
  <div className="flex items-center gap-3">

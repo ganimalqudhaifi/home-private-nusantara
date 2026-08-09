@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useState } from'react';
-import { StudentSession } from'../../types';
+import React, { useState } from 'react';
+import { StudentSession } from '../../types';
+import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
 import {
- Calendar,
- Clock,
- MapPin,
- CheckCircle2,
- ShieldCheck,
- CalendarCheck,
- AlertCircle,
- Search,
-} from'lucide-react';
+  Calendar,
+  Clock,
+  MapPin,
+  CheckCircle2,
+  ShieldCheck,
+  CalendarCheck,
+  AlertCircle,
+  Search,
+  Plus,
+} from 'lucide-react';
 
 export interface AdminScheduleMonitoringGridProps {
  readonly sessions: readonly StudentSession[];
@@ -19,11 +21,12 @@ export interface AdminScheduleMonitoringGridProps {
 }
 
 export function AdminScheduleMonitoringGrid({
- sessions,
- className ='',
+  sessions,
+  className = '',
 }: AdminScheduleMonitoringGridProps) {
- const [statusFilter, setStatusFilter] = useState<'all' |'scheduled' |'completed'>('all');
- const [searchQuery, setSearchQuery] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'scheduled' | 'completed'>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
  const filteredSessions = sessions.filter((s) => {
  const matchesStatus = statusFilter ==='all' || s.status === statusFilter;
@@ -141,16 +144,27 @@ export function AdminScheduleMonitoringGrid({
  </button>
  </div>
 
- <div className="relative">
- <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
- <input
- type="text"
- value={searchQuery}
- onChange={(e) => setSearchQuery(e.target.value)}
- placeholder="Cari sesi / nama siswa..."
- className="pl-8 pr-3 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none w-full sm:w-56"
- />
- </div>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari sesi / nama siswa..."
+              className="pl-8 pr-3 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none w-full sm:w-48"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>+ Buat Jadwal Paket</span>
+          </button>
+        </div>
  </div>
 
  {/* Data Table */}
@@ -239,10 +253,15 @@ export function AdminScheduleMonitoringGrid({
  </tr>
  );
  })}
- </tbody>
- </table>
- </div>
- </div>
- </div>
- );
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <CreateScheduleRundownModal
+      isOpen={isCreateModalOpen}
+      onClose={() => setIsCreateModalOpen(false)}
+    />
+  </div>
+  );
 }

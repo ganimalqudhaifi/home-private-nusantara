@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from'react';
-import { Student, LevelType } from'../../types';
-import { Search, GraduationCap, BookOpen, Phone, MapPin, Calendar } from'lucide-react';
+import React, { useState } from 'react';
+import { Student, LevelType } from '../../types';
+import { Search, GraduationCap, BookOpen, Phone, MapPin, Calendar, Plus } from 'lucide-react';
+import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
 
 export interface StudentDirectoryTableProps {
  readonly students: readonly Student[];
@@ -10,11 +11,12 @@ export interface StudentDirectoryTableProps {
 }
 
 export function StudentDirectoryTable({
- students,
- className ='',
+  students,
+  className = '',
 }: StudentDirectoryTableProps) {
- const [filterLevel, setFilterLevel] = useState<string>('all');
- const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filterLevel, setFilterLevel] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedStudentForRundown, setSelectedStudentForRundown] = useState<Student | null>(null);
 
  const filteredStudents = students.filter((s) => {
  const matchesLevel = filterLevel ==='all' || s.level === filterLevel;
@@ -144,24 +146,44 @@ export function StudentDirectoryTable({
  <td className="px-6 py-4 text-center font-mono font-bold text-primary">
  {student.totalSessions} Sesi
  </td>
- <td className="px-6 py-4 text-right">
- <a
- href={`https://wa.me/${student.parentPhone.replace(/[^0-9]/g,'')}`}
- target="_blank"
- rel="noreferrer"
- className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-semibold transition-colors"
- >
- <Phone className="w-3.5 h-3.5" />
- <span>Chat WA</span>
- </a>
- </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedStudentForRundown(student)}
+                          className="inline-flex items-center gap-1 bg-primary-container hover:bg-primary-hover text-white px-2.5 py-1.5 rounded-xl font-bold transition-all text-[11px]"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Buat Rundown</span>
+                        </button>
+                        <a
+                          href={`https://wa.me/${student.parentPhone.replace(/[^0-9]/g, '')}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-semibold transition-colors"
+                        >
+                          <Phone className="w-3.5 h-3.5" />
+                          <span>Chat WA</span>
+                        </a>
+                      </div>
+                    </td>
  </tr>
  );
  })}
  </tbody>
- </table>
- </div>
- </div>
- </div>
+  </table>
+  </div>
+  </div>
+
+  {selectedStudentForRundown && (
+    <CreateScheduleRundownModal
+      isOpen={!!selectedStudentForRundown}
+      onClose={() => setSelectedStudentForRundown(null)}
+      defaultStudentName={selectedStudentForRundown.name}
+      defaultParentName={selectedStudentForRundown.parentName}
+      defaultParentPhone={selectedStudentForRundown.parentPhone}
+    />
+  )}
+  </div>
  );
 }
