@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { StudentSession } from '../../types';
 import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
+import { DeleteBookingModal } from './DeleteBookingModal';
 import {
   Calendar,
   Clock,
@@ -14,6 +15,7 @@ import {
   Search,
   Plus,
   RefreshCw,
+  Trash2,
 } from 'lucide-react';
 
 export interface AdminScheduleMonitoringGridProps {
@@ -36,6 +38,8 @@ export function AdminScheduleMonitoringGrid({
   const [statusFilter, setStatusFilter] = useState<'all' | 'scheduled' | 'completed'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [bookingToDelete, setBookingToDelete] = useState<StudentSession | null>(null);
+  const [deleteError, setDeleteError] = useState('');
 
   // Fetch real booking data from Neon Database via /api/admin/bookings
   const fetchBookingsFromDB = () => {
@@ -95,6 +99,17 @@ export function AdminScheduleMonitoringGrid({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDeleteBooking = async (id: string) => {
+    setDeleteError('');
+    const response = await fetch(`/api/admin/bookings?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+    const data = await response.json();
+    if (!response.ok) {
+      setDeleteError(data.error || 'Gagal menghapus sesi.');
+      throw new Error(data.error || 'Gagal menghapus sesi.');
+    }
+    setSessions((current) => current.filter((session) => session.id !== id));
   };
 
   const filteredSessions = sessions.filter((s) => {
@@ -321,6 +336,7 @@ export function AdminScheduleMonitoringGrid({
                   <th className="p-4 font-semibold">Tutor Pengajar</th>
                   <th className="p-4 font-semibold">Lokasi Belajar</th>
                   <th className="p-4 font-semibold text-center">Status</th>
+                  <th className="p-4 font-semibold text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-whisper text-xs">
@@ -398,6 +414,20 @@ export function AdminScheduleMonitoringGrid({
                           <span>{isCompleted ? 'SELESAI' : 'TERKONFIRMASI'}</span>
                         </span>
                       </td>
+                      <td className="p-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDeleteError('');
+                            setBookingToDelete(ses);
+                          }}
+                          className="inline-flex items-center gap-1 rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+                          aria-label={`Hapus sesi ${ses.code}`}
+                          title="Hapus sesi"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -407,10 +437,23 @@ export function AdminScheduleMonitoringGrid({
         )}
       </div>
 
+      {deleteError && (
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
+          {deleteError}
+        </p>
+      )}
+
       <CreateScheduleRundownModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSaveRundown={handleSaveRundownToDB}
+      />
+
+      <DeleteBookingModal
+        isOpen={Boolean(bookingToDelete)}
+        booking={bookingToDelete}
+        onClose={() => setBookingToDelete(null)}
+        onConfirm={handleDeleteBooking}
       />
     </div>
   );

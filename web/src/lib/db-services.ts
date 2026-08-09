@@ -290,6 +290,16 @@ export async function getAllBookingsFromDB() {
   }
 }
 
+export async function deleteBookingById(id: string) {
+  const rows = await sql`
+    DELETE FROM bookings
+    WHERE id = ${id}::uuid
+    RETURNING id;
+  `;
+
+  return rows[0] || null;
+}
+
 export async function getWeeklySessionsFromDB() {
   try {
     const rows = await sql`

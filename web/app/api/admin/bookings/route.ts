@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/src/lib/auth-server';
-import { getAllBookingsFromDB, getWeeklySessionsFromDB, createBatchBookings, getUserById } from '@/src/lib/db-services';
+import { getAllBookingsFromDB, getWeeklySessionsFromDB, createBatchBookings, deleteBookingById, getUserById } from '@/src/lib/db-services';
 
 export async function GET(request: Request) {
   try {
@@ -24,6 +24,39 @@ export async function GET(request: Request) {
     console.error('Error fetching bookings:', error);
     return NextResponse.json(
       { error: 'Gagal mengambil data jadwal dari database.' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { data: sessionData } = await auth.getSession();
+    if (sessionData?.user?.id) {
+      const dbUser = await getUserById(sessionData.user.id);
+      if (dbUser && dbUser.role !== 'admin') {
+        return NextResponse.json(
+          { error: 'Akses ditolak. Anda tidak memiliki hak akses Admin.' },
+          { status: 403 }
+        );
+      }
+    }
+
+    const id = new URL(request.url).searchParams.get('id');
+    if (!id) {
+      return NextResponse.json({ error: 'ID sesi wajib diisi.' }, { status: 400 });
+    }
+
+    const deleted = await deleteBookingById(id);
+    if (!deleted) {
+      return NextResponse.json({ error: 'Sesi tidak ditemukan.' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, id: deleted.id });
+  } catch (error: any) {
+    console.error('Error deleting booking:', error);
+    return NextResponse.json(
+      { error: 'Gagal menghapus sesi dari database.' },
       { status: 500 }
     );
   }
