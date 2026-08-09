@@ -17,6 +17,7 @@ import {
   Sparkles,
   MessageCircle,
   CheckCircle2,
+  MapPin,
 } from 'lucide-react';
 
 const TIME_OPTIONS = [
@@ -28,18 +29,17 @@ const TIME_OPTIONS = [
 ];
 
 const SUBJECT_OPTIONS = [
-  'Matematika',
-  'Bahasa Inggris',
-  'IPA (Fisika/Biologi)',
-  'Calistung (Membaca, Menulis, Berhitung)',
-  'Bahasa Indonesia',
-  'IPS / PKn',
+  'Calistung',
+  'Matematika SD',
+  'Bahasa Inggris SD',
+  'Matematika SMP',
+  'Bahasa Inggris SMP',
 ];
 
 export interface ScheduleItem {
   id: string;
   meetingNumber: number;
-  date: string;
+  date: string; // YYYY-MM-DD
   time: string;
   subject: string;
   tutorId: string;
@@ -53,6 +53,7 @@ export interface CreateScheduleRundownModalProps {
   readonly defaultStudentName?: string;
   readonly defaultParentName?: string;
   readonly defaultParentPhone?: string;
+  readonly defaultAddress?: string;
 }
 
 export function CreateScheduleRundownModal({
@@ -62,14 +63,21 @@ export function CreateScheduleRundownModal({
   defaultStudentName = 'Muhammad Rayhan',
   defaultParentName = 'Ibu Hasnah',
   defaultParentPhone = '081234567890',
+  defaultAddress = 'Jl. Hertasning No. 25, Makassar',
 }: CreateScheduleRundownModalProps) {
+  const getTodayISO = () => new Date().toISOString().split('T')[0];
+
   const [studentName, setStudentName] = useState(defaultStudentName);
   const [parentName, setParentName] = useState(defaultParentName);
   const [parentPhone, setParentPhone] = useState(defaultParentPhone);
+  const [startDate, setStartDate] = useState<string>(getTodayISO());
+  const [locationArea, setLocationArea] = useState<'Makassar' | 'Gowa'>('Makassar');
+  const [address, setAddress] = useState<string>(defaultAddress);
+
   const [packageCount, setPackageCount] = useState<number>(8); // 8 meetings per month default
   const [selectedDays, setSelectedDays] = useState<string[]>(['Senin', 'Kamis']);
   const [defaultTime, setDefaultTime] = useState<string>('16:00 - 17:30');
-  const [defaultSubject, setDefaultSubject] = useState<string>('Matematika');
+  const [defaultSubject, setDefaultSubject] = useState<string>('Matematika SD');
 
   const [tutorsList, setTutorsList] = useState<readonly Tutor[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
@@ -89,7 +97,7 @@ export function CreateScheduleRundownModal({
               name: t.name || 'Pengajar',
               university: t.university || '-',
               title: t.major || t.degree || 'Pengajar',
-              subjects: t.subjects || ['Matematika'],
+              subjects: t.subjects || ['Matematika SD'],
               status: t.status,
             }));
           setTutorsList(verified.length > 0 ? verified : MOCK_TUTORS);
@@ -105,13 +113,25 @@ export function CreateScheduleRundownModal({
   // Filter available verified tutors
   const verifiedTutors = tutorsList.length > 0 ? tutorsList : MOCK_TUTORS.filter((t) => t.isVerified);
 
-  // Generate initial schedule rundown items
+  // Format YYYY-MM-DD to Indonesian localized string
+  const formatIndonesianDate = (isoDate: string) => {
+    if (!isoDate) return '-';
+    const [year, month, day] = isoDate.split('-').map(Number);
+    if (!year || !month || !day) return isoDate;
+    const d = new Date(year, month - 1, day);
+    return d.toLocaleDateString('id-ID', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  // Generate initial schedule rundown items starting from startDate
   const handleGenerateRundown = () => {
     const items: ScheduleItem[] = [];
-    const today = new Date();
-    let current = new Date(today);
-    // Find next matching day
-    current.setDate(current.getDate() + 1);
+    const baseDate = startDate ? new Date(startDate) : new Date();
+    let current = new Date(baseDate);
 
     const defaultTutor = verifiedTutors[0] || { id: 'tutor-1', name: 'Kak Sarah - S1 Math UNM' };
 
@@ -131,24 +151,23 @@ export function CreateScheduleRundownModal({
       .sort((a, b) => a - b);
 
     let count = 0;
-    while (count < packageCount && items.length < packageCount) {
+    let safetyCounter = 0;
+
+    while (count < packageCount && safetyCounter < 120) {
+      safetyCounter++;
       const dayIdx = current.getDay();
+
       if (targetDayIndexes.includes(dayIdx) || targetDayIndexes.length === 0) {
         count++;
-        const dateStr = current.toLocaleDateString('id-ID', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        });
+        const isoString = current.toISOString().split('T')[0];
         const assignedTutor = verifiedTutors[(count - 1) % verifiedTutors.length] || defaultTutor;
 
         items.push({
           id: `item-${count}-${Date.now()}`,
           meetingNumber: count,
-          date: dateStr,
+          date: isoString,
           time: defaultTime,
-          subject: count % 2 === 0 ? 'Bahasa Inggris' : defaultSubject,
+          subject: count % 2 === 0 ? 'Bahasa Inggris SD' : defaultSubject,
           tutorId: assignedTutor.id,
           tutorName: assignedTutor.name,
         });
@@ -188,12 +207,14 @@ export function CreateScheduleRundownModal({
   const handleAddMeeting = () => {
     const count = scheduleItems.length + 1;
     const defaultTutor = verifiedTutors[0] || { id: 'tutor-1', name: 'Pengajar' };
+    const lastDateIso = scheduleItems[scheduleItems.length - 1]?.date || getTodayISO();
+
     setScheduleItems((prev) => [
       ...prev,
       {
         id: `item-${count}-${Date.now()}`,
         meetingNumber: count,
-        date: `Pertemuan Ke-${count}`,
+        date: lastDateIso,
         time: defaultTime,
         subject: defaultSubject,
         tutorId: defaultTutor.id,
@@ -212,12 +233,12 @@ export function CreateScheduleRundownModal({
   const generateWAMessage = () => {
     const lines = scheduleItems.map(
       (item) =>
-        `• *Pertemuan ${item.meetingNumber}*: ${item.date} (${item.time})\n  - Mapel: ${item.subject}\n  - Pengajar: ${item.tutorName}`
+        `• *Pertemuan ${item.meetingNumber}*: ${formatIndonesianDate(item.date)} (${item.time})\n  - Mapel: ${item.subject}\n  - Pengajar: ${item.tutorName}`
     );
 
-    return `Halo ${parentName || 'Orang Tua/Wali'}, berikut adalah Rencana Rundown Jadwal Bimbingan Les Privat untuk ananda *${studentName}* (${scheduleItems.length} Sesi Pertemuan):\n\n${lines.join(
+    return `Halo ${parentName || 'Orang Tua/Wali'}, berikut adalah Rencana Rundown Jadwal Bimbingan Les Privat untuk ananda *${studentName}* (${scheduleItems.length} Sesi Pertemuan):\n\n*Lokasi Mengajar:* ${address} (${locationArea})\n\n${lines.join(
       '\n\n'
-    )}\n\nMohon konfirmasi jika jadwal di atas sudah sesuai. Terima kasih! - Tim Admin Home Private Nusantara`;
+    )}\n\nMohon konfirmasi jika jadwal & lokasi di atas sudah sesuai. Terima kasih! - Tim Admin Home Private Nusantara`;
   };
 
   const handleCopyWA = () => {
@@ -236,8 +257,10 @@ export function CreateScheduleRundownModal({
             tutorId: item.tutorId,
             tutorName: item.tutorName,
             subject: item.subject,
-            date: item.date,
+            date: formatIndonesianDate(item.date),
             time: item.time,
+            address,
+            city: locationArea,
             status: 'scheduled',
           }))
         );
@@ -259,7 +282,7 @@ export function CreateScheduleRundownModal({
         <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper space-y-4">
           <div className="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-wider">
             <Sparkles className="w-4 h-4 text-primary-container" />
-            <span>1. Pengaturan Paket & Informasi Wali Murid</span>
+            <span>1. Pengaturan Paket, Tanggal Mulai & Lokasi Mengajar</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -284,6 +307,41 @@ export function CreateScheduleRundownModal({
             </div>
 
             <div>
+              <label className="font-semibold text-text-muted block mb-1">No. WhatsApp Wali</label>
+              <input
+                type="tel"
+                value={parentPhone}
+                onChange={(e) => setParentPhone(e.target.value)}
+                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+              />
+            </div>
+          </div>
+
+          {/* Location & Start Date Settings */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div>
+              <label className="font-semibold text-text-muted block mb-1">Tanggal Mulai Pertemuan Ke-1</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs text-primary"
+              />
+            </div>
+
+            <div>
+              <label className="font-semibold text-text-muted block mb-1">Wilayah Layanan</label>
+              <select
+                value={locationArea}
+                onChange={(e) => setLocationArea(e.target.value as 'Makassar' | 'Gowa')}
+                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs"
+              >
+                <option value="Makassar">Kota Makassar</option>
+                <option value="Gowa">Kabupaten Gowa</option>
+              </select>
+            </div>
+
+            <div>
               <label className="font-semibold text-text-muted block mb-1">Jumlah Pertemuan Paket</label>
               <select
                 value={packageCount}
@@ -298,9 +356,36 @@ export function CreateScheduleRundownModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+            <div className="sm:col-span-8">
+              <label className="font-semibold text-text-muted flex items-center gap-1 mb-1">
+                <MapPin className="w-3.5 h-3.5 text-red-500" />
+                <span>Alamat Lengkap / Lokasi Mengajar</span>
+              </label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
+                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+              />
+            </div>
+
+            <div className="sm:col-span-4 flex items-end">
+              <button
+                type="button"
+                onClick={handleGenerateRundown}
+                className="w-full py-2.5 px-3 rounded-xl bg-primary-container hover:bg-primary-hover text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Otomatiskan Tanggal Sesi</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-border-whisper/60">
             <div>
-              <label className="font-semibold text-text-muted block mb-1">Pilihan Hari Belajar Rutin</label>
+              <label className="font-semibold text-text-muted block mb-1">Hari Belajar Rutin</label>
               <div className="flex flex-wrap gap-1">
                 {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'].map((day) => {
                   const isSel = selectedDays.includes(day);
@@ -342,17 +427,6 @@ export function CreateScheduleRundownModal({
                 ))}
               </select>
             </div>
-
-            <div className="flex items-end">
-              <button
-                type="button"
-                onClick={handleGenerateRundown}
-                className="w-full py-2.5 px-3 rounded-xl bg-primary-container hover:bg-primary-hover text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1.5"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Otomatiskan Tanggal Sesi</span>
-              </button>
-            </div>
           </div>
         </div>
 
@@ -379,7 +453,8 @@ export function CreateScheduleRundownModal({
               <thead className="bg-surface-container-low text-text-muted font-bold uppercase text-[10px] sticky top-0 z-10 border-b border-border-whisper">
                 <tr>
                   <th className="px-3 py-2.5 w-10">No</th>
-                  <th className="px-3 py-2.5">Hari & Tanggal</th>
+                  <th className="px-3 py-2.5">Tanggal (Datepicker)</th>
+                  <th className="px-3 py-2.5">Tampilan Hari & Tanggal</th>
                   <th className="px-3 py-2.5">Jam Sesi</th>
                   <th className="px-3 py-2.5">Mata Pelajaran</th>
                   <th className="px-3 py-2.5">Pengajar (Tutor Terverifikasi)</th>
@@ -392,11 +467,14 @@ export function CreateScheduleRundownModal({
                     <td className="px-3 py-2 font-bold text-primary">{item.meetingNumber}</td>
                     <td className="px-3 py-2">
                       <input
-                        type="text"
+                        type="date"
                         value={item.date}
                         onChange={(e) => handleUpdateItem(item.id, 'date', e.target.value)}
-                        className="w-full p-1.5 rounded-lg border border-border-whisper text-xs bg-surface-container-low/30"
+                        className="p-1.5 rounded-lg border border-border-whisper text-xs bg-white font-mono"
                       />
+                    </td>
+                    <td className="px-3 py-2 font-semibold text-primary">
+                      {formatIndonesianDate(item.date)}
                     </td>
                     <td className="px-3 py-2">
                       <select
