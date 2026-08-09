@@ -185,20 +185,6 @@ export async function syncUserRoleWithAuth(userId: string, email?: string, authR
   const user = await getUserById(userId, email);
   if (!user) return null;
 
-  // Sync user ID in public.users if matched by email but ID differs
-  if (user.id !== userId) {
-    try {
-      await sql`
-        UPDATE users
-        SET id = ${userId}, updated_at = NOW()
-        WHERE id = ${user.id};
-      `;
-      user.id = userId;
-    } catch (err) {
-      console.warn('User ID sync notice:', err);
-    }
-  }
-
   let isAuthAdmin = authRole === 'admin' || authRole === 'ADMIN';
 
   // Automatically check Neon Auth internal user table (neon_auth.user / neon_auth.users) if not yet identified as admin
@@ -223,7 +209,7 @@ export async function syncUserRoleWithAuth(userId: string, email?: string, authR
     await sql`
       UPDATE users
       SET role = 'admin', updated_at = NOW()
-      WHERE id = ${userId};
+      WHERE id = ${user.id} OR (email = ${email} AND email IS NOT NULL);
     `;
     user.role = 'admin';
   }
