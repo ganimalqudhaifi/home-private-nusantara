@@ -107,13 +107,17 @@ export function QuickBookingFormSection() {
   const [selectedDays, setSelectedDays] = useState<string[]>(['Senin', 'Kamis']);
   const [preferredTime, setPreferredTime] = useState<string>(TIME_OPTIONS[2].value);
 
-  // Dynamic Class & Subjects state
-  const [selectedGrade, setSelectedGrade] = useState<string>(LEVEL_CONFIGS.sd.grades[3]);
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0].name]);
+  // Dynamic Class, Subjects & Name state for Student 1 and Student 2
+  const [selectedGrade1, setSelectedGrade1] = useState<string>(LEVEL_CONFIGS.sd.grades[3]);
+  const [selectedSubjects1, setSelectedSubjects1] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0].name]);
+  const [studentName1, setStudentName1] = useState('');
+
+  const [selectedGrade2, setSelectedGrade2] = useState<string>(LEVEL_CONFIGS.sd.grades[1]);
+  const [selectedSubjects2, setSelectedSubjects2] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0].name]);
+  const [studentName2, setStudentName2] = useState('');
 
   const [parentName, setParentName] = useState('');
   const [parentPhone, setParentPhone] = useState('');
-  const [studentName, setStudentName] = useState('');
   const [cityArea, setCityArea] = useState<'Makassar' | 'Gowa'>('Makassar');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
@@ -125,18 +129,31 @@ export function QuickBookingFormSection() {
   const handleLevelChange = (newLevel: 'calistung' | 'sd' | 'smp') => {
     setLevelId(newLevel);
     const config = LEVEL_CONFIGS[newLevel];
-    setSelectedGrade(config.grades[0]);
-    setSelectedSubjects([config.subjects[0].name]);
+    setSelectedGrade1(config.grades[0]);
+    setSelectedSubjects1([config.subjects[0].name]);
+    setSelectedGrade2(config.grades[1] || config.grades[0]);
+    setSelectedSubjects2([config.subjects[0].name]);
   };
 
-  // Toggle Subject selection
-  const handleToggleSubject = (subject: string) => {
-    if (selectedSubjects.includes(subject)) {
-      if (selectedSubjects.length > 1) {
-        setSelectedSubjects(selectedSubjects.filter((s) => s !== subject));
+  // Toggle Subject selection for Student 1
+  const handleToggleSubject1 = (subject: string) => {
+    if (selectedSubjects1.includes(subject)) {
+      if (selectedSubjects1.length > 1) {
+        setSelectedSubjects1(selectedSubjects1.filter((s) => s !== subject));
       }
     } else {
-      setSelectedSubjects([...selectedSubjects, subject]);
+      setSelectedSubjects1([...selectedSubjects1, subject]);
+    }
+  };
+
+  // Toggle Subject selection for Student 2
+  const handleToggleSubject2 = (subject: string) => {
+    if (selectedSubjects2.includes(subject)) {
+      if (selectedSubjects2.length > 1) {
+        setSelectedSubjects2(selectedSubjects2.filter((s) => s !== subject));
+      }
+    } else {
+      setSelectedSubjects2([...selectedSubjects2, subject]);
     }
   };
 
@@ -178,7 +195,11 @@ export function QuickBookingFormSection() {
 
     const selectedPkg = PRICING_PACKAGES.find((p) => p.levelId === levelId);
     const daysStr = selectedDays.join(', ') || 'Belum dipilih';
-    const subjectsStr = selectedSubjects.join(', ') || 'Semua Materi';
+
+    const gradeSummary =
+      studentCount === 1
+        ? `${selectedGrade1} (${selectedPkg?.levelName || levelId.toUpperCase()})`
+        : `Siswa 1: ${selectedGrade1}, Siswa 2: ${selectedGrade2} (${selectedPkg?.levelName || levelId.toUpperCase()})`;
 
     try {
       await fetch('/api/consultation', {
@@ -187,7 +208,7 @@ export function QuickBookingFormSection() {
         body: JSON.stringify({
           parentName: parentName || 'Calon Orang Tua',
           parentPhone: parentPhone || '-',
-          studentGrade: `${selectedGrade} (${selectedPkg?.levelName || levelId.toUpperCase()})`,
+          studentGrade: gradeSummary,
           preferredSchedule: `${daysStr} | ${preferredTime}`,
         }),
       });
@@ -195,12 +216,19 @@ export function QuickBookingFormSection() {
       console.error('Failed to record consultation:', err);
     }
 
+    const studentDetailsMsg =
+      studentCount === 1
+        ? `- Tingkatan / Kelas: ${selectedGrade1}
+- Mata Pelajaran / Fokus: ${selectedSubjects1.join(', ') || 'Semua Materi'}
+- Nama Siswa: ${studentName1 || '-'}`
+        : `- Rincian Siswa 1: ${studentName1 || 'Siswa 1'} (${selectedGrade1} - ${selectedSubjects1.join(', ') || 'Semua Materi'})
+- Rincian Siswa 2: ${studentName2 || 'Siswa 2'} (${selectedGrade2} - ${selectedSubjects2.join(', ') || 'Semua Materi'})`;
+
     const message = `Halo Admin Home Private Nusantara, saya ingin mendaftar/konsultasi les privat di rumah dengan formulir berikut:
 
 *Rincian Paket & Jadwal:*
 - Program: ${selectedPkg?.levelName || levelId.toUpperCase()}
-- Tingkatan / Kelas: ${selectedGrade}
-- Mata Pelajaran / Fokus: ${subjectsStr}
+${studentDetailsMsg}
 - Frekuensi: ${frequency} seminggu (${studentCount} Siswa)
 - Estimasi Biaya: Rp ${estimatedPrice.toLocaleString('id-ID')} / bulan
 - Pilihan Hari Belajar: ${daysStr}
@@ -209,7 +237,6 @@ export function QuickBookingFormSection() {
 *Data Siswa & Orang Tua:*
 - Nama Orang Tua/Wali: ${parentName || '-'}
 - No. WhatsApp: ${parentPhone || '-'}
-- Nama Siswa: ${studentName || '-'}
 - Wilayah Layanan: Kota/Kab. ${cityArea}
 - Alamat Lengkap: ${address || '-'}
 - Catatan / Kebutuhan Belajar: ${notes || '-'}
@@ -412,78 +439,18 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
           </div>
 
           {/* Step 3: Dynamic Class, Subject & Student Info */}
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div className="flex items-center gap-2 pb-2 border-b border-border-whisper">
               <span className="w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">
                 3
               </span>
               <h3 className="font-headline text-sm font-bold text-primary uppercase tracking-wider">
-                Tingkatan Kelas, Mata Pelajaran & Data Murid
+                Data Orang Tua & Murid
               </h3>
             </div>
 
-            {/* Dynamic Class Chips */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                <GraduationCap className="w-4 h-4 text-primary-container" />
-                <span>Pilih Tingkatan Kelas ({levelId.toUpperCase()}):</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {currentConfig.grades.map((gr) => {
-                  const isSelected = selectedGrade === gr;
-                  return (
-                    <button
-                      key={gr}
-                      type="button"
-                      onClick={() => setSelectedGrade(gr)}
-                      className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${
-                        isSelected
-                          ? 'border-primary-container bg-primary-container text-white shadow-xs'
-                          : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
-                      }`}
-                    >
-                      {gr}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Dynamic Subject Tags */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                <BookOpen className="w-4 h-4 text-primary-container" />
-                <span>Pilih Mata Pelajaran / Fokus Bimbingan{currentConfig.subjects.length > 1 ? ' (Bisa pilih lebih dari satu)' : ''}:</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {currentConfig.subjects.map((sub) => {
-                  const isSelected = selectedSubjects.includes(sub.name);
-                  return (
-                    <button
-                      key={sub.name}
-                      type="button"
-                      onClick={() => handleToggleSubject(sub.name)}
-                      className={`px-3.5 py-2.5 rounded-xl text-left border transition-all flex flex-col gap-0.5 ${
-                        isSelected
-                          ? 'border-[#DC2626] bg-red-50 shadow-xs'
-                          : 'border-border-whisper bg-surface-container-lowest hover:border-gray-300'
-                      }`}
-                    >
-                      <span className={`text-xs font-bold flex items-center gap-1.5 ${isSelected ? 'text-[#DC2626]' : 'text-text-primary'}`}>
-                        {sub.name}
-                        {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
-                      </span>
-                      <span className={`text-[10px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
-                        {sub.desc}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Student & Parent Form Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            {/* Parent Form Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   Nama Orang Tua / Wali
@@ -513,17 +480,281 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
               </div>
             </div>
 
+            {/* Student Info Section */}
+            {studentCount === 1 ? (
+              /* Single Student Form */
+              <div className="p-4 sm:p-5 rounded-2xl bg-surface-container-lowest border border-border-whisper space-y-4">
+                <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                  <GraduationCap className="w-4 h-4 text-primary-container" />
+                  <span>Data Murid</span>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                    Nama Siswa
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Contoh: Muhammad Rayhan"
+                    value={studentName1}
+                    onChange={(e) => setStudentName1(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+                  />
+                </div>
+
+                {/* Class Chips for Student 1 */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                    <span>Pilih Tingkatan Kelas ({levelId.toUpperCase()}):</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {currentConfig.grades.map((gr) => {
+                      const isSelected = selectedGrade1 === gr;
+                      return (
+                        <button
+                          key={gr}
+                          type="button"
+                          onClick={() => setSelectedGrade1(gr)}
+                          className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${
+                            isSelected
+                              ? 'border-primary-container bg-primary-container text-white shadow-xs'
+                              : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
+                          }`}
+                        >
+                          {gr}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Subject Tags for Student 1 */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-primary-container" />
+                    <span>Mata Pelajaran / Fokus Bimbingan:</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {currentConfig.subjects.map((sub) => {
+                      const isSelected = selectedSubjects1.includes(sub.name);
+                      return (
+                        <button
+                          key={sub.name}
+                          type="button"
+                          onClick={() => handleToggleSubject1(sub.name)}
+                          className={`px-3.5 py-2.5 rounded-xl text-left border transition-all flex flex-col gap-0.5 ${
+                            isSelected
+                              ? 'border-[#DC2626] bg-red-50 shadow-xs'
+                              : 'border-border-whisper bg-white hover:border-gray-300'
+                          }`}
+                        >
+                          <span className={`text-xs font-bold flex items-center gap-1.5 ${isSelected ? 'text-[#DC2626]' : 'text-text-primary'}`}>
+                            {sub.name}
+                            {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
+                          </span>
+                          <span className={`text-[10px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
+                            {sub.desc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Two Students Form (Grup Hemat) */
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-1">
+                  <label className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                    <GraduationCap className="w-4 h-4 text-primary-container" />
+                    <span>Data Murid 1 & Murid 2 (2 Siswa dalam 1 Sesi)</span>
+                  </label>
+                  <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                    Bisa Beda Kelas & Beda Mapel
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Student 1 Box */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-surface-container-lowest border border-border-whisper space-y-4 relative">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center">
+                        1
+                      </span>
+                      <h4 className="font-bold text-xs text-primary uppercase">Siswa Pertama</h4>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                        Nama Siswa 1
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Contoh: Muhammad Rayhan"
+                        value={studentName1}
+                        onChange={(e) => setStudentName1(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+                      />
+                    </div>
+
+                    {/* Class Chips for Student 1 */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+                        Tingkatan Kelas Siswa 1:
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {currentConfig.grades.map((gr) => {
+                          const isSelected = selectedGrade1 === gr;
+                          return (
+                            <button
+                              key={gr}
+                              type="button"
+                              onClick={() => setSelectedGrade1(gr)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                                isSelected
+                                  ? 'border-primary-container bg-primary-container text-white shadow-xs'
+                                  : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
+                              }`}
+                            >
+                              {gr}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Subject Tags for Student 1 */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+                        Mata Pelajaran Siswa 1:
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {currentConfig.subjects.map((sub) => {
+                          const isSelected = selectedSubjects1.includes(sub.name);
+                          return (
+                            <button
+                              key={sub.name}
+                              type="button"
+                              onClick={() => handleToggleSubject1(sub.name)}
+                              className={`px-3 py-2 rounded-xl text-left border transition-all flex flex-col gap-0.5 ${
+                                isSelected
+                                  ? 'border-[#DC2626] bg-red-50 shadow-xs'
+                                  : 'border-border-whisper bg-white hover:border-gray-300'
+                              }`}
+                            >
+                              <span className={`text-xs font-bold flex items-center gap-1.5 ${isSelected ? 'text-[#DC2626]' : 'text-text-primary'}`}>
+                                {sub.name}
+                                {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
+                              </span>
+                              <span className={`text-[9px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
+                                {sub.desc}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Student 2 Box */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-surface-container-lowest border border-border-whisper space-y-4 relative">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center">
+                        2
+                      </span>
+                      <h4 className="font-bold text-xs text-emerald-800 uppercase">Siswa Kedua</h4>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                        Nama Siswa 2
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Contoh: Aisha Azahra"
+                        value={studentName2}
+                        onChange={(e) => setStudentName2(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+                      />
+                    </div>
+
+                    {/* Class Chips for Student 2 */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+                        Tingkatan Kelas Siswa 2:
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {currentConfig.grades.map((gr) => {
+                          const isSelected = selectedGrade2 === gr;
+                          return (
+                            <button
+                              key={gr}
+                              type="button"
+                              onClick={() => setSelectedGrade2(gr)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                                isSelected
+                                  ? 'border-emerald-600 bg-emerald-600 text-white shadow-xs'
+                                  : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
+                              }`}
+                            >
+                              {gr}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Subject Tags for Student 2 */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+                        Mata Pelajaran Siswa 2:
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {currentConfig.subjects.map((sub) => {
+                          const isSelected = selectedSubjects2.includes(sub.name);
+                          return (
+                            <button
+                              key={sub.name}
+                              type="button"
+                              onClick={() => handleToggleSubject2(sub.name)}
+                              className={`px-3 py-2 rounded-xl text-left border transition-all flex flex-col gap-0.5 ${
+                                isSelected
+                                  ? 'border-emerald-600 bg-emerald-50 shadow-xs'
+                                  : 'border-border-whisper bg-white hover:border-gray-300'
+                              }`}
+                            >
+                              <span className={`text-xs font-bold flex items-center gap-1.5 ${isSelected ? 'text-emerald-700' : 'text-text-primary'}`}>
+                                {sub.name}
+                                {isSelected && <Check className="w-3 h-3 text-emerald-700" />}
+                              </span>
+                              <span className={`text-[9px] leading-tight ${isSelected ? 'text-emerald-700/70' : 'text-text-muted'}`}>
+                                {sub.desc}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Location & Address */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1 sm:col-span-2">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                  Nama Siswa
+                  Alamat Lengkap / Patokan Rumah
                 </label>
                 <input
                   required
                   type="text"
-                  placeholder="Contoh: Muhammad Rayhan"
-                  value={studentName}
-                  onChange={(e) => setStudentName(e.target.value)}
+                  placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-xs"
                 />
               </div>
@@ -541,20 +772,6 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                   <option value="Gowa">Kabupaten Gowa</option>
                 </select>
               </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                Alamat Lengkap / Patokan Rumah
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-xs"
-              />
             </div>
 
             <div className="space-y-1">
@@ -584,7 +801,9 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                 <span className="text-xs text-text-muted">/ bulan (4 pertemuan)</span>
               </div>
               <p className="text-[11px] text-emerald-700 font-semibold mt-1">
-                *Program: {selectedGrade} • {selectedSubjects.join(', ')}
+                {studentCount === 1
+                  ? `*Program: ${selectedGrade1} • ${selectedSubjects1.join(', ')}`
+                  : `*Siswa 1: ${selectedGrade1} (${selectedSubjects1.join(', ')}) • Siswa 2: ${selectedGrade2} (${selectedSubjects2.join(', ')})`}
               </p>
             </div>
 
