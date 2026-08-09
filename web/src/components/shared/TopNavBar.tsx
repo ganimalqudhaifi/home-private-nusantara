@@ -38,7 +38,7 @@ export function TopNavBar({
  {/* Brand Logo & Name - Always Links to Home */}
  <Link
  href="/"
- className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-primary-container rounded-lg p-1"
+  className="flex items-center gap-3 group focus:outline-none rounded-lg p-1"
  >
  <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-border-whisper shadow-xs shrink-0 bg-white">
  <Image
