@@ -1,8 +1,20 @@
 import { NextResponse } from 'next/server';
-import { updateTutorVerification, getAllTutorsFromDB } from '@/src/lib/db-services';
+import { auth } from '@/src/lib/auth-server';
+import { updateTutorVerification, getAllTutorsFromDB, getUserById } from '@/src/lib/db-services';
 
 export async function GET() {
   try {
+    const { data: sessionData } = await auth.getSession();
+    if (sessionData?.user?.id) {
+      const dbUser = await getUserById(sessionData.user.id);
+      if (dbUser && dbUser.role !== 'admin') {
+        return NextResponse.json(
+          { error: 'Akses ditolak. Anda tidak memiliki hak akses Admin.' },
+          { status: 403 }
+        );
+      }
+    }
+
     const tutors = await getAllTutorsFromDB();
     return NextResponse.json({ success: true, tutors });
   } catch (error: any) {
@@ -16,6 +28,17 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
+    const { data: sessionData } = await auth.getSession();
+    if (sessionData?.user?.id) {
+      const dbUser = await getUserById(sessionData.user.id);
+      if (dbUser && dbUser.role !== 'admin') {
+        return NextResponse.json(
+          { error: 'Akses ditolak. Anda tidak memiliki hak akses Admin.' },
+          { status: 403 }
+        );
+      }
+    }
+
     const body = await request.json();
     const { tutorId, status, rejectionReason, adminId } = body;
 
@@ -29,7 +52,7 @@ export async function PATCH(request: Request) {
     const updated = await updateTutorVerification(
       tutorId,
       status,
-      adminId || '00000000-0000-0000-0000-000000000000',
+      adminId || sessionData?.user?.id || '00000000-0000-0000-0000-000000000000',
       rejectionReason
     );
 
