@@ -1,67 +1,139 @@
 'use client';
 
-import React, { useState } from'react';
-import Link from'next/link';
-import { TopNavBar } from'../../../src/components/shared/TopNavBar';
-import { Footer } from'../../../src/components/shared/Footer';
-import { AdminKPICards } from'../../../src/components/admin/AdminKPICards';
-import { UrgentTutorVerificationQueueTable } from'../../../src/components/admin/UrgentTutorVerificationQueueTable';
-import { TutorAuditDrawer } from'../../../src/components/admin/TutorAuditDrawer';
-import { TutorActionModal } from'../../../src/components/admin/TutorActionModal';
-import { useDrawer } from'../../../src/hooks/useDrawer';
-import { useModal } from'../../../src/hooks/useModal';
-import { ADMIN_STATS, MOCK_TUTORS, MOCK_SESSIONS } from'../../../src/data/mockData';
-import { Tutor } from'../../../src/types';
-import { Calendar, Users, GraduationCap, ShieldCheck, ArrowRight, Clock } from'lucide-react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { TopNavBar } from '../../../src/components/shared/TopNavBar';
+import { Footer } from '../../../src/components/shared/Footer';
+import { AdminKPICards } from '../../../src/components/admin/AdminKPICards';
+import { UrgentTutorVerificationQueueTable } from '../../../src/components/admin/UrgentTutorVerificationQueueTable';
+import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
+import { TutorActionModal } from '../../../src/components/admin/TutorActionModal';
+import { useDrawer } from '../../../src/hooks/useDrawer';
+import { useModal } from '../../../src/hooks/useModal';
+import { ADMIN_STATS, MOCK_TUTORS, MOCK_SESSIONS } from '../../../src/data/mockData';
+import { Tutor } from '../../../src/types';
+import { Calendar, Users, GraduationCap, ShieldCheck, ArrowRight, Clock } from 'lucide-react';
 
 export interface AdminDashboardPageProps {
- readonly initialRole?: string;
+  readonly initialRole?: string;
 }
 
-export default function AdminDashboardPage({ initialRole ='admin' }: AdminDashboardPageProps) {
- const [tutorsList, setTutorsList] = useState<readonly Tutor[]>(MOCK_TUTORS);
- const pendingTutors = tutorsList.filter((t) => t.status ==='pending');
+export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashboardPageProps) {
+  const [tutorsList, setTutorsList] = useState<readonly Tutor[]>(MOCK_TUTORS);
+  const [stats, setStats] = useState(ADMIN_STATS);
+  const pendingTutors = tutorsList.filter((t) => t.status === 'pending');
 
- const {
- isOpen: isAuditOpen,
- data: auditTutor,
- open: openAudit,
- close: closeAudit,
- } = useDrawer<Tutor>();
+  useEffect(() => {
+    // Fetch real stats from database
+    fetch('/api/admin/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.stats) {
+          setStats((prev) => ({
+            ...prev,
+            activeTutors: data.stats.activeTutors || prev.activeTutors,
+            pendingTutors: data.stats.pendingTutors || prev.pendingTutors,
+            registeredStudents: {
+              ...prev.registeredStudents,
+              total: data.stats.registeredStudents?.total || prev.registeredStudents.total,
+              sd: data.stats.registeredStudents?.sd || prev.registeredStudents.sd,
+              smp: data.stats.registeredStudents?.smp || prev.registeredStudents.smp,
+            },
+            totalBookings: data.stats.totalBookings || prev.totalBookings,
+          }));
+        }
+      })
+      .catch((err) => console.error('Failed to fetch admin stats:', err));
 
- const {
- isOpen: isActionOpen,
- data: actionModalData,
- open: openAction,
- close: closeAction,
- } = useModal<{ actionType:'approve' |'reject' |'freeze'; tutor: Tutor }>();
+    // Fetch real tutors from database
+    fetch('/api/admin/tutors')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.tutors && data.tutors.length > 0) {
+          const dbTutors: Tutor[] = data.tutors.map((t: any) => ({
+            id: t.id,
+            name: t.name || 'Pengajar',
+            degree: t.major || t.degree || 'S1',
+            university: t.university || '-',
+            gpa: 3.8,
+            subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
+            teachingArea: 'Makassar & Gowa',
+            rating: Number(t.rating || 5.0),
+            reviewCount: Number(t.reviewCount || 0),
+            hourlyRate: Number(t.hourlyRate || 150000),
+            isVerified: t.status === 'verified',
+            status: t.status || 'pending',
+            experienceYears: Number(t.experienceYears || 1),
+            avatarUrl: t.avatar || undefined,
+            documents: {
+              cvUploaded: !!t.portfolioUrl,
+              diplomaUploaded: true,
+              idCardUploaded: true,
+              certificateUploaded: false,
+            },
+          }));
+          setTutorsList(dbTutors);
+        }
+      })
+      .catch((err) => console.error('Failed to fetch admin tutors:', err));
+  }, []);
 
- const handleAuditTutor = (tutor: Tutor) => {
- openAudit(tutor);
- };
+  const {
+    isOpen: isAuditOpen,
+    data: auditTutor,
+    open: openAudit,
+    close: closeAudit,
+  } = useDrawer<Tutor>();
 
- const handleOpenActionModal = (actionType:'approve' |'reject' |'freeze', tutor: Tutor) => {
- openAction({ actionType, tutor });
- };
+  const {
+    isOpen: isActionOpen,
+    data: actionModalData,
+    open: openAction,
+    close: closeAction,
+  } = useModal<{ actionType: 'approve' | 'reject' | 'freeze'; tutor: Tutor }>();
 
- const handleConfirmAction = (
- tutorId: string,
- actionType:'approve' |'reject' |'freeze',
- notes: string
- ) => {
- setTutorsList((prev) =>
- prev.map((t) => {
- if (t.id === tutorId) {
- return {
- ...t,
- status: actionType ==='approve' ?'verified' : actionType ==='reject' ?'pending' :'suspended',
- isVerified: actionType ==='approve',
- };
- }
- return t;
- })
- );
- };
+  const handleAuditTutor = (tutor: Tutor) => {
+    openAudit(tutor);
+  };
+
+  const handleOpenActionModal = (actionType: 'approve' | 'reject' | 'freeze', tutor: Tutor) => {
+    openAction({ actionType, tutor });
+  };
+
+  const handleConfirmAction = async (
+    tutorId: string,
+    actionType: 'approve' | 'reject' | 'freeze',
+    notes: string
+  ) => {
+    const targetStatus = actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'rejected' : 'suspended';
+
+    try {
+      await fetch('/api/admin/tutors', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tutorId,
+          status: targetStatus,
+          rejectionReason: notes,
+        }),
+      });
+    } catch (err) {
+      console.error('Error updating verification status in database:', err);
+    }
+
+    setTutorsList((prev) =>
+      prev.map((t) => {
+        if (t.id === tutorId) {
+          return {
+            ...t,
+            status: actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'pending' : 'suspended',
+            isVerified: actionType === 'approve',
+          };
+        }
+        return t;
+      })
+    );
+  };
 
  return (
  <div className="bg-surface text-text-primary min-h-screen flex flex-col">
@@ -101,8 +173,8 @@ export default function AdminDashboardPage({ initialRole ='admin' }: AdminDashbo
  </div>
  </section>
 
- {/* 1. Admin KPI Metrics Cards */}
- <AdminKPICards stats={ADMIN_STATS} />
+      {/* 1. Admin KPI Metrics Cards */}
+      <AdminKPICards stats={stats} />
 
  {/* 2. Urgent Verification Queue Table */}
  <section>

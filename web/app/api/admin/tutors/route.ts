@@ -1,5 +1,18 @@
 import { NextResponse } from 'next/server';
-import { updateTutorVerification } from '@/src/lib/db-services';
+import { updateTutorVerification, getAllTutorsFromDB } from '@/src/lib/db-services';
+
+export async function GET() {
+  try {
+    const tutors = await getAllTutorsFromDB();
+    return NextResponse.json({ success: true, tutors });
+  } catch (error: any) {
+    console.error('Error fetching tutors:', error);
+    return NextResponse.json(
+      { error: 'Gagal mengambil data tutor dari database.' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PATCH(request: Request) {
   try {

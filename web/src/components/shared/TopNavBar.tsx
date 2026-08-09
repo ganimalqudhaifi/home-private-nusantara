@@ -7,18 +7,20 @@ import { ShieldCheck, HelpCircle, Menu, X } from'lucide-react';
 import { BRAND_INFO, NAV_LINKS } from'../../data/mockData';
 
 export interface TopNavBarProps {
- readonly activeRoute?: string;
- readonly role?:'guest' |'student' |'tutor' |'admin';
- readonly userName?: string;
- readonly userBadge?: string;
+  readonly activeRoute?: string;
+  readonly role?: 'guest' | 'student' | 'tutor' | 'admin';
+  readonly userName?: string;
+  readonly userBadge?: string;
+  readonly userAvatar?: string;
 }
 
 export function TopNavBar({
- activeRoute ='/',
- role ='guest',
- userName,
- userBadge,
- }: TopNavBarProps) {
+  activeRoute = '/',
+  role = 'guest',
+  userName,
+  userBadge,
+  userAvatar,
+}: TopNavBarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -119,19 +121,29 @@ export function TopNavBar({
  <span>{userBadge}</span>
  </div>
  )}
- {userName && (
- <div className="flex items-center gap-2 pl-2 border-l border-border-whisper">
- <div className="text-right hidden sm:block">
- <p className="text-xs font-semibold text-text-primary leading-tight">
- {userName}
- </p>
- <p className="text-[10px] text-text-muted capitalize">{role}</p>
- </div>
- <div className="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold shadow-xs">
- {userName.substring(0, 2).toUpperCase()}
- </div>
- </div>
- )}
+            {userName && (
+              <div className="flex items-center gap-2 pl-2 border-l border-border-whisper">
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-semibold text-text-primary leading-tight">
+                    {userName}
+                  </p>
+                  <p className="text-[10px] text-text-muted capitalize">{role}</p>
+                </div>
+                {userAvatar ? (
+                  <Image
+                    src={userAvatar}
+                    alt={userName}
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 rounded-full object-cover border border-border-whisper shadow-xs"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                    {userName.substring(0, 2).toUpperCase()}
+                  </div>
+                )}
+              </div>
+            )}
  <Link
  href="/#faq"
  className="p-2 rounded-xl border border-border-whisper text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"

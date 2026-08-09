@@ -1,65 +1,114 @@
 'use client';
 
-import React, { useState } from'react';
-import { TopNavBar } from'../../../src/components/shared/TopNavBar';
-import { Footer } from'../../../src/components/shared/Footer';
-import { TutorDirectoryTable } from'../../../src/components/admin/TutorDirectoryTable';
-import { TutorAuditDrawer } from'../../../src/components/admin/TutorAuditDrawer';
-import { TutorActionModal } from'../../../src/components/admin/TutorActionModal';
-import { useDrawer } from'../../../src/hooks/useDrawer';
-import { useModal } from'../../../src/hooks/useModal';
-import { MOCK_TUTORS } from'../../../src/data/mockData';
-import { Tutor } from'../../../src/types';
-import Link from'next/link';
-import { ShieldCheck, Plus, ArrowLeft } from'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { TopNavBar } from '../../../src/components/shared/TopNavBar';
+import { Footer } from '../../../src/components/shared/Footer';
+import { TutorDirectoryTable } from '../../../src/components/admin/TutorDirectoryTable';
+import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
+import { TutorActionModal } from '../../../src/components/admin/TutorActionModal';
+import { useDrawer } from '../../../src/hooks/useDrawer';
+import { useModal } from '../../../src/hooks/useModal';
+import { MOCK_TUTORS } from '../../../src/data/mockData';
+import { Tutor } from '../../../src/types';
+import Link from 'next/link';
+import { ShieldCheck, Plus, ArrowLeft } from 'lucide-react';
 
 export interface AdminTutorsPageProps {
- readonly initialFilter?: string;
+  readonly initialFilter?: string;
 }
 
-export default function AdminTutorsPage({ initialFilter ='all' }: AdminTutorsPageProps) {
- const [tutors, setTutors] = useState<readonly Tutor[]>(MOCK_TUTORS);
+export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPageProps) {
+  const [tutors, setTutors] = useState<readonly Tutor[]>(MOCK_TUTORS);
 
- const {
- isOpen: isAuditOpen,
- data: auditTutor,
- open: openAudit,
- close: closeAudit,
- } = useDrawer<Tutor>();
+  useEffect(() => {
+    fetch('/api/admin/tutors')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.tutors && data.tutors.length > 0) {
+          const dbTutors: Tutor[] = data.tutors.map((t: any) => ({
+            id: t.id,
+            name: t.name || 'Pengajar',
+            degree: t.major || t.degree || 'S1',
+            university: t.university || '-',
+            gpa: 3.8,
+            subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
+            teachingArea: 'Makassar & Gowa',
+            rating: Number(t.rating || 5.0),
+            reviewCount: Number(t.reviewCount || 0),
+            hourlyRate: Number(t.hourlyRate || 150000),
+            isVerified: t.status === 'verified',
+            status: t.status || 'pending',
+            experienceYears: Number(t.experienceYears || 1),
+            avatarUrl: t.avatar || undefined,
+            documents: {
+              cvUploaded: !!t.portfolioUrl,
+              diplomaUploaded: true,
+              idCardUploaded: true,
+              certificateUploaded: false,
+            },
+          }));
+          setTutors(dbTutors);
+        }
+      })
+      .catch((err) => console.error('Failed to fetch tutors list:', err));
+  }, []);
 
- const {
- isOpen: isActionOpen,
- data: actionModalData,
- open: openAction,
- close: closeAction,
- } = useModal<{ actionType:'approve' |'reject' |'freeze'; tutor: Tutor }>();
+  const {
+    isOpen: isAuditOpen,
+    data: auditTutor,
+    open: openAudit,
+    close: closeAudit,
+  } = useDrawer<Tutor>();
 
- const handleAuditTutor = (tutor: Tutor) => {
- openAudit(tutor);
- };
+  const {
+    isOpen: isActionOpen,
+    data: actionModalData,
+    open: openAction,
+    close: closeAction,
+  } = useModal<{ actionType: 'approve' | 'reject' | 'freeze'; tutor: Tutor }>();
 
- const handleOpenActionModal = (actionType:'approve' |'reject' |'freeze', tutor: Tutor) => {
- openAction({ actionType, tutor });
- };
+  const handleAuditTutor = (tutor: Tutor) => {
+    openAudit(tutor);
+  };
 
- const handleConfirmAction = (
- tutorId: string,
- actionType:'approve' |'reject' |'freeze',
- notes: string
- ) => {
- setTutors((prev) =>
- prev.map((t) => {
- if (t.id === tutorId) {
- return {
- ...t,
- status: actionType ==='approve' ?'verified' : actionType ==='reject' ?'pending' :'suspended',
- isVerified: actionType ==='approve',
- };
- }
- return t;
- })
- );
- };
+  const handleOpenActionModal = (actionType: 'approve' | 'reject' | 'freeze', tutor: Tutor) => {
+    openAction({ actionType, tutor });
+  };
+
+  const handleConfirmAction = async (
+    tutorId: string,
+    actionType: 'approve' | 'reject' | 'freeze',
+    notes: string
+  ) => {
+    const targetStatus = actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'rejected' : 'suspended';
+
+    try {
+      await fetch('/api/admin/tutors', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tutorId,
+          status: targetStatus,
+          rejectionReason: notes,
+        }),
+      });
+    } catch (err) {
+      console.error('Error updating tutor status in database:', err);
+    }
+
+    setTutors((prev) =>
+      prev.map((t) => {
+        if (t.id === tutorId) {
+          return {
+            ...t,
+            status: actionType === 'approve' ? 'verified' : actionType === 'reject' ? 'pending' : 'suspended',
+            isVerified: actionType === 'approve',
+          };
+        }
+        return t;
+      })
+    );
+  };
 
  return (
  <div className="bg-surface text-text-primary min-h-screen flex flex-col">

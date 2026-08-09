@@ -139,3 +139,32 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
 
   return { success: true, tutorId: input.userId };
 }
+
+export async function getAllTutorsFromDB() {
+  const rows = await sql`
+    SELECT 
+      t.id,
+      u.full_name as name,
+      u.email,
+      u.phone,
+      u.avatar_url as avatar,
+      t.university,
+      t.degree as major,
+      t.status,
+      t.rating,
+      t.review_count as "reviewCount",
+      t.hourly_rate as "hourlyRate",
+      t.experience_years as "experienceYears",
+      t.portfolio_url as "portfolioUrl",
+      t.created_at as "createdAt",
+      COALESCE(
+        ARRAY_AGG(ts.subject_name) FILTER (WHERE ts.subject_name IS NOT NULL),
+        '{}'
+      ) as subjects
+    FROM tutors t
+    JOIN users u ON t.id = u.id
+    LEFT JOIN tutor_subjects ts ON t.id = ts.tutor_id
+    GROUP BY t.id, u.full_name, u.email, u.phone, u.avatar_url;
+  `;
+  return rows;
+}

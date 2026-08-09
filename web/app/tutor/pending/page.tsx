@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TopNavBar } from '../../../src/components/shared/TopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
@@ -8,20 +10,38 @@ import { TutorVerificationSteps } from '../../../src/components/tutor/TutorVerif
 import { Lock, ArrowRight } from 'lucide-react';
 
 export interface TutorPendingPageProps {
- readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function TutorPendingPage({ searchParams }: TutorPendingPageProps) {
- if (searchParams) await searchParams;
+export default function TutorPendingPage({ searchParams }: TutorPendingPageProps) {
+  const [userName, setUserName] = useState('Calon Pengajar');
+  const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
 
- return (
- <div className="bg-surface text-text-primary min-h-screen flex flex-col">
- <TopNavBar
- activeRoute="/tutor/pending"
- role="tutor"
- userName="Sarah Amanda, S.Pd."
- userBadge="Menunggu Verifikasi"
- />
+  useEffect(() => {
+    fetch('/api/user/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          if (data.user.full_name || data.user.name) {
+            setUserName(data.user.full_name || data.user.name);
+          }
+          if (data.user.avatar_url || data.user.image) {
+            setUserAvatar(data.user.avatar_url || data.user.image);
+          }
+        }
+      })
+      .catch((err) => console.error('Error fetching tutor profile:', err));
+  }, []);
+
+  return (
+    <div className="bg-surface text-text-primary min-h-screen flex flex-col">
+      <TopNavBar
+        activeRoute="/tutor/pending"
+        role="tutor"
+        userName={userName}
+        userAvatar={userAvatar}
+        userBadge="Menunggu Verifikasi"
+      />
 
  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
