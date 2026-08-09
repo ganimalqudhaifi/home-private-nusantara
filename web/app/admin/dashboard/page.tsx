@@ -19,7 +19,8 @@ export interface AdminDashboardPageProps {
 }
 
 export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashboardPageProps) {
-  const [tutorsList, setTutorsList] = useState<readonly Tutor[]>(MOCK_TUTORS);
+  const [tutorsList, setTutorsList] = useState<readonly Tutor[]>([]);
+  const [isLoadingTutors, setIsLoadingTutors] = useState<boolean>(true);
   const [stats, setStats] = useState(ADMIN_STATS);
   const pendingTutors = tutorsList.filter((t) => t.status === 'pending');
 
@@ -79,7 +80,8 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
           setTutorsList(dbTutors);
         }
       })
-      .catch((err) => console.error('Failed to fetch admin tutors:', err));
+      .catch((err) => console.error('Failed to fetch admin tutors:', err))
+      .finally(() => setIsLoadingTutors(false));
   }, []);
 
   const {
@@ -180,13 +182,14 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
       {/* 1. Admin KPI Metrics Cards */}
       <AdminKPICards stats={stats} />
 
- {/* 2. Urgent Verification Queue Table */}
- <section>
- <UrgentTutorVerificationQueueTable
- pendingTutors={pendingTutors}
- onAuditTutor={handleAuditTutor}
- />
- </section>
+  {/* 2. Urgent Verification Queue Table */}
+  <section>
+  <UrgentTutorVerificationQueueTable
+  pendingTutors={pendingTutors}
+  isLoading={isLoadingTutors}
+  onAuditTutor={handleAuditTutor}
+  />
+  </section>
 
  {/* 3. Real-Time Sessions Monitoring Feed */}
  <section className="bg-white border border-border-whisper rounded-2xl p-6 shadow-sm space-y-4">

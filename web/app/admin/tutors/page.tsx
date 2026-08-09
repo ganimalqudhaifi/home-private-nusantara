@@ -8,17 +8,17 @@ import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer
 import { TutorActionModal } from '../../../src/components/admin/TutorActionModal';
 import { useDrawer } from '../../../src/hooks/useDrawer';
 import { useModal } from '../../../src/hooks/useModal';
-import { MOCK_TUTORS } from '../../../src/data/mockData';
 import { Tutor } from '../../../src/types';
 import Link from 'next/link';
-import { ShieldCheck, Plus, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export interface AdminTutorsPageProps {
   readonly initialFilter?: string;
 }
 
 export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPageProps) {
-  const [tutors, setTutors] = useState<readonly Tutor[]>(MOCK_TUTORS);
+  const [tutors, setTutors] = useState<readonly Tutor[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetch('/api/admin/tutors')
@@ -54,7 +54,8 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
           setTutors(dbTutors);
         }
       })
-      .catch((err) => console.error('Failed to fetch tutors list:', err));
+      .catch((err) => console.error('Failed to fetch tutors list:', err))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const {
@@ -124,37 +125,25 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
  userBadge="Admin Master"
  />
 
- <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border-whisper">
- <div>
- <div className="flex items-center gap-2 text-xs font-semibold text-text-muted mb-1">
- <Link href="/admin/dashboard" className="hover:text-primary flex items-center gap-1">
- <ArrowLeft className="w-3.5 h-3.5" />
- <span>Kembali ke Dashboard</span>
- </Link>
- </div>
- <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
- Manajemen & Kurasi Pengajar
- </h1>
- <p className="text-sm text-text-muted mt-0.5">
- Sistem verifikasi dokumen, evaluasi microteaching tatap muka, dan kurasi pengajar se-Indonesia.
- </p>
- </div>
+  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
+  <div className="pb-2 border-b border-border-whisper">
+  <div className="flex items-center gap-2 text-xs font-semibold text-text-muted mb-1">
+  <Link href="/admin/dashboard" className="hover:text-primary flex items-center gap-1">
+  <ArrowLeft className="w-3.5 h-3.5" />
+  <span>Kembali ke Dashboard</span>
+  </Link>
+  </div>
+  <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
+  Manajemen & Kurasi Pengajar
+  </h1>
+  <p className="text-sm text-text-muted mt-0.5">
+  Sistem verifikasi dokumen, evaluasi microteaching tatap muka, dan kurasi pengajar se-Indonesia.
+  </p>
+  </div>
 
- <div className="flex items-center gap-3">
- <Link
- href="/auth/register-tutor"
- className="bg-primary-container hover:bg-primary-hover text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
- >
- <Plus className="w-4 h-4" />
- <span>Tambah Tutor Manual</span>
- </Link>
- </div>
- </div>
-
- {/* Directory Table */}
- <TutorDirectoryTable tutors={tutors} onAuditTutor={handleAuditTutor} />
- </main>
+  {/* Directory Table */}
+  <TutorDirectoryTable tutors={tutors} isLoading={isLoading} onAuditTutor={handleAuditTutor} />
+  </main>
 
  {/* Audit Drawer */}
  <TutorAuditDrawer

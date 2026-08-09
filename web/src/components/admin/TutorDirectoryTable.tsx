@@ -7,15 +7,17 @@ import { ShieldCheck, Hourglass, XCircle, AlertTriangle, Phone, Eye, Search } fr
 import { Badge } from'../shared/Badge';
 
 export interface TutorDirectoryTableProps {
- readonly tutors: readonly Tutor[];
- readonly onAuditTutor: (tutor: Tutor) => void;
- readonly className?: string;
+  readonly tutors: readonly Tutor[];
+  readonly isLoading?: boolean;
+  readonly onAuditTutor: (tutor: Tutor) => void;
+  readonly className?: string;
 }
 
 export function TutorDirectoryTable({
- tutors,
- onAuditTutor,
- className ='',
+  tutors,
+  isLoading = false,
+  onAuditTutor,
+  className = '',
 }: TutorDirectoryTableProps) {
  const [filterStatus, setFilterStatus] = useState<string>('all');
  const [filterLevel, setFilterLevel] = useState<string>('all');
@@ -150,68 +152,112 @@ export function TutorDirectoryTable({
  <th className="px-6 py-4 font-semibold text-right">Tindakan</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-border-whisper text-xs">
- {filteredTutors.map((tutor) => (
- <tr
- key={tutor.id}
- className="hover:bg-surface-container-low/40 transition-colors"
- >
- <td className="px-6 py-4">
- <div className="flex items-center gap-3">
- <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-border-whisper shrink-0 bg-gray-100">
-  <Image
-  src={tutor.avatar && tutor.avatar.trim() !== '' ? tutor.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
-  alt={tutor.name}
- width={40}
- height={40}
- className="object-cover w-full h-full"
- unoptimized
- />
- </div>
- <div>
- <p className="font-headline text-sm font-bold text-primary">
- {tutor.name}
- </p>
- <p className="font-mono text-[11px] text-text-muted">{tutor.phone}</p>
- </div>
- </div>
- </td>
- <td className="px-6 py-4 text-text-primary">
- <p className="font-medium">{tutor.university}</p>
- <p className="text-[11px] text-text-muted">{tutor.title}</p>
- </td>
-  <td className="px-6 py-4">
-  <div className="flex flex-wrap gap-1">
-  {(tutor.grades || []).slice(0, 2).map((g) => (
-  <span
-  key={g}
-  className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-900"
-  >
-  {g}
-  </span>
-  ))}
-  {(tutor.grades || []).length > 2 && (
-  <span className="text-[10px] text-text-muted">
-  +{(tutor.grades || []).length - 2}
-  </span>
-  )}
-  </div>
-  </td>
- <td className="px-6 py-4 text-text-muted font-mono">{tutor.registerDate}</td>
- <td className="px-6 py-4">{getStatusBadge(tutor.status)}</td>
- <td className="px-6 py-4 text-right">
- <button
- type="button"
- onClick={() => onAuditTutor(tutor)}
- className="bg-surface-container-low hover:bg-primary-container hover:text-white text-primary text-xs font-bold px-3.5 py-1.5 rounded-xl border border-border-whisper transition-all inline-flex items-center gap-1.5"
- >
- <Eye className="w-3.5 h-3.5" />
- <span>Audit Berkas</span>
- </button>
- </td>
- </tr>
- ))}
- </tbody>
+  <tbody className="divide-y divide-border-whisper text-xs">
+    {isLoading ? (
+      [1, 2, 3].map((idx) => (
+        <tr key={idx} className="animate-pulse">
+          <td className="px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gray-200 shrink-0" />
+              <div className="space-y-1.5 flex-1">
+                <div className="h-3.5 bg-gray-200 rounded w-28" />
+                <div className="h-2.5 bg-gray-100 rounded w-20" />
+              </div>
+            </div>
+          </td>
+          <td className="px-6 py-4">
+            <div className="space-y-1.5">
+              <div className="h-3.5 bg-gray-200 rounded w-32" />
+              <div className="h-2.5 bg-gray-100 rounded w-24" />
+            </div>
+          </td>
+          <td className="px-6 py-4">
+            <div className="h-4 bg-gray-200 rounded w-16" />
+          </td>
+          <td className="px-6 py-4">
+            <div className="h-3.5 bg-gray-200 rounded w-20" />
+          </td>
+          <td className="px-6 py-4">
+            <div className="h-5 bg-gray-200 rounded-full w-24" />
+          </td>
+          <td className="px-6 py-4 text-right">
+            <div className="h-7 bg-gray-200 rounded-xl w-24 ml-auto" />
+          </td>
+        </tr>
+      ))
+    ) : filteredTutors.length === 0 ? (
+      <tr>
+        <td colSpan={6} className="px-6 py-12 text-center text-text-muted">
+          Belum ada pendaftaran pengajar baru di database.
+        </td>
+      </tr>
+    ) : (
+      filteredTutors.map((tutor) => (
+        <tr
+          key={tutor.id}
+          className="hover:bg-surface-container-low/40 transition-colors"
+        >
+          <td className="px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-border-whisper shrink-0 bg-gray-100">
+                <Image
+                  src={
+                    tutor.avatar && tutor.avatar.trim() !== ''
+                      ? tutor.avatar
+                      : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'
+                  }
+                  alt={tutor.name}
+                  width={40}
+                  height={40}
+                  className="object-cover w-full h-full"
+                  unoptimized
+                />
+              </div>
+              <div>
+                <p className="font-headline text-sm font-bold text-primary">
+                  {tutor.name}
+                </p>
+                <p className="font-mono text-[11px] text-text-muted">{tutor.phone}</p>
+              </div>
+            </div>
+          </td>
+          <td className="px-6 py-4 text-text-primary">
+            <p className="font-medium">{tutor.university}</p>
+            <p className="text-[11px] text-text-muted">{tutor.title}</p>
+          </td>
+          <td className="px-6 py-4">
+            <div className="flex flex-wrap gap-1">
+              {(tutor.grades || []).slice(0, 2).map((g) => (
+                <span
+                  key={g}
+                  className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-900"
+                >
+                  {g}
+                </span>
+              ))}
+              {(tutor.grades || []).length > 2 && (
+                <span className="text-[10px] text-text-muted">
+                  +{(tutor.grades || []).length - 2}
+                </span>
+              )}
+            </div>
+          </td>
+          <td className="px-6 py-4 text-text-muted font-mono">{tutor.registerDate}</td>
+          <td className="px-6 py-4">{getStatusBadge(tutor.status)}</td>
+          <td className="px-6 py-4 text-right">
+            <button
+              type="button"
+              onClick={() => onAuditTutor(tutor)}
+              className="bg-surface-container-low hover:bg-primary-container hover:text-white text-primary text-xs font-bold px-3.5 py-1.5 rounded-xl border border-border-whisper transition-all inline-flex items-center gap-1.5"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>Audit Berkas</span>
+            </button>
+          </td>
+        </tr>
+      ))
+    )}
+  </tbody>
  </table>
  </div>
  </div>
