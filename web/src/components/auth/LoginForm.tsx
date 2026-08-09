@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { Button } from '../shared/Button';
 import { authClient } from '@/src/lib/auth-client';
 
@@ -14,14 +14,35 @@ export interface LoginFormProps {
 
 export function LoginForm({ onSuccess, className = '' }: LoginFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<'tutor' | 'admin'>('tutor');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const errorParam = searchParams?.get('error');
+    if (errorParam === 'unregistered_tutor') {
+      setErrorMessage(
+        'Akun Google ini belum terdaftar sebagai pengajar. Silakan daftar terlebih dahulu melalui tab "Daftar Pengajar Baru".'
+      );
+    } else if (errorParam === 'unregistered_admin') {
+      setErrorMessage(
+        'Akun Google ini tidak terdaftar atau tidak memiliki hak akses sebagai Admin.'
+      );
+    }
+  }, [searchParams]);
+
+  const handleRoleChange = (newRole: 'tutor' | 'admin') => {
+    setRole(newRole);
+    setErrorMessage(null);
+  };
 
   const handleGoogleLogin = async () => {
+    setErrorMessage(null);
     try {
       setIsGoogleLoading(true);
       await authClient.signIn.social({
@@ -30,6 +51,15 @@ export function LoginForm({ onSuccess, className = '' }: LoginFormProps) {
       });
     } catch (err) {
       console.error('Google Sign In failed:', err);
+      if (role === 'admin') {
+        setErrorMessage(
+          'Akun Google ini tidak terdaftar atau tidak memiliki hak akses sebagai Admin.'
+        );
+      } else {
+        setErrorMessage(
+          'Akun Google ini belum terdaftar sebagai pengajar. Silakan daftar terlebih dahulu melalui tab "Daftar Pengajar Baru".'
+        );
+      }
     } finally {
       setIsGoogleLoading(false);
     }
@@ -37,13 +67,22 @@ export function LoginForm({ onSuccess, className = '' }: LoginFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
     setIsLoading(true);
 
     setTimeout(() => {
       setIsLoading(false);
+
+      if (role === 'admin' && !email.toLowerCase().includes('admin')) {
+        setErrorMessage(
+          `Akun (${email}) tidak terdaftar atau tidak memiliki hak akses sebagai Admin.`
+        );
+        return;
+      }
+
       if (onSuccess) onSuccess();
 
-      if (role === 'admin' || email.includes('admin')) {
+      if (role === 'admin') {
         router.push('/admin/dashboard');
       } else {
         router.push('/tutor/dashboard');
@@ -57,7 +96,7 @@ export function LoginForm({ onSuccess, className = '' }: LoginFormProps) {
       <div className="flex p-1 bg-surface-container-low rounded-xl gap-1">
         <button
           type="button"
-          onClick={() => setRole('tutor')}
+          onClick={() => handleRoleChange('tutor')}
           className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
             role === 'tutor'
               ? 'bg-white text-primary shadow-xs'
@@ -68,7 +107,7 @@ export function LoginForm({ onSuccess, className = '' }: LoginFormProps) {
         </button>
         <button
           type="button"
-          onClick={() => setRole('admin')}
+          onClick={() => handleRoleChange('admin')}
           className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
             role === 'admin'
               ? 'bg-white text-primary shadow-xs'
@@ -78,6 +117,14 @@ export function LoginForm({ onSuccess, className = '' }: LoginFormProps) {
           Portal Admin
         </button>
       </div>
+
+      {/* Error Alert Banner */}
+      {errorMessage && (
+        <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2.5 animate-fade-in">
+          <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+          <div className="leading-relaxed font-medium">{errorMessage}</div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
