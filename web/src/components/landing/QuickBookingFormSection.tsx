@@ -29,9 +29,14 @@ const TIME_OPTIONS = [
   { label: '18:30 - 20:00', value: '18:30 - 20:00' },
 ] as const;
 
+interface Subject {
+  readonly name: string;
+  readonly desc: string;
+}
+
 interface LevelOptionConfig {
   readonly grades: readonly string[];
-  readonly subjects: readonly string[];
+  readonly subjects: readonly Subject[];
   readonly placeholderNote: string;
 }
 
@@ -44,10 +49,10 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
       'Kelas 1 SD (Remedial Membaca)',
     ],
     subjects: [
-      'Mengenal Huruf & Mengeja',
-      'Menulis Kata & Kalimat',
-      'Berhitung Dasar (Angka & Tambah/Kurang)',
-      'Paket Komplit Calistung',
+      {
+        name: 'Calistung',
+        desc: 'Membaca, menulis dan menghitung dengan menyenangkan',
+      },
     ],
     placeholderNote:
       'Contoh: Anak belum lancar mengeja 2 suku kata, butuh metode belajar visual yang menyenangkan.',
@@ -62,11 +67,14 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
       'Kelas 6 SD (Persiapan Ujian)',
     ],
     subjects: [
-      'Tematik Lengkap & PR Harian',
-      'Matematika SD',
-      'IPA / Sains Tematik',
-      'Bahasa Inggris Dasar',
-      'Bahasa Indonesia',
+      {
+        name: 'Matematika',
+        desc: 'Memahami konsep, logika, dan pemecahan masalah',
+      },
+      {
+        name: 'Bahasa Inggris',
+        desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami',
+      },
     ],
     placeholderNote:
       'Contoh: Butuh bimbingan intensif materi pecahan campuran dan persiapan ulangan harian matematika.',
@@ -78,11 +86,14 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
       'Kelas 9 SMP (Persiapan Masuk SMA)',
     ],
     subjects: [
-      'Matematika SMP (Aljabar & Geometri)',
-      'IPA Fisika',
-      'IPA Biologi',
-      'Bahasa Inggris SMP',
-      'Semua Mapel Utama & PR',
+      {
+        name: 'Matematika',
+        desc: 'Memahami konsep, logika, dan pemecahan masalah',
+      },
+      {
+        name: 'Bahasa Inggris',
+        desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami',
+      },
     ],
     placeholderNote:
       'Contoh: Fokus pendalaman rumus fisika gerak dan aljabar matematika untuk persiapan PTS.',
@@ -98,7 +109,7 @@ export function QuickBookingFormSection() {
 
   // Dynamic Class & Subjects state
   const [selectedGrade, setSelectedGrade] = useState<string>(LEVEL_CONFIGS.sd.grades[3]);
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0]]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0].name]);
 
   const [parentName, setParentName] = useState('');
   const [parentPhone, setParentPhone] = useState('');
@@ -115,7 +126,7 @@ export function QuickBookingFormSection() {
     setLevelId(newLevel);
     const config = LEVEL_CONFIGS[newLevel];
     setSelectedGrade(config.grades[0]);
-    setSelectedSubjects([config.subjects[0]]);
+    setSelectedSubjects([config.subjects[0].name]);
   };
 
   // Toggle Subject selection
@@ -427,24 +438,29 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
             <div className="space-y-2">
               <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4 text-primary-container" />
-                <span>Pilih Mata Pelajaran / Fokus Bimbingan (Bisa pilih lebih dari satu):</span>
+                <span>Pilih Mata Pelajaran / Fokus Bimbingan{currentConfig.subjects.length > 1 ? ' (Bisa pilih lebih dari satu)' : ''}:</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {currentConfig.subjects.map((sub) => {
-                  const isSelected = selectedSubjects.includes(sub);
+                  const isSelected = selectedSubjects.includes(sub.name);
                   return (
                     <button
-                      key={sub}
+                      key={sub.name}
                       type="button"
-                      onClick={() => handleToggleSubject(sub)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                      onClick={() => handleToggleSubject(sub.name)}
+                      className={`px-3.5 py-2.5 rounded-xl text-left border transition-all flex flex-col gap-0.5 ${
                         isSelected
-                          ? 'border-[#DC2626] bg-red-50 text-[#DC2626] font-bold shadow-xs'
-                          : 'border-border-whisper bg-surface-container-lowest text-text-muted hover:text-text-primary'
+                          ? 'border-[#DC2626] bg-red-50 shadow-xs'
+                          : 'border-border-whisper bg-surface-container-lowest hover:border-gray-300'
                       }`}
                     >
-                      <span>{sub}</span>
-                      {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
+                      <span className={`text-xs font-bold flex items-center gap-1.5 ${isSelected ? 'text-[#DC2626]' : 'text-text-primary'}`}>
+                        {sub.name}
+                        {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
+                      </span>
+                      <span className={`text-[10px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
+                        {sub.desc}
+                      </span>
                     </button>
                   );
                 })}
