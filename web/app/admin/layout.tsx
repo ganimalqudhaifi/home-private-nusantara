@@ -12,8 +12,10 @@ export default async function AdminLayout({
 }) {
   try {
     const { data, error } = await auth.getSession();
-    if (error || !data || !data.user) {
-      redirect('/auth');
+
+    if (!data || !data.user) {
+      // If user session is not found yet, allow page to render so authClient can process neon_auth_session_verifier token if present
+      return <>{children}</>;
     }
 
     const authRole = (data.user as any).role;
@@ -41,8 +43,7 @@ export default async function AdminLayout({
     if (err?.digest?.startsWith('NEXT_REDIRECT')) {
       throw err;
     }
-    console.error('Admin layout auth error:', err);
-    redirect('/auth');
+    console.error('Admin layout auth notice:', err);
   }
 
   return <>{children}</>;
