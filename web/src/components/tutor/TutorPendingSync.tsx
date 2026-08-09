@@ -13,34 +13,52 @@ export function TutorPendingSync() {
     const draftRaw = localStorage.getItem('tutor_registration_draft');
     if (!draftRaw) return;
 
-    try {
-      const draft = JSON.parse(draftRaw);
-      if (draft.name) setTutorName(draft.name);
-      setStatus('syncing');
+    let retriesLeft = 3;
 
-      fetch('/api/tutor/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(draft),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            localStorage.removeItem('tutor_registration_draft');
-            setStatus('synced');
-          } else {
-            console.warn('Sync registration notice:', data.error);
-            setStatus('synced'); // Keep user experience smooth
-          }
+    const performSync = () => {
+      try {
+        const draft = JSON.parse(draftRaw);
+        if (draft.name) setTutorName(draft.name);
+        setStatus('syncing');
+
+        fetch('/api/tutor/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(draft),
         })
-        .catch((err) => {
-          console.error('Failed to sync tutor registration:', err);
-          setStatus('synced');
-        });
-    } catch (err) {
-      console.error('Error parsing registration draft:', err);
-      localStorage.removeItem('tutor_registration_draft');
-    }
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              localStorage.removeItem('tutor_registration_draft');
+              setStatus('synced');
+            } else {
+              console.warn('Sync attempt notice:', data.error);
+              if (retriesLeft > 0) {
+                retriesLeft--;
+                setTimeout(performSync, 1200);
+              } else {
+                setStatus('error');
+              }
+            }
+          })
+          .catch((err) => {
+            console.error('Failed to sync tutor registration:', err);
+            if (retriesLeft > 0) {
+              retriesLeft--;
+              setTimeout(performSync, 1200);
+            } else {
+              setStatus('error');
+            }
+          });
+      } catch (err) {
+        console.error('Error parsing registration draft:', err);
+        localStorage.removeItem('tutor_registration_draft');
+      }
+    };
+
+    // Small delay to allow OAuth verifier exchange to settle
+    const timer = setTimeout(performSync, 600);
+    return () => clearTimeout(timer);
   }, []);
 
   if (status === 'syncing') {

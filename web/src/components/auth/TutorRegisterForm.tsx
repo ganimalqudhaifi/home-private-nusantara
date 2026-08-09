@@ -44,18 +44,30 @@ export function TutorRegisterForm({
     setIsLoading(true);
 
     try {
+      const draftId = crypto.randomUUID();
+      const draftData = {
+        draftId,
+        name,
+        university,
+        major,
+        phone,
+        selectedSubjects,
+        cvFileName,
+      };
+
       if (typeof window !== 'undefined') {
-        localStorage.setItem(
-          'tutor_registration_draft',
-          JSON.stringify({
-            name,
-            university,
-            major,
-            phone,
-            selectedSubjects,
-            cvFileName,
-          })
-        );
+        localStorage.setItem('tutor_registration_draft', JSON.stringify(draftData));
+      }
+
+      // Pre-register to database immediately so profile exists
+      try {
+        await fetch('/api/tutor/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(draftData),
+        });
+      } catch (apiErr) {
+        console.warn('Pre-registration save notice:', apiErr);
       }
 
       await authClient.signIn.social({

@@ -4,33 +4,36 @@ import { registerTutorProfile } from '@/src/lib/db-services';
 
 export async function POST(request: Request) {
   try {
-    const { data: sessionData } = await auth.getSession();
-    const body = await request.json();
-    const { name, phone, university, major, selectedSubjects, cvFileName } = body;
-
-    const userId = sessionData?.user?.id || body.userId;
-    const email = sessionData?.user?.email || body.email;
-
-    if (!userId || !email) {
-      return NextResponse.json(
-        { error: 'Pengguna belum terautentikasi dengan Google.' },
-        { status: 401 }
-      );
+    let sessionUser: any = null;
+    try {
+      const { data } = await auth.getSession();
+      if (data?.user) sessionUser = data.user;
+    } catch (e) {
+      console.warn('Session lookup during tutor register:', e);
     }
+
+    const body = await request.json();
+    const { name, phone, university, major, selectedSubjects, cvFileName, draftId } = body;
+
+    const userId = sessionUser?.id || body.userId || draftId || crypto.randomUUID();
+    const email =
+      sessionUser?.email ||
+      body.email ||
+      (phone ? `tutor-${phone.replace(/\D/g, '')}@homeprivatenusantara.id` : `tutor-${userId.slice(0, 8)}@homeprivatenusantara.id`);
 
     const result = await registerTutorProfile({
       userId,
       email,
-      fullName: name || sessionData?.user?.name || 'Calon Pengajar',
+      fullName: name || sessionUser?.name || 'Calon Pengajar',
       phone: phone || '-',
       university: university || '-',
       major: major || '-',
       selectedSubjects: selectedSubjects || [],
       cvFileName,
-      avatarUrl: sessionData?.user?.image || undefined,
+      avatarUrl: sessionUser?.image || undefined,
     });
 
-    return NextResponse.json({ success: true, result });
+    return NextResponse.json({ success: true, result, userId });
   } catch (error: any) {
     console.error('Error registering tutor profile:', error);
     return NextResponse.json(
