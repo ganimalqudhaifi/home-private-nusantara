@@ -10,8 +10,9 @@ export async function GET() {
     }
 
     const authRole = (data.user as any).role;
-    const syncedUser = await syncUserRoleWithAuth(data.user.id, authRole);
-    const dbUser = syncedUser || (await getUserById(data.user.id));
+    const userEmail = data.user.email;
+    const syncedUser = await syncUserRoleWithAuth(data.user.id, userEmail, authRole);
+    const dbUser = syncedUser || (await getUserById(data.user.id, userEmail));
 
     return NextResponse.json({
       authenticated: true,

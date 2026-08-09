@@ -15,7 +15,18 @@ export async function saveQuickConsultation(input: CreateConsultationInput) {
   `;
 }
 
-export async function getUserById(userId: string) {
+export async function getUserById(userId: string, email?: string) {
+  if (email) {
+    const rows = await sql`
+      SELECT id, email, full_name, phone, role, avatar_url, created_at
+      FROM users
+      WHERE id = ${userId} OR email = ${email}
+      ORDER BY CASE WHEN id = ${userId} THEN 1 ELSE 2 END
+      LIMIT 1;
+    `;
+    return rows[0] || null;
+  }
+
   const rows = await sql`
     SELECT id, email, full_name, phone, role, avatar_url, created_at
     FROM users
@@ -170,9 +181,23 @@ export async function getAllTutorsFromDB() {
   return rows;
 }
 
-export async function syncUserRoleWithAuth(userId: string, authRole?: string) {
-  const user = await getUserById(userId);
+export async function syncUserRoleWithAuth(userId: string, email?: string, authRole?: string) {
+  const user = await getUserById(userId, email);
   if (!user) return null;
+
+  // Sync user ID in public.users if matched by email but ID differs
+  if (user.id !== userId) {
+    try {
+      await sql`
+        UPDATE users
+        SET id = ${userId}, updated_at = NOW()
+        WHERE id = ${user.id};
+      `;
+      user.id = userId;
+    } catch (err) {
+      console.warn('User ID sync notice:', err);
+    }
+  }
 
   let isAuthAdmin = authRole === 'admin' || authRole === 'ADMIN';
 
