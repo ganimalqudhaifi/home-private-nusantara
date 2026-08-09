@@ -173,12 +173,27 @@ export function QuickBookingFormSection() {
     return studentCount === 1 ? rateData.oneStudent : rateData.twoStudents;
   }, [levelId, frequency, studentCount]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const selectedPkg = PRICING_PACKAGES.find((p) => p.levelId === levelId);
     const daysStr = selectedDays.join(', ') || 'Belum dipilih';
     const subjectsStr = selectedSubjects.join(', ') || 'Semua Materi';
+
+    try {
+      await fetch('/api/consultation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          parentName: parentName || 'Calon Orang Tua',
+          parentPhone: parentPhone || '-',
+          studentGrade: `${selectedGrade} (${selectedPkg?.levelName || levelId.toUpperCase()})`,
+          preferredSchedule: `${daysStr} | ${preferredTime}`,
+        }),
+      });
+    } catch (err) {
+      console.error('Failed to record consultation:', err);
+    }
 
     const message = `Halo Admin Home Private Nusantara, saya ingin mendaftar/konsultasi les privat di rumah dengan formulir berikut:
 
