@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Modal } from '../shared/Modal';
 import { Student, LevelType } from '../../types';
+import { PROVINCES, getRegencies, getDistricts } from '../../data/wilayahData';
 import {
   UserPlus,
   GraduationCap,
@@ -13,6 +14,7 @@ import {
   School,
   Building,
   AlertCircle,
+  Globe,
 } from 'lucide-react';
 
 export interface CreateStudentModalProps {
@@ -33,11 +35,23 @@ export function CreateStudentModal({
   const [parentName, setParentName] = useState('');
   const [parentPhone, setParentPhone] = useState('');
   const [address, setAddress] = useState('');
-  const [district, setDistrict] = useState('Rappocini');
-  const [city, setCity] = useState('Kota Makassar');
+
+  // Wilayah cascaded state
+  const [provinceCode, setProvinceCode] = useState<string>('73');
+  const [regencyCode, setRegencyCode] = useState<string>('73.71');
+  const [city, setCity] = useState<string>('Kota Makassar');
+  const [districtCode, setDistrictCode] = useState<string>('73.71.03');
+  const [district, setDistrict] = useState<string>('Rappocini');
+
+  // Custom typing toggle if needed
+  const [isCustomCity, setIsCustomCity] = useState<boolean>(false);
+  const [isCustomDistrict, setIsCustomDistrict] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const availableRegencies = getRegencies(provinceCode);
+  const availableDistricts = getDistricts(regencyCode);
 
   const resetForm = () => {
     setName('');
@@ -47,9 +61,74 @@ export function CreateStudentModal({
     setParentName('');
     setParentPhone('');
     setAddress('');
-    setDistrict('Rappocini');
+    setProvinceCode('73');
+    setRegencyCode('73.71');
     setCity('Kota Makassar');
+    setDistrictCode('73.71.03');
+    setDistrict('Rappocini');
+    setIsCustomCity(false);
+    setIsCustomDistrict(false);
     setErrorMsg(null);
+  };
+
+  const handleProvinceChange = (newProvCode: string) => {
+    setProvinceCode(newProvCode);
+    const regencies = getRegencies(newProvCode);
+    if (regencies.length > 0) {
+      const firstReg = regencies[0];
+      setRegencyCode(firstReg.code);
+      setCity(firstReg.name);
+      setIsCustomCity(false);
+
+      const dists = getDistricts(firstReg.code);
+      if (dists.length > 0) {
+        setDistrictCode(dists[0].code);
+        setDistrict(dists[0].name);
+        setIsCustomDistrict(false);
+      }
+    }
+  };
+
+  const handleRegencyChange = (newRegCode: string) => {
+    if (newRegCode === 'CUSTOM') {
+      setIsCustomCity(true);
+      setCity('');
+      setDistrict('');
+      setIsCustomDistrict(true);
+      return;
+    }
+
+    setIsCustomCity(false);
+    setRegencyCode(newRegCode);
+    const selectedReg = availableRegencies.find((r) => r.code === newRegCode);
+    if (selectedReg) {
+      setCity(selectedReg.name);
+    }
+
+    const dists = getDistricts(newRegCode);
+    if (dists.length > 0) {
+      setDistrictCode(dists[0].code);
+      setDistrict(dists[0].name);
+      setIsCustomDistrict(false);
+    } else {
+      setIsCustomDistrict(true);
+      setDistrict('');
+    }
+  };
+
+  const handleDistrictChange = (newDistCode: string) => {
+    if (newDistCode === 'CUSTOM') {
+      setIsCustomDistrict(true);
+      setDistrict('');
+      return;
+    }
+
+    setIsCustomDistrict(false);
+    setDistrictCode(newDistCode);
+    const selectedDist = availableDistricts.find((d) => d.code === newDistCode);
+    if (selectedDist) {
+      setDistrict(selectedDist.name);
+    }
   };
 
   const handleLevelChange = (newLevel: LevelType) => {
@@ -63,7 +142,7 @@ export function CreateStudentModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !parentName.trim() || !parentPhone.trim() || !address.trim()) {
+    if (!name.trim() || !parentName.trim() || !parentPhone.trim() || !address.trim() || !city.trim() || !district.trim()) {
       setErrorMsg('Mohon isi semua bidang yang wajib diisi.');
       return;
     }
@@ -306,34 +385,89 @@ export function CreateStudentModal({
           </div>
         </div>
 
-        {/* Kecamatan & Kota */}
+        {/* Provinsi & Kota / Kabupaten */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-text-primary mb-1">Kecamatan</label>
+            <label className="block text-xs font-semibold text-text-primary mb-1">Provinsi</label>
             <div className="relative">
-              <Building className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-                placeholder="Contoh: Rappocini"
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors"
-              />
+              <Globe className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <select
+                value={provinceCode}
+                onChange={(e) => handleProvinceChange(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-medium appearance-none"
+              >
+                {PROVINCES.map((prov) => (
+                  <option key={prov.code} value={prov.code}>
+                    {prov.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-text-primary mb-1">Kota / Kabupaten</label>
+            <label className="block text-xs font-semibold text-text-primary mb-1">
+              Kota / Kabupaten <span className="text-red-500">*</span>
+            </label>
             <div className="relative">
-              <Building className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+              <Building className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              {isCustomCity ? (
+                <input
+                  type="text"
+                  required
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Ketik Kota / Kabupaten..."
+                  className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors"
+                />
+              ) : (
+                <select
+                  value={regencyCode}
+                  onChange={(e) => handleRegencyChange(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-medium appearance-none"
+                >
+                  {availableRegencies.map((reg) => (
+                    <option key={reg.code} value={reg.code}>
+                      {reg.name}
+                    </option>
+                  ))}
+                  <option value="CUSTOM">+ Ketik Manual (Lainnya)</option>
+                </select>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Kecamatan */}
+        <div>
+          <label className="block text-xs font-semibold text-text-primary mb-1">
+            Kecamatan <span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <Building className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            {isCustomDistrict ? (
               <input
                 type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Contoh: Kota Makassar"
+                required
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                placeholder="Ketik nama Kecamatan..."
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors"
               />
-            </div>
+            ) : (
+              <select
+                value={districtCode}
+                onChange={(e) => handleDistrictChange(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-medium appearance-none"
+              >
+                {availableDistricts.map((dist) => (
+                  <option key={dist.code} value={dist.code}>
+                    {dist.name}
+                  </option>
+                ))}
+                <option value="CUSTOM">+ Ketik Manual (Lainnya)</option>
+              </select>
+            )}
           </div>
         </div>
 
