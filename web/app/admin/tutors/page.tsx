@@ -76,6 +76,16 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
     openAudit(tutor);
   };
 
+  const handleTutorUpdated = (updatedTutor: Tutor) => {
+    setTutors((prev) =>
+      prev.map((t) => (t.id === updatedTutor.id ? updatedTutor : t))
+    );
+  };
+
+  const handleTutorDeleted = (tutorId: string) => {
+    setTutors((prev) => prev.filter((t) => t.id !== tutorId));
+  };
+
   const handleOpenActionModal = (actionType: ActionType, tutor: Tutor) => {
     openAction({ actionType, tutor });
   };
@@ -122,56 +132,62 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
     );
   };
 
- return (
- <div className="bg-surface text-text-primary min-h-screen flex flex-col">
- {/* Top Header */}
- <TopNavBar
- activeRoute="/admin/tutors"
- role="admin"
- userName="Administrator Pusat"
- userBadge="Admin Master"
- />
+  return (
+    <div className="bg-surface text-text-primary min-h-screen flex flex-col">
+      {/* Top Header */}
+      <TopNavBar
+        activeRoute="/admin/tutors"
+        role="admin"
+        userName="Administrator Pusat"
+        userBadge="Admin Master"
+      />
 
-  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
-  <div className="pb-2 border-b border-border-whisper">
-  <div className="flex items-center gap-2 text-xs font-semibold text-text-muted mb-1">
-  <Link href="/admin/dashboard" className="hover:text-primary flex items-center gap-1">
-  <ArrowLeft className="w-3.5 h-3.5" />
-  <span>Kembali ke Dashboard</span>
-  </Link>
-  </div>
-  <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
-  Manajemen & Kurasi Pengajar
-  </h1>
-  <p className="text-sm text-text-muted mt-0.5">
-  Sistem verifikasi dokumen, evaluasi microteaching tatap muka, dan kurasi pengajar se-Indonesia.
-  </p>
-  </div>
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
+        <div className="pb-2 border-b border-border-whisper">
+          <div className="flex items-center gap-2 text-xs font-semibold text-text-muted mb-1">
+            <Link href="/admin/dashboard" className="hover:text-primary flex items-center gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Kembali ke Dashboard</span>
+            </Link>
+          </div>
+          <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
+            Manajemen & Kurasi Pengajar
+          </h1>
+          <p className="text-sm text-text-muted mt-0.5">
+            Sistem verifikasi dokumen, evaluasi microteaching tatap muka, dan kurasi pengajar se-Indonesia.
+          </p>
+        </div>
 
-  {/* Directory Table */}
-  <TutorDirectoryTable tutors={tutors} isLoading={isLoading} onAuditTutor={handleAuditTutor} />
-  </main>
+        {/* Directory Table */}
+        <TutorDirectoryTable
+          tutors={tutors}
+          isLoading={isLoading}
+          onAuditTutor={handleAuditTutor}
+          onTutorUpdated={handleTutorUpdated}
+          onTutorDeleted={handleTutorDeleted}
+        />
+      </main>
 
- {/* Audit Drawer */}
- <TutorAuditDrawer
- isOpen={isAuditOpen}
- onClose={closeAudit}
- tutor={auditTutor}
- onOpenActionModal={handleOpenActionModal}
- />
+      {/* Audit Drawer */}
+      <TutorAuditDrawer
+        isOpen={isAuditOpen}
+        onClose={closeAudit}
+        tutor={auditTutor}
+        onOpenActionModal={handleOpenActionModal}
+      />
 
- {/* Action Modal */}
- {actionModalData && (
- <TutorActionModal
- isOpen={isActionOpen}
- onClose={closeAction}
- actionType={actionModalData.actionType}
- tutor={actionModalData.tutor}
- onConfirm={handleConfirmAction}
- />
- )}
+      {/* Action Modal */}
+      {actionModalData && (
+        <TutorActionModal
+          isOpen={isActionOpen}
+          onClose={closeAction}
+          actionType={actionModalData.actionType}
+          tutor={actionModalData.tutor}
+          onConfirm={handleConfirmAction}
+        />
+      )}
 
- <Footer />
- </div>
- );
+      <Footer />
+    </div>
+  );
 }

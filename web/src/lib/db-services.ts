@@ -688,3 +688,89 @@ export async function deleteStudentFromDB(id: string) {
 
   return deletedUser[0] || { id };
 }
+
+export interface UpdateTutorInput {
+  name: string;
+  phone: string;
+  university: string;
+  degree: string;
+  subjects?: string[];
+  hourlyRate?: number;
+  experienceYears?: number;
+  status?: string;
+  avatarUrl?: string;
+}
+
+export async function updateTutorProfileInDB(tutorId: string, input: UpdateTutorInput) {
+  // Update users table
+  await sql`
+    UPDATE users
+    SET
+      full_name = ${input.name},
+      phone = ${input.phone},
+      avatar_url = COALESCE(${input.avatarUrl || null}, avatar_url),
+      updated_at = NOW()
+    WHERE id = ${tutorId};
+  `;
+
+  // Update tutors table
+  const updatedTutor = await sql`
+    UPDATE tutors
+    SET
+      university = ${input.university},
+      degree = ${input.degree},
+      hourly_rate = ${input.hourlyRate || 150000},
+      experience_years = ${input.experienceYears || 1},
+      status = COALESCE(${input.status || null}, status),
+      updated_at = NOW()
+    WHERE id = ${tutorId}
+    RETURNING *;
+  `;
+
+  // Sync subjects
+  if (input.subjects && Array.isArray(input.subjects)) {
+    await sql`
+      DELETE FROM tutor_subjects
+      WHERE tutor_id = ${tutorId};
+    `;
+
+    for (const subjectName of input.subjects) {
+      await sql`
+        INSERT INTO tutor_subjects (tutor_id, subject_name)
+        VALUES (${tutorId}, ${subjectName})
+        ON CONFLICT DO NOTHING;
+      `;
+    }
+  }
+
+  return updatedTutor[0] || null;
+}
+
+export async function deleteTutorFromDB(tutorId: string) {
+  // Delete associated bookings first
+  await sql`
+    DELETE FROM bookings
+    WHERE tutor_id = ${tutorId};
+  `;
+
+  // Delete tutor subjects
+  await sql`
+    DELETE FROM tutor_subjects
+    WHERE tutor_id = ${tutorId};
+  `;
+
+  // Delete tutor record
+  await sql`
+    DELETE FROM tutors
+    WHERE id = ${tutorId};
+  `;
+
+  // Delete user record
+  const deletedUser = await sql`
+    DELETE FROM users
+    WHERE id = ${tutorId}
+    RETURNING id;
+  `;
+
+  return deletedUser[0] || { id: tutorId };
+}
