@@ -465,11 +465,7 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
           day,
           start_time,
           end_time,
-      CONCAT(
-        address,
-        CASE WHEN district IS NOT NULL AND district != '' THEN CONCAT(', Kecamatan ', district) ELSE '' END,
-        CASE WHEN city IS NOT NULL AND city != '' THEN CONCAT(', ', city) ELSE '' END
-      ) as address,
+          address,
           district,
           city,
           amount,
