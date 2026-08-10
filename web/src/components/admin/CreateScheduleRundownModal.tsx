@@ -24,6 +24,8 @@ import {
   GraduationCap,
 } from 'lucide-react';
 
+const DAYS_OF_WEEK = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
 const TIME_OPTIONS = [
   '08:00 - 09:30',
   '10:00 - 11:30',
@@ -352,7 +354,7 @@ export function CreateScheduleRundownModal({
           <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper space-y-4">
             <div className="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-wider">
               <Sparkles className="w-4 h-4 text-primary-container" />
-              <span>1. Pilih Siswa & Pengaturan Paket Sesi</span>
+              <span>1. Pilih Siswa, Wilayah & Pengaturan Jadwal Belajar</span>
             </div>
 
             {/* Student Selector & Add Student Button */}
@@ -423,19 +425,9 @@ export function CreateScheduleRundownModal({
               </div>
             )}
 
-            {/* Location & Start Date Settings */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-              <div>
-                <label className="font-semibold text-text-muted block mb-1">Tanggal Mulai Pertemuan Ke-1</label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs text-primary"
-                />
-              </div>
-
-              <div>
+            {/* Location Area & Address Settings */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+              <div className="sm:col-span-4">
                 <label className="font-semibold text-text-muted block mb-1">Wilayah Layanan</label>
                 <select
                   value={locationArea}
@@ -445,6 +437,33 @@ export function CreateScheduleRundownModal({
                   <option value="Makassar">Kota Makassar</option>
                   <option value="Gowa">Kabupaten Gowa</option>
                 </select>
+              </div>
+
+              <div className="sm:col-span-8">
+                <label className="font-semibold text-text-muted flex items-center gap-1 mb-1">
+                  <MapPin className="w-3.5 h-3.5 text-red-500" />
+                  <span>Alamat Lengkap / Lokasi Mengajar</span>
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
+                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+                />
+              </div>
+            </div>
+
+            {/* Start Date, Package Count & Day Selection */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label className="font-semibold text-text-muted block mb-1">Tanggal Mulai Pertemuan Ke-1</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs text-primary"
+                />
               </div>
 
               <div>
@@ -462,31 +481,42 @@ export function CreateScheduleRundownModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
-              <div className="sm:col-span-8">
-                <label className="font-semibold text-text-muted flex items-center gap-1 mb-1">
-                  <MapPin className="w-3.5 h-3.5 text-red-500" />
-                  <span>Alamat Lengkap / Lokasi Mengajar</span>
-                </label>
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
-                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
-                />
+            {/* Days Selection Chips */}
+            <div>
+              <label className="font-semibold text-text-primary block mb-1.5">
+                Pilih Hari Belajar Rutin Per Minggu <span className="text-red-500">*</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {DAYS_OF_WEEK.map((day) => {
+                  const isSelected = selectedDays.includes(day);
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => toggleDaySelection(day)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                        isSelected
+                          ? 'bg-primary-container text-white border-primary-container shadow-xs'
+                          : 'bg-white border-border-whisper text-text-muted hover:bg-surface-container-high'
+                      }`}
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
-              <div className="sm:col-span-4 flex items-end">
-                <button
-                  type="button"
-                  onClick={handleGenerateRundown}
-                  className="w-full p-2.5 rounded-xl bg-primary-container hover:bg-primary-hover text-white font-bold text-xs transition-colors shadow-xs flex items-center justify-center gap-1.5"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Generate Rundown</span>
-                </button>
-              </div>
+            {/* Generate Button */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={handleGenerateRundown}
+                className="w-full p-3 rounded-xl bg-primary-container hover:bg-primary-hover text-white font-bold text-xs transition-colors shadow-xs flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Generate Rundown Pertemuan ({packageCount} Sesi)</span>
+              </button>
             </div>
           </div>
 
