@@ -346,7 +346,7 @@ export function CreateScheduleRundownModal({
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        maxWidth="xl"
+        maxWidth="4xl"
         title="Generator Rundown & Pembuat Jadwal Sesi"
       >
         <div className="space-y-6 pt-2 text-xs">
@@ -362,12 +362,12 @@ export function CreateScheduleRundownModal({
               <label className="font-semibold text-text-primary block mb-1.5">
                 Pilih Siswa Terdaftar <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <select
                   value={selectedStudentId}
                   onChange={(e) => handleSelectStudent(e.target.value)}
                   disabled={isLoadingStudents}
-                  className="flex-1 p-2.5 rounded-xl border border-border-whisper bg-white text-xs font-medium outline-none focus:border-primary transition-colors disabled:opacity-50"
+                  className="w-full sm:flex-1 min-w-0 p-2.5 rounded-xl border border-border-whisper bg-white text-xs font-medium outline-none focus:border-primary transition-colors disabled:opacity-50"
                 >
                   {isLoadingStudents ? (
                     <option value="">Memuat data siswa dari database...</option>
@@ -385,7 +385,7 @@ export function CreateScheduleRundownModal({
                 <button
                   type="button"
                   onClick={() => setIsAddStudentModalOpen(true)}
-                  className="px-3.5 py-2.5 bg-primary-container hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-xs transition-colors shrink-0 flex items-center gap-1.5"
+                  className="px-3.5 py-2.5 bg-primary-container hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-xs transition-colors shrink-0 flex items-center justify-center gap-1.5 w-full sm:w-auto"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>+ Tambah Siswa Baru</span>
@@ -395,31 +395,31 @@ export function CreateScheduleRundownModal({
 
             {/* Selected Student Card Summary */}
             {selectedStudentObj && (
-              <div className="p-3.5 rounded-xl bg-white border border-border-whisper flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+              <div className="p-3.5 rounded-xl bg-white border border-border-whisper flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs min-w-0">
+                <div className="space-y-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <User className="w-4 h-4 text-primary shrink-0" />
                     <span className="font-bold text-primary text-sm">{selectedStudentObj.name}</span>
                     <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-900 font-extrabold text-[10px]">
                       {selectedStudentObj.level} Kelas {selectedStudentObj.grade}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 text-text-muted text-[11px]">
+                  <div className="flex items-center gap-3 sm:gap-4 text-text-muted text-[11px] flex-wrap">
                     <span className="flex items-center gap-1">
-                      <GraduationCap className="w-3.5 h-3.5" />
-                      <span>{selectedStudentObj.school}</span>
+                      <GraduationCap className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate max-w-[180px] sm:max-w-xs">{selectedStudentObj.school}</span>
                     </span>
                     <span className="flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5" />
+                      <Phone className="w-3.5 h-3.5 shrink-0" />
                       <span>Wali: {selectedStudentObj.parentName} ({selectedStudentObj.parentPhone})</span>
                     </span>
                   </div>
                 </div>
 
-                <div className="text-right sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-border-whisper">
+                <div className="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-border-whisper shrink-0 min-w-0">
                   <div className="flex items-center gap-1 text-text-muted text-[11px] justify-start sm:justify-end">
                     <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                    <span className="truncate max-w-xs">{selectedStudentObj.address}</span>
+                    <span className="truncate max-w-full sm:max-w-xs">{selectedStudentObj.address}</span>
                   </div>
                 </div>
               </div>
