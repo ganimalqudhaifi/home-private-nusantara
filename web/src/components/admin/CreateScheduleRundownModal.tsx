@@ -22,6 +22,7 @@ import {
   User,
   Phone,
   GraduationCap,
+  School,
 } from 'lucide-react';
 
 const DAYS_OF_WEEK = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
@@ -395,32 +396,63 @@ export function CreateScheduleRundownModal({
 
             {/* Selected Student Card Summary */}
             {selectedStudentObj && (
-              <div className="p-3.5 rounded-xl bg-white border border-border-whisper flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs min-w-0">
-                <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <User className="w-4 h-4 text-primary shrink-0" />
-                    <span className="font-bold text-primary text-sm">{selectedStudentObj.name}</span>
-                    <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-900 font-extrabold text-[10px]">
-                      {selectedStudentObj.level} Kelas {selectedStudentObj.grade}
-                    </span>
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50/60 via-white to-surface-container-low border border-blue-100/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs min-w-0">
+                {/* Left: Avatar & Student Details */}
+                <div className="flex items-start gap-3.5 min-w-0">
+                  <div
+                    className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-white shrink-0 shadow-xs ${
+                      selectedStudentObj.level === 'SD'
+                        ? 'bg-blue-600'
+                        : 'bg-indigo-600'
+                    }`}
+                  >
+                    {selectedStudentObj.level === 'SD' ? (
+                      <BookOpen className="w-5 h-5" />
+                    ) : (
+                      <GraduationCap className="w-5 h-5" />
+                    )}
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-4 text-text-muted text-[11px] flex-wrap">
-                    <span className="flex items-center gap-1">
-                      <GraduationCap className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate max-w-[180px] sm:max-w-xs">{selectedStudentObj.school}</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 shrink-0" />
-                      <span>Wali: {selectedStudentObj.parentName} ({selectedStudentObj.parentPhone})</span>
-                    </span>
+
+                  <div className="space-y-1.5 min-w-0">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="font-headline text-base font-extrabold text-primary">
+                        {selectedStudentObj.name}
+                      </span>
+                      <span
+                        className={`px-3 py-1 rounded-xl text-xs font-bold border shadow-2xs ${
+                          selectedStudentObj.level === 'SD'
+                            ? 'bg-blue-100 border-blue-200 text-blue-950'
+                            : 'bg-indigo-100 border-indigo-200 text-indigo-950'
+                        }`}
+                      >
+                        {selectedStudentObj.level} Kelas {selectedStudentObj.grade}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-text-muted text-xs flex-wrap">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <School className="w-4 h-4 text-primary/70 shrink-0" />
+                        <span className="truncate max-w-[200px] sm:max-w-xs">{selectedStudentObj.school}</span>
+                      </span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>
+                          Wali: <strong className="text-text-primary font-semibold">{selectedStudentObj.parentName}</strong> ({selectedStudentObj.parentPhone})
+                        </span>
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-border-whisper shrink-0 min-w-0">
-                  <div className="flex items-center gap-1 text-text-muted text-[11px] justify-start sm:justify-end">
+                {/* Right: Address Mini Card */}
+                <div className="p-2.5 px-3 rounded-xl bg-white border border-border-whisper shadow-2xs shrink-0 min-w-0 md:max-w-xs">
+                  <div className="flex items-center gap-1 text-[10px] font-extrabold text-text-muted uppercase tracking-wider mb-0.5">
                     <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                    <span className="truncate max-w-full sm:max-w-xs">{selectedStudentObj.address}</span>
+                    <span>Alamat Domisili Siswa</span>
                   </div>
+                  <p className="text-xs text-text-primary font-medium truncate" title={selectedStudentObj.address}>
+                    {selectedStudentObj.address}
+                  </p>
                 </div>
               </div>
             )}
