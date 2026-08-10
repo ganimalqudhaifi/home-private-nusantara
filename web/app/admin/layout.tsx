@@ -21,7 +21,7 @@ export default async function AdminLayout({
     const authRole = (data.user as any).role;
     const userEmail = data.user.email;
     const userName = data.user.name;
-    const userImage = data.user.image;
+    const userImage = data.user.image || (data.user as any).avatarUrl || (data.user as any).picture || null;
 
     const dbUser =
       (await syncUserRoleWithAuth(data.user.id, userEmail, authRole, userName, userImage)) ||

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../shared/Modal';
 import { Tutor, TutorStatus } from '../../types';
-import { Edit3, User, Phone, GraduationCap, Award, DollarSign, Clock, AlertCircle, Check } from 'lucide-react';
+import { Edit3, User, Phone, GraduationCap, Award, AlertCircle, Check } from 'lucide-react';
 import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
 
 export interface EditTutorModalProps {
@@ -24,8 +24,6 @@ export function EditTutorModal({
   const [university, setUniversity] = useState('');
   const [degree, setDegree] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [hourlyRate, setHourlyRate] = useState<number>(150000);
-  const [experienceYears, setExperienceYears] = useState<number>(1);
   const [status, setStatus] = useState<TutorStatus>('verified');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -38,8 +36,6 @@ export function EditTutorModal({
       setUniversity(tutor.university || '');
       setDegree(tutor.title || 'S1');
       setSelectedSubjects(tutor.subjects ? [...tutor.subjects] : ['Matematika SD']);
-      setHourlyRate(tutor.hourlyRate || 150000);
-      setExperienceYears(tutor.experienceYears || 1);
       setStatus(tutor.status || 'verified');
       setErrorMsg(null);
     }
@@ -77,8 +73,6 @@ export function EditTutorModal({
           university: university.trim(),
           degree: degree.trim() || 'S1',
           subjects: selectedSubjects,
-          hourlyRate: Number(hourlyRate),
-          experienceYears: Number(experienceYears),
           status,
         }),
       });
@@ -96,8 +90,6 @@ export function EditTutorModal({
         university: university.trim(),
         title: degree.trim() || 'S1',
         subjects: selectedSubjects,
-        hourlyRate: Number(hourlyRate),
-        experienceYears: Number(experienceYears),
         status,
         isVerified: status === 'verified' || status === 'active',
       };
@@ -109,7 +101,6 @@ export function EditTutorModal({
       onClose();
     } catch (err: any) {
       console.error('Error updating tutor:', err);
-      // Fallback local update if offline / dev
       const fallbackUpdated: Tutor = {
         ...tutor,
         name: name.trim(),
@@ -117,8 +108,6 @@ export function EditTutorModal({
         university: university.trim(),
         title: degree.trim() || 'S1',
         subjects: selectedSubjects,
-        hourlyRate: Number(hourlyRate),
-        experienceYears: Number(experienceYears),
         status,
         isVerified: status === 'verified' || status === 'active',
       };
@@ -146,7 +135,7 @@ export function EditTutorModal({
           </div>
           <div>
             <h3 className="font-headline text-lg font-bold text-primary">Edit Data Pengajar</h3>
-            <p className="text-xs text-text-muted">Perbarui profil akademis, tarif, mata pelajaran, dan status pengajar</p>
+            <p className="text-xs text-text-muted">Perbarui profil akademis, mata pelajaran, dan status pengajar</p>
           </div>
         </div>
       }
@@ -160,7 +149,6 @@ export function EditTutorModal({
           </div>
         )}
 
-        {/* Nama Pengajar & Phone */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-text-primary mb-1">
@@ -197,7 +185,6 @@ export function EditTutorModal({
           </div>
         </div>
 
-        {/* Universitas & Jurusan */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-text-primary mb-1">
@@ -231,55 +218,22 @@ export function EditTutorModal({
           </div>
         </div>
 
-        {/* Tarif Per Sesi & Pengalaman */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-text-primary mb-1">Tarif Mengajar Per Sesi (Rp)</label>
-            <div className="relative">
-              <DollarSign className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="number"
-                step={10000}
-                value={hourlyRate}
-                onChange={(e) => setHourlyRate(Number(e.target.value))}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-mono font-medium text-primary"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-text-primary mb-1">Pengalaman Mengajar (Tahun)</label>
-            <div className="relative">
-              <Clock className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="number"
-                min={0}
-                max={40}
-                value={experienceYears}
-                onChange={(e) => setExperienceYears(Number(e.target.value))}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-mono font-medium text-primary"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-text-primary mb-1">Status Akun Pengajar</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as TutorStatus)}
-              className="w-full px-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-semibold text-primary"
-            >
-              <option value="verified">Terverifikasi (Verified)</option>
-              <option value="pending">Pending Review</option>
-              <option value="on_leave">Sedang Cuti</option>
-              <option value="inactive">Nonaktif</option>
-              <option value="suspended">Dibekukan (Suspended)</option>
-              <option value="rejected">Ditolak (Rejected)</option>
-            </select>
-          </div>
+        <div>
+          <label className="block text-xs font-semibold text-text-primary mb-1">Status Akun Pengajar</label>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as TutorStatus)}
+            className="w-full px-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-semibold text-primary"
+          >
+            <option value="verified">Terverifikasi (Verified)</option>
+            <option value="pending">Pending Review</option>
+            <option value="on_leave">Sedang Cuti</option>
+            <option value="inactive">Nonaktif</option>
+            <option value="suspended">Dibekukan (Suspended)</option>
+            <option value="rejected">Ditolak (Rejected)</option>
+          </select>
         </div>
 
-        {/* Subjects Checkboxes */}
         <div>
           <label className="block text-xs font-semibold text-text-primary mb-1.5">
             Mata Pelajaran yang Diampu <span className="text-red-500">*</span>
@@ -306,7 +260,6 @@ export function EditTutorModal({
           </div>
         </div>
 
-        {/* Footer Actions */}
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-whisper">
           <button
             type="button"

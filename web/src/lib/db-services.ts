@@ -92,7 +92,7 @@ export async function updateTutorVerification(
 
 export interface RegisterTutorInput {
   userId: string;
-  email: string;
+  email?: string;
   fullName: string;
   phone: string;
   university: string;
@@ -108,7 +108,7 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
     INSERT INTO users (id, email, full_name, phone, role, avatar_url, updated_at)
     VALUES (
       ${input.userId},
-      ${input.email},
+      ${input.email || null},
       ${input.fullName},
       ${input.phone},
       'tutor',
@@ -119,16 +119,18 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
       full_name = EXCLUDED.full_name,
       phone = EXCLUDED.phone,
       role = 'tutor',
+      avatar_url = COALESCE(EXCLUDED.avatar_url, users.avatar_url),
       updated_at = NOW();
   `;
 
   await sql`
-    INSERT INTO tutors (id, title, university, degree, portfolio_url, status, updated_at)
+    INSERT INTO tutors (id, title, university, degree, subjects, portfolio_url, status, updated_at)
     VALUES (
       ${input.userId},
       ${input.major},
       ${input.university},
       ${input.major},
+      ${input.selectedSubjects || []},
       ${input.portfolioUrl || input.cvFileName || null},
       'pending',
       NOW()
@@ -137,19 +139,10 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
       title = EXCLUDED.title,
       university = EXCLUDED.university,
       degree = EXCLUDED.degree,
+      subjects = EXCLUDED.subjects,
       portfolio_url = EXCLUDED.portfolio_url,
       updated_at = NOW();
   `;
-
-  if (input.selectedSubjects && input.selectedSubjects.length > 0) {
-    for (const subjectName of input.selectedSubjects) {
-      await sql`
-        INSERT INTO tutor_subjects (tutor_id, subject_name)
-        VALUES (${input.userId}, ${subjectName})
-        ON CONFLICT (tutor_id, subject_name) DO NOTHING;
-      `;
-    }
-  }
 
   return { success: true, tutorId: input.userId };
 }
@@ -165,20 +158,11 @@ export async function getAllTutorsFromDB() {
       t.university,
       t.degree as major,
       t.status,
-      t.rating,
-      t.review_count as "reviewCount",
-      t.hourly_rate as "hourlyRate",
-      t.experience_years as "experienceYears",
+      t.subjects,
       t.portfolio_url as "portfolioUrl",
-      t.created_at as "createdAt",
-      COALESCE(
-        ARRAY_AGG(ts.subject_name) FILTER (WHERE ts.subject_name IS NOT NULL),
-        '{}'
-      ) as subjects
+      t.created_at as "createdAt"
     FROM tutors t
-    JOIN users u ON t.id = u.id
-    LEFT JOIN tutor_subjects ts ON t.id = ts.tutor_id
-    GROUP BY t.id, u.full_name, u.email, u.phone, u.avatar_url;
+    JOIN users u ON t.id = u.id;
   `;
   return rows;
 }
@@ -192,8 +176,8 @@ export async function syncUserRoleWithAuth(
 ) {
   let user = await getUserById(userId, email);
 
-  // If user is missing from public.users but authenticated via auth, auto-provision
-  if (!user && email) {
+  // Auto-provision missing user
+  if (!user) {
     try {
       const isInitialAdmin = authRole === 'admin' || authRole === 'ADMIN';
       const initialRole = isInitialAdmin ? 'admin' : 'student';
@@ -202,7 +186,7 @@ export async function syncUserRoleWithAuth(
         INSERT INTO users (id, email, full_name, phone, role, avatar_url, created_at, updated_at)
         VALUES (
           ${userId},
-          ${email},
+          ${email || null},
           ${fullName || 'Pengguna'},
           '-',
           ${initialRole},
@@ -210,7 +194,8 @@ export async function syncUserRoleWithAuth(
           NOW(),
           NOW()
         )
-        ON CONFLICT (email) DO UPDATE SET
+        ON CONFLICT (id) DO UPDATE SET
+          avatar_url = COALESCE(${avatarUrl || null}, users.avatar_url),
           updated_at = NOW()
         RETURNING id, email, full_name, phone, role, avatar_url, created_at;
       `;
@@ -222,9 +207,22 @@ export async function syncUserRoleWithAuth(
 
   if (!user) return null;
 
+  // Fix avatar_url when missing or changed from OAuth login
+  if (avatarUrl && avatarUrl.trim() !== '' && user.avatar_url !== avatarUrl) {
+    try {
+      await sql`
+        UPDATE users
+        SET avatar_url = ${avatarUrl}, updated_at = NOW()
+        WHERE id = ${user.id};
+      `;
+      user.avatar_url = avatarUrl;
+    } catch (err) {
+      console.warn('Avatar update notice:', err);
+    }
+  }
+
   let isAuthAdmin = authRole === 'admin' || authRole === 'ADMIN';
 
-  // Automatically check Neon Auth internal user table (neon_auth.user / neon_auth.users) if not yet identified as admin
   if (!isAuthAdmin && user.role !== 'admin') {
     try {
       const neonAuthRows = await sql`
@@ -241,7 +239,6 @@ export async function syncUserRoleWithAuth(
     }
   }
 
-  // Automatically promote user role to admin in public.users if neon_auth specifies admin
   if (isAuthAdmin && user.role !== 'admin') {
     await sql`
       UPDATE users
@@ -379,14 +376,13 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
         const isSMP = (firstSession.subject || '').toLowerCase().includes('smp');
         const level = isSMP ? 'SMP' : 'SD';
         const grade = isSMP ? 7 : 4;
-        const studentEmail = `siswa_${Date.now()}_${Math.floor(Math.random() * 1000)}@homeprivatenusantara.com`;
 
-        // Create base user row for student to fulfill Foreign Key constraint
+        // Create base user row for student (email is optional/null)
         const userRow = await sql`
           INSERT INTO users (id, email, full_name, phone, role, created_at, updated_at)
           VALUES (
             gen_random_uuid(),
-            ${studentEmail},
+            NULL,
             ${firstSession.studentName},
             ${firstSession.parentPhone || '08123456789'},
             'student',
@@ -547,13 +543,11 @@ export interface CreateStudentInput {
 }
 
 export async function createStudentInDB(input: CreateStudentInput) {
-  const studentEmail = `siswa_${Date.now()}_${Math.floor(Math.random() * 1000)}@homeprivatenusantara.com`;
-
   const userRow = await sql`
     INSERT INTO users (id, email, full_name, phone, role, created_at, updated_at)
     VALUES (
       gen_random_uuid(),
-      ${studentEmail},
+      NULL,
       ${input.name},
       ${input.parentPhone},
       'student',
@@ -667,19 +661,16 @@ export async function updateStudentInDB(id: string, input: UpdateStudentInput) {
 }
 
 export async function deleteStudentFromDB(id: string) {
-  // Delete associated bookings first to preserve foreign key constraints
   await sql`
     DELETE FROM bookings
     WHERE student_id = ${id};
   `;
 
-  // Delete student record
   await sql`
     DELETE FROM students
     WHERE id = ${id};
   `;
 
-  // Delete user record
   const deletedUser = await sql`
     DELETE FROM users
     WHERE id = ${id}
@@ -695,14 +686,11 @@ export interface UpdateTutorInput {
   university: string;
   degree: string;
   subjects?: string[];
-  hourlyRate?: number;
-  experienceYears?: number;
   status?: string;
   avatarUrl?: string;
 }
 
 export async function updateTutorProfileInDB(tutorId: string, input: UpdateTutorInput) {
-  // Update users table
   await sql`
     UPDATE users
     SET
@@ -713,59 +701,32 @@ export async function updateTutorProfileInDB(tutorId: string, input: UpdateTutor
     WHERE id = ${tutorId};
   `;
 
-  // Update tutors table
   const updatedTutor = await sql`
     UPDATE tutors
     SET
       university = ${input.university},
       degree = ${input.degree},
-      hourly_rate = ${input.hourlyRate || 150000},
-      experience_years = ${input.experienceYears || 1},
+      subjects = COALESCE(${input.subjects ? input.subjects : null}, subjects),
       status = COALESCE(${input.status || null}, status),
       updated_at = NOW()
     WHERE id = ${tutorId}
     RETURNING *;
   `;
 
-  // Sync subjects
-  if (input.subjects && Array.isArray(input.subjects)) {
-    await sql`
-      DELETE FROM tutor_subjects
-      WHERE tutor_id = ${tutorId};
-    `;
-
-    for (const subjectName of input.subjects) {
-      await sql`
-        INSERT INTO tutor_subjects (tutor_id, subject_name)
-        VALUES (${tutorId}, ${subjectName})
-        ON CONFLICT DO NOTHING;
-      `;
-    }
-  }
-
   return updatedTutor[0] || null;
 }
 
 export async function deleteTutorFromDB(tutorId: string) {
-  // Delete associated bookings first
   await sql`
     DELETE FROM bookings
     WHERE tutor_id = ${tutorId};
   `;
 
-  // Delete tutor subjects
-  await sql`
-    DELETE FROM tutor_subjects
-    WHERE tutor_id = ${tutorId};
-  `;
-
-  // Delete tutor record
   await sql`
     DELETE FROM tutors
     WHERE id = ${tutorId};
   `;
 
-  // Delete user record
   const deletedUser = await sql`
     DELETE FROM users
     WHERE id = ${tutorId}

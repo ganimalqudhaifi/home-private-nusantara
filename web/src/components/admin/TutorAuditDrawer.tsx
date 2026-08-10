@@ -21,7 +21,6 @@ import {
   User,
   GraduationCap,
   Award,
-  DollarSign,
   Check,
   AlertCircle,
 } from 'lucide-react';
@@ -47,8 +46,6 @@ export function TutorAuditDrawer({
   const [university, setUniversity] = useState('');
   const [degree, setDegree] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [hourlyRate, setHourlyRate] = useState<number>(150000);
-  const [experienceYears, setExperienceYears] = useState<number>(1);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -60,8 +57,6 @@ export function TutorAuditDrawer({
       setUniversity(tutor.university || '');
       setDegree(tutor.title || 'S1');
       setSelectedSubjects(tutor.subjects ? [...tutor.subjects] : ['Matematika SD']);
-      setHourlyRate(tutor.hourlyRate || 150000);
-      setExperienceYears(tutor.experienceYears || 1);
       setErrorMsg(null);
       setSuccessMsg(null);
       setIsEditing(false);
@@ -101,8 +96,6 @@ export function TutorAuditDrawer({
       university: university.trim(),
       title: degree.trim() || 'S1',
       subjects: selectedSubjects,
-      hourlyRate: Number(hourlyRate),
-      experienceYears: Number(experienceYears),
     };
 
     try {
@@ -116,8 +109,6 @@ export function TutorAuditDrawer({
           university: university.trim(),
           degree: degree.trim() || 'S1',
           subjects: selectedSubjects,
-          hourlyRate: Number(hourlyRate),
-          experienceYears: Number(experienceYears),
           status: tutor.status,
         }),
       });
@@ -285,37 +276,6 @@ export function TutorAuditDrawer({
                     value={degree}
                     onChange={(e) => setDegree(e.target.value)}
                     className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-medium text-primary"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[11px] font-semibold text-text-primary mb-1">Tarif Per Sesi (Rp)</label>
-                <div className="relative">
-                  <DollarSign className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="number"
-                    step={10000}
-                    value={hourlyRate}
-                    onChange={(e) => setHourlyRate(Number(e.target.value))}
-                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-mono font-medium text-primary"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-text-primary mb-1">Pengalaman (Tahun)</label>
-                <div className="relative">
-                  <Clock className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="number"
-                    min={0}
-                    max={40}
-                    value={experienceYears}
-                    onChange={(e) => setExperienceYears(Number(e.target.value))}
-                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-mono font-medium text-primary"
                   />
                 </div>
               </div>

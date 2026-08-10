@@ -87,7 +87,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { tutorId, name, phone, university, degree, subjects, hourlyRate, experienceYears, status, avatarUrl } = body;
+    const { tutorId, name, phone, university, degree, subjects, status, avatarUrl } = body;
 
     if (!tutorId || !name || !phone || !university) {
       return NextResponse.json(
@@ -102,8 +102,6 @@ export async function PUT(request: Request) {
       university: String(university).trim(),
       degree: degree ? String(degree).trim() : 'S1',
       subjects: Array.isArray(subjects) ? subjects : undefined,
-      hourlyRate: hourlyRate ? Number(hourlyRate) : 150000,
-      experienceYears: experienceYears ? Number(experienceYears) : 1,
       status: status ? String(status) : undefined,
       avatarUrl: avatarUrl ? String(avatarUrl) : undefined,
     });
