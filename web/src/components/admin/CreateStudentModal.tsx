@@ -111,7 +111,7 @@ export function CreateStudentModal({
         school: school.trim() || (level === 'SD' ? 'SD Nusantara' : 'SMP Nusantara'),
         parentName: parentName.trim(),
         parentPhone: parentPhone.trim(),
-        address: `${address.trim()}, ${district.trim()} ${city.trim()}`,
+        address: `${address.trim()}, Kecamatan ${district.trim()}, ${city.trim()}`,
         totalSessions: 0,
         activeBookings: 0,
         joinDate: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),

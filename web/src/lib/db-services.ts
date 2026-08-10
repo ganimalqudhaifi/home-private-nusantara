@@ -465,7 +465,11 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
           day,
           start_time,
           end_time,
-          address,
+      CONCAT(
+        address,
+        CASE WHEN district IS NOT NULL AND district != '' THEN CONCAT(', Kecamatan ', district) ELSE '' END,
+        CASE WHEN city IS NOT NULL AND city != '' THEN CONCAT(', ', city) ELSE '' END
+      ) as address,
           district,
           city,
           amount,
@@ -513,7 +517,11 @@ export async function getAllStudentsFromDB() {
         COALESCE(s.school_name, 'SD/SMP Nusantara') as school,
         COALESCE(s.parent_name, 'Wali Murid') as "parentName",
         COALESCE(s.parent_phone, u.phone, '-') as "parentPhone",
-        CONCAT(s.address, ', ', COALESCE(s.district, ''), ' ', COALESCE(s.city, '')) as address,
+        CONCAT(
+          s.address,
+          CASE WHEN s.district IS NOT NULL AND s.district != '' THEN CONCAT(', Kecamatan ', s.district) ELSE '' END,
+          CASE WHEN s.city IS NOT NULL AND s.city != '' THEN CONCAT(', ', s.city) ELSE '' END
+        ) as address,
         COUNT(b.id) as "totalSessions",
         COUNT(b.id) FILTER (WHERE b.status = 'scheduled' OR b.status = 'in_progress') as "activeBookings",
         TO_CHAR(s.created_at, 'DD Mon YYYY') as "joinDate"
