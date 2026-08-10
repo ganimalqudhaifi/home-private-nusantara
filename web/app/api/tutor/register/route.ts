@@ -9,17 +9,23 @@ export async function POST(request: Request) {
       const { data } = await auth.getSession();
       if (data?.user) sessionUser = data.user;
     } catch (e) {
-      console.warn('Session lookup during tutor register:', e);
+      console.warn('Session lookup during tutor register notice:', e);
     }
 
     const body = await request.json();
-    const { name, phone, university, major, selectedSubjects, portfolioUrl, cvFileName, draftId } = body;
+    const { name, phone, university, major, selectedSubjects, portfolioUrl, cvFileName } = body;
 
-    const userId = sessionUser?.id || body.userId || draftId || crypto.randomUUID();
-    const email =
-      sessionUser?.email ||
-      body.email ||
-      (phone ? `tutor-${phone.replace(/\D/g, '')}@homeprivatenusantara.id` : `tutor-${userId.slice(0, 8)}@homeprivatenusantara.id`);
+    const userId = sessionUser?.id || body.userId;
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Pengguna harus login terlebih dahulu dengan akun Google.' },
+        { status: 401 }
+      );
+    }
+
+    const email = sessionUser?.email || body.email || null;
+    const avatarUrl =
+      sessionUser?.image || (sessionUser as any)?.avatarUrl || (sessionUser as any)?.picture || null;
 
     const result = await registerTutorProfile({
       userId,
@@ -30,7 +36,7 @@ export async function POST(request: Request) {
       major: major || '-',
       selectedSubjects: selectedSubjects || [],
       portfolioUrl: portfolioUrl || cvFileName,
-      avatarUrl: sessionUser?.image || undefined,
+      avatarUrl,
     });
 
     return NextResponse.json({ success: true, result, userId });

@@ -377,41 +377,23 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
         const level = isSMP ? 'SMP' : 'SD';
         const grade = isSMP ? 7 : 4;
 
-        // Create base user row for student (email is optional/null)
-        const userRow = await sql`
-          INSERT INTO users (id, email, full_name, phone, role, created_at, updated_at)
+        const newStudent = await sql`
+          INSERT INTO students (id, parent_name, parent_phone, student_name, level, grade, school_name, address, district, city)
           VALUES (
             gen_random_uuid(),
-            NULL,
-            ${firstSession.studentName},
+            ${firstSession.parentName || 'Wali Murid'},
             ${firstSession.parentPhone || '08123456789'},
-            'student',
-            NOW(),
-            NOW()
+            ${firstSession.studentName},
+            ${level},
+            ${grade},
+            ${isSMP ? 'SMP Nusantara' : 'SD Nusantara'},
+            ${firstSession.address || 'Jl. Hertasning'},
+            'Rappocini',
+            ${firstSession.city || 'Kota Makassar'}
           )
           RETURNING id;
         `;
-        const newUserId = userRow[0]?.id;
-
-        if (newUserId) {
-          const newStudent = await sql`
-            INSERT INTO students (id, parent_name, parent_phone, student_name, level, grade, school_name, address, district, city)
-            VALUES (
-              ${newUserId},
-              ${firstSession.parentName || 'Wali Murid'},
-              ${firstSession.parentPhone || '08123456789'},
-              ${firstSession.studentName},
-              ${level},
-              ${grade},
-              ${isSMP ? 'SMP Nusantara' : 'SD Nusantara'},
-              ${firstSession.address || 'Jl. Hertasning'},
-              'Rappocini',
-              ${firstSession.city || 'Kota Makassar'}
-            )
-            RETURNING id;
-          `;
-          studentIdToUse = newStudent[0]?.id || newUserId;
-        }
+        studentIdToUse = newStudent[0]?.id || null;
       }
     } catch (e) {
       console.warn('Student provision notice:', e);
@@ -503,12 +485,12 @@ export async function getAllStudentsFromDB() {
     const rows = await sql`
       SELECT 
         s.id,
-        COALESCE(s.student_name, u.full_name, 'Siswa Nusantara') as name,
+        COALESCE(s.student_name, 'Siswa Nusantara') as name,
         s.level,
         s.grade,
         COALESCE(s.school_name, 'SD/SMP Nusantara') as school,
         COALESCE(s.parent_name, 'Wali Murid') as "parentName",
-        COALESCE(s.parent_phone, u.phone, '-') as "parentPhone",
+        COALESCE(s.parent_phone, '-') as "parentPhone",
         CONCAT(
           s.address,
           CASE WHEN s.district IS NOT NULL AND s.district != '' THEN CONCAT(', Kecamatan ', s.district) ELSE '' END,
@@ -518,9 +500,8 @@ export async function getAllStudentsFromDB() {
         COUNT(b.id) FILTER (WHERE b.status = 'scheduled' OR b.status = 'in_progress') as "activeBookings",
         TO_CHAR(s.created_at, 'DD Mon YYYY') as "joinDate"
       FROM students s
-      LEFT JOIN users u ON s.id = u.id
       LEFT JOIN bookings b ON s.id = b.student_id
-      GROUP BY s.id, s.student_name, u.full_name, s.level, s.grade, s.school_name, s.parent_name, s.parent_phone, u.phone, s.address, s.district, s.city, s.created_at
+      GROUP BY s.id, s.student_name, s.level, s.grade, s.school_name, s.parent_name, s.parent_phone, s.address, s.district, s.city, s.created_at
       ORDER BY s.created_at DESC;
     `;
     return rows;
@@ -543,21 +524,6 @@ export interface CreateStudentInput {
 }
 
 export async function createStudentInDB(input: CreateStudentInput) {
-  const userRow = await sql`
-    INSERT INTO users (id, email, full_name, phone, role, created_at, updated_at)
-    VALUES (
-      gen_random_uuid(),
-      NULL,
-      ${input.name},
-      ${input.parentPhone},
-      'student',
-      NOW(),
-      NOW()
-    )
-    RETURNING id;
-  `;
-  const userId = userRow[0]?.id;
-
   const studentRow = await sql`
     INSERT INTO students (
       id,
@@ -573,7 +539,7 @@ export async function createStudentInDB(input: CreateStudentInput) {
       created_at,
       updated_at
     ) VALUES (
-      ${userId},
+      gen_random_uuid(),
       ${input.parentName},
       ${input.parentPhone},
       ${input.name},
@@ -616,15 +582,6 @@ export interface UpdateStudentInput {
 }
 
 export async function updateStudentInDB(id: string, input: UpdateStudentInput) {
-  await sql`
-    UPDATE users
-    SET
-      full_name = ${input.name},
-      phone = ${input.parentPhone},
-      updated_at = NOW()
-    WHERE id = ${id};
-  `;
-
   const updatedRows = await sql`
     UPDATE students
     SET
@@ -666,18 +623,13 @@ export async function deleteStudentFromDB(id: string) {
     WHERE student_id = ${id};
   `;
 
-  await sql`
+  const deletedStudent = await sql`
     DELETE FROM students
-    WHERE id = ${id};
-  `;
-
-  const deletedUser = await sql`
-    DELETE FROM users
     WHERE id = ${id}
     RETURNING id;
   `;
 
-  return deletedUser[0] || { id };
+  return deletedStudent[0] || { id };
 }
 
 export interface UpdateTutorInput {

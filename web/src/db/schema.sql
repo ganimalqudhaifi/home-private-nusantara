@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS tutors (
 
 -- 3. Students Table (Student & Parent Details)
 CREATE TABLE IF NOT EXISTS students (
-    id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_name VARCHAR(255) NOT NULL,
     parent_name VARCHAR(255) NOT NULL,
     parent_phone VARCHAR(50) NOT NULL,
