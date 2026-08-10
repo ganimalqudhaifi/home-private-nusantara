@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Tutor, TutorStatus } from '../../types';
-import { ShieldCheck, Hourglass, XCircle, AlertTriangle, Eye, Search, Coffee, UserX, Edit3, Trash2 } from 'lucide-react';
-import { EditTutorModal } from './EditTutorModal';
+import { ShieldCheck, Hourglass, XCircle, AlertTriangle, Eye, Search, Coffee, UserX, Trash2 } from 'lucide-react';
 import { DeleteTutorModal } from './DeleteTutorModal';
 
 export interface TutorDirectoryTableProps {
@@ -28,7 +27,6 @@ export function TutorDirectoryTable({
   const [filterLevel, setFilterLevel] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const [selectedTutorForEdit, setSelectedTutorForEdit] = useState<Tutor | null>(null);
   const [selectedTutorForDelete, setSelectedTutorForDelete] = useState<Tutor | null>(null);
 
   const filteredTutors = tutors.filter((tutor) => {
@@ -210,8 +208,7 @@ export function TutorDirectoryTable({
               <tr>
                 <th className="px-6 py-4 font-semibold">Pengajar & Kontak</th>
                 <th className="px-6 py-4 font-semibold">Pendidikan & Kampus</th>
-                <th className="px-6 py-4 font-semibold">Jenjang Diampu</th>
-                <th className="px-6 py-4 font-semibold">Waktu Daftar</th>
+                <th className="px-6 py-4 font-semibold">Mata Pelajaran yang Diampu</th>
                 <th className="px-6 py-4 font-semibold">Status Akun</th>
                 <th className="px-6 py-4 font-semibold text-right font-medium">Tindakan</th>
               </tr>
@@ -236,10 +233,7 @@ export function TutorDirectoryTable({
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-gray-200 rounded w-16" />
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="h-3.5 bg-gray-200 rounded w-20" />
+                      <div className="h-4 bg-gray-200 rounded w-24" />
                     </td>
                     <td className="px-6 py-4">
                       <div className="h-5 bg-gray-200 rounded-full w-24" />
@@ -251,7 +245,7 @@ export function TutorDirectoryTable({
                 ))
               ) : filteredTutors.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-text-muted">
+                  <td colSpan={5} className="px-6 py-12 text-center text-text-muted">
                     Belum ada pendaftaran pengajar di database.
                   </td>
                 </tr>
@@ -291,22 +285,21 @@ export function TutorDirectoryTable({
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {(tutor.grades || []).slice(0, 2).map((g) => (
+                        {(tutor.subjects || []).slice(0, 2).map((sub) => (
                           <span
-                            key={g}
+                            key={sub}
                             className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-900"
                           >
-                            {g}
+                            {sub}
                           </span>
                         ))}
-                        {(tutor.grades || []).length > 2 && (
+                        {(tutor.subjects || []).length > 2 && (
                           <span className="text-[10px] text-text-muted">
-                            +{(tutor.grades || []).length - 2}
+                            +{(tutor.subjects || []).length - 2}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-text-muted font-mono">{tutor.registerDate}</td>
                     <td className="px-6 py-4">{getStatusBadge(tutor.status)}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
@@ -318,15 +311,6 @@ export function TutorDirectoryTable({
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>Audit</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setSelectedTutorForEdit(tutor)}
-                          className="p-1.5 text-primary hover:bg-surface-container-high rounded-xl transition-colors"
-                          title="Edit Data Pengajar"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
                         </button>
 
                         <button
@@ -346,13 +330,6 @@ export function TutorDirectoryTable({
           </table>
         </div>
       </div>
-
-      <EditTutorModal
-        isOpen={!!selectedTutorForEdit}
-        tutor={selectedTutorForEdit}
-        onClose={() => setSelectedTutorForEdit(null)}
-        onTutorUpdated={onTutorUpdated}
-      />
 
       <DeleteTutorModal
         isOpen={!!selectedTutorForDelete}

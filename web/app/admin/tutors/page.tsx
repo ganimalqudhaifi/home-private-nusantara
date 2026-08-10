@@ -174,6 +174,7 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
         onClose={closeAudit}
         tutor={auditTutor}
         onOpenActionModal={handleOpenActionModal}
+        onTutorUpdated={handleTutorUpdated}
       />
 
       {/* Action Modal */}

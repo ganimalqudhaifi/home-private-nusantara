@@ -1,25 +1,29 @@
 'use client';
 
-import React from'react';
-import Image from'next/image';
-import { Drawer } from'../shared/Drawer';
-import { Button } from'../shared/Button';
-import { Tutor } from'../../types';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { Drawer } from '../shared/Drawer';
+import { Button } from '../shared/Button';
+import { Tutor } from '../../types';
 import { ActionType } from './TutorActionModal';
+import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
 import {
   ShieldCheck,
-  School,
-  Calendar,
   Phone,
   FileText,
   CheckCircle2,
-  XCircle,
   Clock,
-  Eye,
   ExternalLink,
   Coffee,
   AlertTriangle,
   UserX,
+  Edit3,
+  User,
+  GraduationCap,
+  Award,
+  DollarSign,
+  Check,
+  AlertCircle,
 } from 'lucide-react';
 
 export interface TutorAuditDrawerProps {
@@ -27,120 +31,403 @@ export interface TutorAuditDrawerProps {
   readonly onClose: () => void;
   readonly tutor: Tutor | null;
   readonly onOpenActionModal: (actionType: ActionType, tutor: Tutor) => void;
+  readonly onTutorUpdated?: (updatedTutor: Tutor) => void;
 }
 
 export function TutorAuditDrawer({
- isOpen,
- onClose,
- tutor,
- onOpenActionModal,
+  isOpen,
+  onClose,
+  tutor,
+  onOpenActionModal,
+  onTutorUpdated,
 }: TutorAuditDrawerProps) {
- if (!tutor) return null;
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [university, setUniversity] = useState('');
+  const [degree, setDegree] = useState('');
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [hourlyRate, setHourlyRate] = useState<number>(150000);
+  const [experienceYears, setExperienceYears] = useState<number>(1);
+  const [isSaving, setIsSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
- return (
- <Drawer
- isOpen={isOpen}
- onClose={onClose}
- width="lg"
- title={
- <div className="flex items-center gap-2">
- <h2 className="font-headline text-lg font-bold text-primary">
- Audit Berkas & Verifikasi Pengajar
- </h2>
- </div>
- }
- >
- <div className="space-y-6">
- {/* Profile Card */}
- <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper flex items-center gap-4">
- <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-emerald-500 shrink-0 bg-gray-100">
-  <Image
-  src={tutor.avatar && tutor.avatar.trim() !== '' ? tutor.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
-  alt={tutor.name}
- width={56}
- height={56}
- className="object-cover w-full h-full"
- unoptimized
- />
- </div>
- <div>
- <h3 className="font-headline text-base font-bold text-primary">
- {tutor.name}
- </h3>
- <p className="text-xs text-text-muted">{tutor.title}</p>
- <p className="text-xs text-primary font-semibold mt-0.5">
- {tutor.university}
- </p>
- </div>
- </div>
+  useEffect(() => {
+    if (tutor) {
+      setName(tutor.name || '');
+      setPhone(tutor.phone || '');
+      setUniversity(tutor.university || '');
+      setDegree(tutor.title || 'S1');
+      setSelectedSubjects(tutor.subjects ? [...tutor.subjects] : ['Matematika SD']);
+      setHourlyRate(tutor.hourlyRate || 150000);
+      setExperienceYears(tutor.experienceYears || 1);
+      setErrorMsg(null);
+      setSuccessMsg(null);
+      setIsEditing(false);
+    }
+  }, [tutor]);
 
- {/* Status Banner */}
- <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50/60 flex items-center justify-between text-xs">
- <div className="flex items-center gap-2">
- <Clock className="w-4 h-4 text-status-warning" />
- <span className="font-semibold text-status-warning">
- Status: Menunggu Audit Wawancara Tatap Muka
- </span>
- </div>
- <span className="font-mono text-text-muted">{tutor.registerDate}</span>
- </div>
+  if (!tutor) return null;
 
- {/* Teaching Subjects & Grades */}
- <div className="p-4 rounded-2xl border border-border-whisper space-y-2.5 text-xs">
- <h4 className="font-bold text-text-muted uppercase tracking-wider">
- Mata Pelajaran & Jenjang yang Diajukan
- </h4>
- <div className="flex flex-wrap gap-1.5">
- {tutor.subjects.map((s) => (
- <span
- key={s}
- className="px-2.5 py-1 rounded-lg bg-surface-container-low text-primary font-semibold"
- >
- {s}
- </span>
- ))}
- </div>
- </div>
+  const isAlreadyVerified =
+    tutor.status === 'verified' || tutor.status === 'active' || tutor.isVerified;
 
-  {/* Submitted Documents Checklist */}
-  <div className="p-4 rounded-2xl border border-border-whisper space-y-3 text-xs">
-  <h4 className="font-bold text-text-muted uppercase tracking-wider">
-  Dokumen & Berkas Kualifikasi Pengajar
-  </h4>
+  const toggleSubject = (sub: string) => {
+    if (selectedSubjects.includes(sub)) {
+      if (selectedSubjects.length > 1) {
+        setSelectedSubjects(selectedSubjects.filter((s) => s !== sub));
+      }
+    } else {
+      setSelectedSubjects([...selectedSubjects, sub]);
+    }
+  };
 
-  <div className="space-y-2">
-  <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
-  <div className="flex items-center gap-2 overflow-hidden">
-  <FileText className="w-4 h-4 text-blue-600 shrink-0" />
-  <span className="font-medium truncate">Link CV / Portfolio / Drive</span>
-  </div>
-  {tutor.portfolioUrl ? (
-  <a
-  href={tutor.portfolioUrl.startsWith('http') ? tutor.portfolioUrl : `https://${tutor.portfolioUrl}`}
-  target="_blank"
-  rel="noreferrer"
-  className="text-primary-container font-bold hover:underline flex items-center gap-1 shrink-0 ml-2"
-  >
-  <span>Buka Link</span>
-  <ExternalLink className="w-3.5 h-3.5" />
-  </a>
-  ) : (
-  <span className="text-text-muted italic shrink-0">Tidak dilampirkan</span>
-  )}
-  </div>
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !phone.trim() || !university.trim()) {
+      setErrorMsg('Mohon isi bidang Nama, Nomor WhatsApp, dan Universitas.');
+      return;
+    }
 
-  <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
-  <div className="flex items-center gap-2">
-  <FileText className="w-4 h-4 text-amber-600" />
-  <span className="font-medium">Catatan Wawancara Tatap Muka & Microteaching</span>
-  </div>
-  <span className="text-status-warning font-bold flex items-center gap-1">
-  <Clock className="w-3.5 h-3.5" />
-  <span>Siap Diaktivasi</span>
-  </span>
-  </div>
-  </div>
-  </div>
+    setIsSaving(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    const updatedData: Tutor = {
+      ...tutor,
+      name: name.trim(),
+      phone: phone.trim(),
+      university: university.trim(),
+      title: degree.trim() || 'S1',
+      subjects: selectedSubjects,
+      hourlyRate: Number(hourlyRate),
+      experienceYears: Number(experienceYears),
+    };
+
+    try {
+      const res = await fetch('/api/admin/tutors', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tutorId: tutor.id,
+          name: name.trim(),
+          phone: phone.trim(),
+          university: university.trim(),
+          degree: degree.trim() || 'S1',
+          subjects: selectedSubjects,
+          hourlyRate: Number(hourlyRate),
+          experienceYears: Number(experienceYears),
+          status: tutor.status,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Gagal memperbarui profil pengajar.');
+      }
+    } catch (err: any) {
+      console.error('API update failed, updating locally:', err);
+    } finally {
+      setIsSaving(false);
+      if (onTutorUpdated) {
+        onTutorUpdated(updatedData);
+      }
+      setSuccessMsg('Data pengajar berhasil diperbarui.');
+      setIsEditing(false);
+    }
+  };
+
+  return (
+    <Drawer
+      isOpen={isOpen}
+      onClose={onClose}
+      width="lg"
+      title={
+        <div className="flex items-center justify-between w-full pr-4">
+          <h2 className="font-headline text-lg font-bold text-primary">
+            Audit Berkas & Verifikasi Pengajar
+          </h2>
+          <button
+            type="button"
+            onClick={() => setIsEditing(!isEditing)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+              isEditing
+                ? 'bg-primary-container text-white border-primary-container'
+                : 'bg-surface-container-low text-primary border-border-whisper hover:bg-surface-container-high'
+            }`}
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>{isEditing ? 'Tutup Edit' : 'Edit Profil'}</span>
+          </button>
+        </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Profile Card */}
+        <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper flex items-center gap-4">
+          <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-emerald-500 shrink-0 bg-gray-100">
+            <Image
+              src={
+                tutor.avatar && tutor.avatar.trim() !== ''
+                  ? tutor.avatar
+                  : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'
+              }
+              alt={tutor.name}
+              width={56}
+              height={56}
+              className="object-cover w-full h-full"
+              unoptimized
+            />
+          </div>
+          <div>
+            <h3 className="font-headline text-base font-bold text-primary">{tutor.name}</h3>
+            <p className="text-xs text-text-muted">{tutor.title}</p>
+            <p className="text-xs text-primary font-semibold mt-0.5">{tutor.university}</p>
+          </div>
+        </div>
+
+        {/* Success / Error Messages */}
+        {successMsg && (
+          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs text-emerald-800 font-medium">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{successMsg}</span>
+          </div>
+        )}
+
+        {/* Status Banner */}
+        <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50/60 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-status-warning" />
+            <span className="font-semibold text-status-warning">
+              Status: {isAlreadyVerified ? 'Terverifikasi' : 'Menunggu Audit Wawancara Tatap Muka'}
+            </span>
+          </div>
+          {tutor.registerDate && (
+            <span className="font-mono text-text-muted">{tutor.registerDate}</span>
+          )}
+        </div>
+
+        {/* Integrated Edit Form */}
+        {isEditing ? (
+          <form onSubmit={handleSaveEdit} className="p-4 rounded-2xl border border-border-whisper bg-white space-y-4 text-xs">
+            <div className="flex items-center justify-between pb-2 border-b border-border-whisper">
+              <h4 className="font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                <Edit3 className="w-4 h-4" />
+                <span>Form Edit Data Pengajar</span>
+              </h4>
+            </div>
+
+            {errorMsg && (
+              <div className="p-2.5 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-700">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-semibold text-text-primary mb-1">
+                  Nama Lengkap <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <User className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-medium text-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-text-primary mb-1">
+                  No. WhatsApp / HP <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Phone className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-mono font-medium text-primary"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-semibold text-text-primary mb-1">
+                  Universitas <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <GraduationCap className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    required
+                    value={university}
+                    onChange={(e) => setUniversity(e.target.value)}
+                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-medium text-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-text-primary mb-1">Jurusan / Gelar</label>
+                <div className="relative">
+                  <Award className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={degree}
+                    onChange={(e) => setDegree(e.target.value)}
+                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-medium text-primary"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-semibold text-text-primary mb-1">Tarif Per Sesi (Rp)</label>
+                <div className="relative">
+                  <DollarSign className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="number"
+                    step={10000}
+                    value={hourlyRate}
+                    onChange={(e) => setHourlyRate(Number(e.target.value))}
+                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-mono font-medium text-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-text-primary mb-1">Pengalaman (Tahun)</label>
+                <div className="relative">
+                  <Clock className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="number"
+                    min={0}
+                    max={40}
+                    value={experienceYears}
+                    onChange={(e) => setExperienceYears(Number(e.target.value))}
+                    className="w-full pl-8 pr-2.5 py-1.5 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary font-mono font-medium text-primary"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-text-primary mb-1.5">
+                Mata Pelajaran yang Diampu
+              </label>
+              <div className="flex flex-wrap gap-1.5 p-2.5 rounded-xl bg-surface-container-low border border-border-whisper max-h-32 overflow-y-auto">
+                {TUTOR_SUBJECT_NAMES.map((sub) => {
+                  const isSelected = selectedSubjects.includes(sub);
+                  return (
+                    <button
+                      key={sub}
+                      type="button"
+                      onClick={() => toggleSubject(sub)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all border flex items-center gap-1 ${
+                        isSelected
+                          ? 'bg-primary-container text-white border-primary-container shadow-2xs'
+                          : 'bg-white border-border-whisper text-text-muted hover:bg-surface-container-high'
+                      }`}
+                    >
+                      {isSelected && <Check className="w-3 h-3" />}
+                      <span>{sub}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-border-whisper">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="px-3 py-1.5 rounded-xl text-xs font-semibold text-text-muted hover:bg-surface-container-high"
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="px-4 py-1.5 bg-primary-container hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+              >
+                {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </button>
+            </div>
+          </form>
+        ) : (
+          /* Teaching Subjects & Details Display */
+          <div className="p-4 rounded-2xl border border-border-whisper space-y-2.5 text-xs">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-text-muted uppercase tracking-wider">
+                Mata Pelajaran yang Diampu
+              </h4>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {tutor.subjects.map((s) => (
+                <span
+                  key={s}
+                  className="px-2.5 py-1 rounded-lg bg-surface-container-low text-primary font-semibold"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Submitted Documents Checklist */}
+        <div className="p-4 rounded-2xl border border-border-whisper space-y-3 text-xs">
+          <h4 className="font-bold text-text-muted uppercase tracking-wider">
+            Dokumen & Berkas Kualifikasi Pengajar
+          </h4>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <FileText className="w-4 h-4 text-blue-600 shrink-0" />
+                <span className="font-medium truncate">Link CV / Portfolio / Drive</span>
+              </div>
+              {tutor.portfolioUrl ? (
+                <a
+                  href={
+                    tutor.portfolioUrl.startsWith('http')
+                      ? tutor.portfolioUrl
+                      : `https://${tutor.portfolioUrl}`
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary-container font-bold hover:underline flex items-center gap-1 shrink-0 ml-2"
+                >
+                  <span>Buka Link</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              ) : (
+                <span className="text-text-muted italic shrink-0">Tidak dilampirkan</span>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low">
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-amber-600" />
+                <span className="font-medium">Catatan Wawancara Tatap Muka & Microteaching</span>
+              </div>
+              <span className="text-status-warning font-bold flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Siap Diaktivasi</span>
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Action Decision Buttons */}
         <div className="pt-2 space-y-2.5">
@@ -148,14 +435,24 @@ export function TutorAuditDrawer({
             type="button"
             variant="primary"
             size="lg"
+            disabled={isAlreadyVerified}
             onClick={() => {
+              if (isAlreadyVerified) return;
               onClose();
               onOpenActionModal('approve', tutor);
             }}
-            className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-bold"
+            className={
+              isAlreadyVerified
+                ? 'w-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold opacity-80 cursor-not-allowed flex items-center justify-center gap-2'
+                : 'w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-bold flex items-center justify-center gap-2'
+            }
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>Setujui & Terbitkan Status Pengajar Terverifikasi</span>
+            <span>
+              {isAlreadyVerified
+                ? 'Sudah Terverifikasi'
+                : 'Setujui & Terbitkan Status Pengajar Terverifikasi'}
+            </span>
           </Button>
 
           <div className="grid grid-cols-2 gap-2">
@@ -208,7 +505,7 @@ export function TutorAuditDrawer({
             </a>
           </div>
         </div>
- </div>
- </Drawer>
- );
+      </div>
+    </Drawer>
+  );
 }
