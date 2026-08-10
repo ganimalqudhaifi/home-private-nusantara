@@ -4,20 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../shared/Modal';
 import { Tutor, TutorStatus } from '../../types';
 import { Edit3, User, Phone, GraduationCap, Award, DollarSign, Clock, AlertCircle, Check } from 'lucide-react';
-
-const AVAILABLE_SUBJECT_OPTIONS = [
-  'Calistung',
-  'Matematika SD',
-  'Bahasa Inggris SD',
-  'IPA SD',
-  'IPS SD',
-  'Matematika SMP',
-  'Bahasa Inggris SMP',
-  'IPA SMP',
-  'IPS SMP',
-  'Fisika SMP',
-  'Biologi SMP',
-];
+import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
 
 export interface EditTutorModalProps {
   readonly isOpen: boolean;
@@ -298,7 +285,7 @@ export function EditTutorModal({
             Mata Pelajaran yang Diampu <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-surface-container-low border border-border-whisper max-h-36 overflow-y-auto">
-            {AVAILABLE_SUBJECT_OPTIONS.map((sub) => {
+            {TUTOR_SUBJECT_NAMES.map((sub) => {
               const isSelected = selectedSubjects.includes(sub);
               return (
                 <button

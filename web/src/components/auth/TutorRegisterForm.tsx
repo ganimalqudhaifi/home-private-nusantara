@@ -5,19 +5,12 @@ import { useRouter } from 'next/navigation';
 import { User, School, Phone, Link as LinkIcon, CheckCircle2, Check } from 'lucide-react';
 import { Button } from '../shared/Button';
 import { authClient } from '@/src/lib/auth-client';
+import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
 
 export interface TutorRegisterFormProps {
   readonly onSuccess?: () => void;
   readonly className?: string;
 }
-
-const SUBJECT_OPTIONS = [
-  'Matematika SD',
-  'Bahasa Inggris SD',
-  'Matematika SMP',
-  'Bahasa Inggris SMP',
-  'Calistung',
-] as const;
 
 export function TutorRegisterForm({
   onSuccess,
@@ -184,7 +177,7 @@ export function TutorRegisterForm({
           Pilihan Bidang & Mata Pelajaran yang Diampu (Bisa pilih lebih dari satu)
         </label>
         <div className="flex flex-wrap gap-2">
-          {SUBJECT_OPTIONS.map((subject) => {
+          {TUTOR_SUBJECT_NAMES.map((subject) => {
             const isSelected = selectedSubjects.includes(subject);
             return (
               <button

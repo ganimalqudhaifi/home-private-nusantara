@@ -5,6 +5,7 @@ import { Modal } from '../shared/Modal';
 import { Tutor, StudentSession, Student } from '../../types';
 import { MOCK_TUTORS } from '../../data/mockData';
 import { CreateStudentModal } from './CreateStudentModal';
+import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
 import {
   Calendar,
   Clock,
@@ -33,14 +34,6 @@ const TIME_OPTIONS = [
   '13:00 - 14:30',
   '16:00 - 17:30',
   '18:30 - 20:00',
-];
-
-const SUBJECT_OPTIONS = [
-  'Calistung',
-  'Matematika SD',
-  'Bahasa Inggris SD',
-  'Matematika SMP',
-  'Bahasa Inggris SMP',
 ];
 
 export interface ScheduleItem {
@@ -617,7 +610,7 @@ export function CreateScheduleRundownModal({
                               onChange={(e) => handleItemChange(item.id, 'subject', e.target.value)}
                               className="p-1.5 rounded-lg border border-border-whisper text-xs font-semibold text-primary outline-none bg-white"
                             >
-                              {SUBJECT_OPTIONS.map((s) => (
+                              {TUTOR_SUBJECT_NAMES.map((s) => (
                                 <option key={s} value={s}>
                                   {s}
                                 </option>
