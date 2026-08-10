@@ -9,6 +9,7 @@ import {
   Check,
   BookOpen,
   GraduationCap,
+  Sparkles,
 } from 'lucide-react';
 
 const DAYS_OF_WEEK = [
@@ -18,7 +19,6 @@ const DAYS_OF_WEEK = [
   'Kamis',
   'Jumat',
   'Sabtu',
-  'Minggu',
 ] as const;
 
 const TIME_OPTIONS = [
@@ -102,6 +102,7 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
 
 export function QuickBookingFormSection() {
   const [levelId, setLevelId] = useState<'calistung' | 'sd' | 'smp'>('sd');
+  const [bookingPeriod, setBookingPeriod] = useState<'monthly' | '3months'>('monthly');
   const [frequency, setFrequency] = useState<'2x' | '3x'>('2x');
   const [studentCount, setStudentCount] = useState<1 | 2>(1);
   const [selectedDays, setSelectedDays] = useState<string[]>(['Senin', 'Kamis']);
@@ -182,13 +183,34 @@ export function QuickBookingFormSection() {
     }
   };
 
-  // Calculate Price
-  const estimatedPrice = useMemo(() => {
+  // Calculate Price with Promo 3 Months (Discount Rp 102.000)
+  const { estimatedPrice, originalPrice, totalSessions, discountAmount } = useMemo(() => {
     const pkg = PRICING_PACKAGES.find((p) => p.levelId === levelId);
-    if (!pkg) return 0;
+    if (!pkg) return { estimatedPrice: 0, originalPrice: 0, totalSessions: 8, discountAmount: 0 };
     const rateData = frequency === '2x' ? pkg.rates.twoDays : pkg.rates.threeDays;
-    return studentCount === 1 ? rateData.oneStudent : rateData.twoStudents;
-  }, [levelId, frequency, studentCount]);
+    const baseMonthly = studentCount === 1 ? rateData.oneStudent : rateData.twoStudents;
+
+    if (bookingPeriod === '3months') {
+      const raw3Months = baseMonthly * 3;
+      const discount = 102000; // Promo 3 bulan hemat 102.000
+      const finalPrice = raw3Months - discount;
+      const sessions = frequency === '2x' ? 24 : 36;
+      return {
+        estimatedPrice: finalPrice,
+        originalPrice: raw3Months,
+        totalSessions: sessions,
+        discountAmount: discount,
+      };
+    }
+
+    const sessions = frequency === '2x' ? 8 : 12;
+    return {
+      estimatedPrice: baseMonthly,
+      originalPrice: baseMonthly,
+      totalSessions: sessions,
+      discountAmount: 0,
+    };
+  }, [levelId, frequency, studentCount, bookingPeriod]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,13 +246,18 @@ export function QuickBookingFormSection() {
         : `- Rincian Siswa 1: ${studentName1 || 'Siswa 1'} (${selectedGrade1} - ${selectedSubjects1.join(', ') || 'Semua Materi'})
 - Rincian Siswa 2: ${studentName2 || 'Siswa 2'} (${selectedGrade2} - ${selectedSubjects2.join(', ') || 'Semua Materi'})`;
 
+    const periodMsg =
+      bookingPeriod === '3months'
+        ? `Promo 3 Bulan (${totalSessions} Sesi - Hemat Rp 102.000)`
+        : `Paket 1 Bulan (${totalSessions} Sesi)`;
+
     const message = `Halo Admin Home Private Nusantara, saya ingin mendaftar/konsultasi les privat di rumah dengan formulir berikut:
 
 *Rincian Paket & Jadwal:*
-- Program: ${selectedPkg?.levelName || levelId.toUpperCase()}
+- Program: ${selectedPkg?.levelName || levelId.toUpperCase()} (${periodMsg})
 ${studentDetailsMsg}
 - Frekuensi: ${frequency} seminggu (${studentCount} Siswa)
-- Estimasi Biaya: Rp ${estimatedPrice.toLocaleString('id-ID')} / bulan
+- Estimasi Biaya: Rp ${estimatedPrice.toLocaleString('id-ID')} ${bookingPeriod === '3months' ? '(Potongan Hemat Rp 102.000)' : '/ bulan'}
 - Pilihan Hari Belajar: ${daysStr}
 - Pilihan Waktu Belajar: ${preferredTime}
 
@@ -307,65 +334,114 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
               })}
             </div>
 
-            {/* Frequency & Student Count Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            {/* Periode, Frequency & Student Count Grid */}
+            <div className="space-y-4 pt-2">
+              {/* Periode Belajar Selector */}
               <div>
                 <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">
-                  Frekuensi Belajar Per Minggu
+                  Pilihan Paket & Durasi Belajar
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <button
                     type="button"
-                    onClick={() => handleFrequencyChange('2x')}
-                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
-                      frequency === '2x'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border-whisper bg-surface-container-low text-text-primary'
+                    onClick={() => setBookingPeriod('monthly')}
+                    className={`py-3 px-4 rounded-2xl text-xs font-bold border transition-all text-left flex items-center justify-between ${
+                      bookingPeriod === 'monthly'
+                        ? 'border-primary bg-primary text-white shadow-xs'
+                        : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
                     }`}
                   >
-                    2x Seminggu (8 sesi)
+                    <div>
+                      <p className="font-bold">Paket 1 Bulan (Standar)</p>
+                      <p className={`text-[11px] font-normal ${bookingPeriod === 'monthly' ? 'text-white/80' : 'text-text-muted'}`}>
+                        {frequency === '2x' ? '8 Pertemuan Sesi' : '12 Pertemuan Sesi'}
+                      </p>
+                    </div>
+                    {bookingPeriod === 'monthly' && <Check className="w-4 h-4 text-white" />}
                   </button>
+
                   <button
                     type="button"
-                    onClick={() => handleFrequencyChange('3x')}
-                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
-                      frequency === '3x'
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border-whisper bg-surface-container-low text-text-primary'
+                    onClick={() => setBookingPeriod('3months')}
+                    className={`py-3 px-4 rounded-2xl text-xs font-bold border transition-all text-left flex items-center justify-between relative overflow-hidden ${
+                      bookingPeriod === '3months'
+                        ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                        : 'border-amber-300 bg-amber-50/80 hover:bg-amber-100/60 text-amber-950'
                     }`}
                   >
-                    3x Seminggu (12 sesi)
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-200 shrink-0" />
+                        <p className="font-extrabold">Promo 3 Bulan (Hemat Rp 102.000)</p>
+                      </div>
+                      <p className={`text-[11px] font-normal ${bookingPeriod === '3months' ? 'text-white/90' : 'text-amber-800'}`}>
+                        {frequency === '2x' ? 'Total 24 Pertemuan' : 'Total 36 Pertemuan'} • Hemat Rp 102.000
+                      </p>
+                    </div>
+                    {bookingPeriod === '3months' && <Check className="w-4 h-4 text-white" />}
                   </button>
                 </div>
               </div>
 
-              <div>
-                <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">
-                  Jumlah Siswa Dalam 1 Sesi
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setStudentCount(1)}
-                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
-                      studentCount === 1
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border-whisper bg-surface-container-low text-text-primary'
-                    }`}
-                  >
-                    1 Siswa (Privat)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStudentCount(2)}
-                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
-                      studentCount === 2
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-border-whisper bg-surface-container-low text-text-primary'
-                    }`}
-                  >
-                    2 Siswa (Grup Hemat)
-                  </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <div>
+                  <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">
+                    Frekuensi Belajar Per Minggu
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleFrequencyChange('2x')}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
+                        frequency === '2x'
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-border-whisper bg-surface-container-low text-text-primary'
+                      }`}
+                    >
+                      2x Seminggu ({bookingPeriod === '3months' ? '24 sesi/3bln' : '8 sesi/bln'})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleFrequencyChange('3x')}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
+                        frequency === '3x'
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-border-whisper bg-surface-container-low text-text-primary'
+                      }`}
+                    >
+                      3x Seminggu ({bookingPeriod === '3months' ? '36 sesi/3bln' : '12 sesi/bln'})
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">
+                    Jumlah Siswa Dalam 1 Sesi
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setStudentCount(1)}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
+                        studentCount === 1
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-border-whisper bg-surface-container-low text-text-primary'
+                      }`}
+                    >
+                      1 Siswa (Privat)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStudentCount(2)}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
+                        studentCount === 2
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-border-whisper bg-surface-container-low text-text-primary'
+                      }`}
+                    >
+                      2 Siswa (Grup Hemat)
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -791,15 +867,30 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
           {/* Pricing Summary & Action CTA */}
           <div className="p-5 sm:p-6 rounded-2xl bg-surface-container-low border border-border-whisper flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <span className="text-xs text-text-muted uppercase tracking-wider block mb-1">
-                Estimasi Biaya Paket ({frequency} / Minggu - {studentCount} Siswa):
-              </span>
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs text-text-muted uppercase tracking-wider block">
+                  Estimasi Biaya Paket ({frequency} / Minggu - {studentCount} Siswa):
+                </span>
+                {bookingPeriod === '3months' && (
+                  <span className="px-2 py-0.5 rounded-md bg-amber-100 border border-amber-300 text-amber-900 text-[10px] font-extrabold flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-600" />
+                    <span>Hemat Rp 102.000</span>
+                  </span>
+                )}
+              </div>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                {bookingPeriod === '3months' && originalPrice > estimatedPrice && (
+                  <span className="text-sm sm:text-base text-text-muted line-through font-semibold">
+                    Rp {originalPrice.toLocaleString('id-ID')}
+                  </span>
+                )}
                 <p className="font-headline text-2xl sm:text-3xl font-extrabold text-[#DC2626]">
                   Rp {estimatedPrice.toLocaleString('id-ID')}
                 </p>
-                <span className="text-xs text-text-muted">
-                  / bulan ({frequency === '2x' ? '8' : '12'} pertemuan)
+                <span className="text-xs text-text-muted font-medium">
+                  {bookingPeriod === '3months'
+                    ? `/ 3 bulan (${totalSessions} pertemuan)`
+                    : `/ bulan (${totalSessions} pertemuan)`}
                 </span>
               </div>
               <p className="text-[11px] text-emerald-700 font-semibold mt-1">
