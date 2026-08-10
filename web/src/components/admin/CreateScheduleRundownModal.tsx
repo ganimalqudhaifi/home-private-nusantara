@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../shared/Modal';
-import { Button } from '../shared/Button';
-import { Tutor, StudentSession } from '../../types';
+import { Tutor, StudentSession, Student } from '../../types';
 import { MOCK_TUTORS } from '../../data/mockData';
+import { CreateStudentModal } from './CreateStudentModal';
 import {
   Calendar,
   Clock,
@@ -18,6 +18,10 @@ import {
   MessageCircle,
   CheckCircle2,
   MapPin,
+  UserPlus,
+  User,
+  Phone,
+  GraduationCap,
 } from 'lucide-react';
 
 const TIME_OPTIONS = [
@@ -67,6 +71,11 @@ export function CreateScheduleRundownModal({
 }: CreateScheduleRundownModalProps) {
   const getTodayISO = () => new Date().toISOString().split('T')[0];
 
+  const [studentsList, setStudentsList] = useState<Student[]>([]);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>('');
+  const [isLoadingStudents, setIsLoadingStudents] = useState<boolean>(true);
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState<boolean>(false);
+
   const [studentName, setStudentName] = useState(defaultStudentName);
   const [parentName, setParentName] = useState(defaultParentName);
   const [parentPhone, setParentPhone] = useState(defaultParentPhone);
@@ -83,6 +92,41 @@ export function CreateScheduleRundownModal({
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
   const [copiedWA, setCopiedWA] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch real students from DB
+  useEffect(() => {
+    setIsLoadingStudents(true);
+    fetch('/api/admin/students')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.students && Array.isArray(data.students) && data.students.length > 0) {
+          const list: Student[] = data.students.map((s: any) => ({
+            id: s.id,
+            name: s.name || 'Siswa',
+            level: s.level || 'SD',
+            grade: Number(s.grade || 4),
+            school: s.school || 'SD/SMP Nusantara',
+            parentName: s.parentName || 'Wali Murid',
+            parentPhone: s.parentPhone || '-',
+            address: s.address || 'Makassar',
+            totalSessions: Number(s.totalSessions || 0),
+            activeBookings: Number(s.activeBookings || 0),
+            joinDate: s.joinDate || '2025',
+          }));
+          setStudentsList(list);
+
+          const first = list[0];
+          setSelectedStudentId(first.id);
+          setStudentName(first.name);
+          setParentName(first.parentName);
+          setParentPhone(first.parentPhone);
+          setAddress(first.address);
+          setLocationArea(first.address.toLowerCase().includes('gowa') ? 'Gowa' : 'Makassar');
+        }
+      })
+      .catch((err) => console.error('Failed to fetch students for rundown modal:', err))
+      .finally(() => setIsLoadingStudents(false));
+  }, []);
 
   // Fetch verified tutors from database or fallback to mock data
   useEffect(() => {
@@ -110,10 +154,30 @@ export function CreateScheduleRundownModal({
       });
   }, []);
 
-  // Filter available verified tutors
+  const handleSelectStudent = (id: string) => {
+    setSelectedStudentId(id);
+    const chosen = studentsList.find((s) => s.id === id);
+    if (chosen) {
+      setStudentName(chosen.name);
+      setParentName(chosen.parentName);
+      setParentPhone(chosen.parentPhone);
+      setAddress(chosen.address);
+      setLocationArea(chosen.address.toLowerCase().includes('gowa') ? 'Gowa' : 'Makassar');
+    }
+  };
+
+  const handleStudentCreated = (newStudent: Student) => {
+    setStudentsList((prev) => [newStudent, ...prev]);
+    setSelectedStudentId(newStudent.id);
+    setStudentName(newStudent.name);
+    setParentName(newStudent.parentName);
+    setParentPhone(newStudent.parentPhone);
+    setAddress(newStudent.address);
+    setLocationArea(newStudent.address.toLowerCase().includes('gowa') ? 'Gowa' : 'Makassar');
+  };
+
   const verifiedTutors = tutorsList.length > 0 ? tutorsList : MOCK_TUTORS.filter((t) => t.isVerified);
 
-  // Format YYYY-MM-DD to Indonesian localized string
   const formatIndonesianDate = (isoDate: string) => {
     if (!isoDate) return '-';
     const [year, month, day] = isoDate.split('-').map(Number);
@@ -127,7 +191,6 @@ export function CreateScheduleRundownModal({
     });
   };
 
-  // Generate initial schedule rundown items starting from startDate
   const handleGenerateRundown = () => {
     const items: ScheduleItem[] = [];
     const baseDate = startDate ? new Date(startDate) : new Date();
@@ -167,7 +230,7 @@ export function CreateScheduleRundownModal({
           meetingNumber: count,
           date: isoString,
           time: defaultTime,
-          subject: count % 2 === 0 ? 'Bahasa Inggris SD' : defaultSubject,
+          subject: defaultSubject,
           tutorId: assignedTutor.id,
           tutorName: assignedTutor.name,
         });
@@ -178,23 +241,26 @@ export function CreateScheduleRundownModal({
     setScheduleItems(items);
   };
 
-  // Auto-generate once when opening modal
-  useEffect(() => {
-    if (isOpen && scheduleItems.length === 0) {
-      handleGenerateRundown();
+  const toggleDaySelection = (day: string) => {
+    if (selectedDays.includes(day)) {
+      if (selectedDays.length > 1) {
+        setSelectedDays(selectedDays.filter((d) => d !== day));
+      }
+    } else {
+      setSelectedDays([...selectedDays, day]);
     }
-  }, [isOpen]);
+  };
 
-  const handleUpdateItem = (id: string, field: keyof ScheduleItem, value: string) => {
+  const handleItemChange = (id: string, field: keyof ScheduleItem, value: any) => {
     setScheduleItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
           if (field === 'tutorId') {
-            const found = verifiedTutors.find((t) => t.id === value);
+            const tutor = verifiedTutors.find((t) => t.id === value);
             return {
               ...item,
               tutorId: value,
-              tutorName: found ? found.name : item.tutorName,
+              tutorName: tutor ? tutor.name : 'Pengajar',
             };
           }
           return { ...item, [field]: value };
@@ -229,7 +295,6 @@ export function CreateScheduleRundownModal({
     );
   };
 
-  // Format WhatsApp Message for Parent
   const generateWAMessage = () => {
     const lines = scheduleItems.map(
       (item) =>
@@ -259,7 +324,7 @@ export function CreateScheduleRundownModal({
             tutorId: item.tutorId,
             tutorName: item.tutorName,
             subject: item.subject,
-            date: item.date, // ISO format YYYY-MM-DD
+            date: item.date,
             time: item.time,
             address,
             city: locationArea,
@@ -272,309 +337,320 @@ export function CreateScheduleRundownModal({
     }, 600);
   };
 
+  const selectedStudentObj = studentsList.find((s) => s.id === selectedStudentId);
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      maxWidth="xl"
-      title="Generator Rundown & Pembuat Jadwal Sesi"
-    >
-      <div className="space-y-6 pt-2 text-xs">
-        {/* Step 1: Base Configuration */}
-        <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper space-y-4">
-          <div className="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-wider">
-            <Sparkles className="w-4 h-4 text-primary-container" />
-            <span>1. Pengaturan Paket, Tanggal Mulai & Lokasi Mengajar</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label className="font-semibold text-text-muted block mb-1">Nama Siswa</label>
-              <input
-                type="text"
-                value={studentName}
-                onChange={(e) => setStudentName(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
-              />
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        maxWidth="xl"
+        title="Generator Rundown & Pembuat Jadwal Sesi"
+      >
+        <div className="space-y-6 pt-2 text-xs">
+          {/* Step 1: Base Configuration */}
+          <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper space-y-4">
+            <div className="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-primary-container" />
+              <span>1. Pilih Siswa & Pengaturan Paket Sesi</span>
             </div>
 
+            {/* Student Selector & Add Student Button */}
             <div>
-              <label className="font-semibold text-text-muted block mb-1">Nama Orang Tua/Wali</label>
-              <input
-                type="text"
-                value={parentName}
-                onChange={(e) => setParentName(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold text-text-muted block mb-1">No. WhatsApp Wali</label>
-              <input
-                type="tel"
-                value={parentPhone}
-                onChange={(e) => setParentPhone(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
-              />
-            </div>
-          </div>
-
-          {/* Location & Start Date Settings */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-            <div>
-              <label className="font-semibold text-text-muted block mb-1">Tanggal Mulai Pertemuan Ke-1</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs text-primary"
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold text-text-muted block mb-1">Wilayah Layanan</label>
-              <select
-                value={locationArea}
-                onChange={(e) => setLocationArea(e.target.value as 'Makassar' | 'Gowa')}
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs"
-              >
-                <option value="Makassar">Kota Makassar</option>
-                <option value="Gowa">Kabupaten Gowa</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="font-semibold text-text-muted block mb-1">Jumlah Pertemuan Paket</label>
-              <select
-                value={packageCount}
-                onChange={(e) => setPackageCount(Number(e.target.value))}
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs"
-              >
-                <option value={4}>Paket 4x Pertemuan (1x / minggu)</option>
-                <option value={8}>Paket 8x Pertemuan (2x / minggu)</option>
-                <option value={12}>Paket 12x Pertemuan (3x / minggu)</option>
-                <option value={16}>Paket 16x Pertemuan (4x / minggu)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
-            <div className="sm:col-span-8">
-              <label className="font-semibold text-text-muted flex items-center gap-1 mb-1">
-                <MapPin className="w-3.5 h-3.5 text-red-500" />
-                <span>Alamat Lengkap / Lokasi Mengajar</span>
+              <label className="font-semibold text-text-primary block mb-1.5">
+                Pilih Siswa Terdaftar <span className="text-red-500">*</span>
               </label>
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
-              />
-            </div>
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedStudentId}
+                  onChange={(e) => handleSelectStudent(e.target.value)}
+                  disabled={isLoadingStudents}
+                  className="flex-1 p-2.5 rounded-xl border border-border-whisper bg-white text-xs font-medium outline-none focus:border-primary transition-colors disabled:opacity-50"
+                >
+                  {isLoadingStudents ? (
+                    <option value="">Memuat data siswa dari database...</option>
+                  ) : studentsList.length === 0 ? (
+                    <option value="">Belum ada siswa terdaftar. Klik + Tambah Siswa Baru.</option>
+                  ) : (
+                    studentsList.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} — {s.level} Kelas {s.grade} (Orang Tua: {s.parentName})
+                      </option>
+                    ))
+                  )}
+                </select>
 
-            <div className="sm:col-span-4 flex items-end">
-              <button
-                type="button"
-                onClick={handleGenerateRundown}
-                className="w-full py-2.5 px-3 rounded-xl bg-primary-container hover:bg-primary-hover text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1.5"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Otomatiskan Tanggal Sesi</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-border-whisper/60">
-            <div>
-              <label className="font-semibold text-text-muted block mb-1">Hari Belajar Rutin</label>
-              <div className="flex flex-wrap gap-1">
-                {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'].map((day) => {
-                  const isSel = selectedDays.includes(day);
-                  return (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => {
-                        if (isSel) {
-                          setSelectedDays(selectedDays.filter((d) => d !== day));
-                        } else {
-                          setSelectedDays([...selectedDays, day]);
-                        }
-                      }}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors ${
-                        isSel
-                          ? 'border-primary bg-primary text-white'
-                          : 'border-border-whisper bg-white text-text-muted'
-                      }`}
-                    >
-                      {day}
-                    </button>
-                  );
-                })}
+                <button
+                  type="button"
+                  onClick={() => setIsAddStudentModalOpen(true)}
+                  className="px-3.5 py-2.5 bg-primary-container hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-xs transition-colors shrink-0 flex items-center gap-1.5"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>+ Tambah Siswa Baru</span>
+                </button>
               </div>
             </div>
 
-            <div>
-              <label className="font-semibold text-text-muted block mb-1">Preferensi Jam Belajar</label>
-              <select
-                value={defaultTime}
-                onChange={(e) => setDefaultTime(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+            {/* Selected Student Card Summary */}
+            {selectedStudentObj && (
+              <div className="p-3.5 rounded-xl bg-white border border-border-whisper flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-primary shrink-0" />
+                    <span className="font-bold text-primary text-sm">{selectedStudentObj.name}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-900 font-extrabold text-[10px]">
+                      {selectedStudentObj.level} Kelas {selectedStudentObj.grade}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 text-text-muted text-[11px]">
+                    <span className="flex items-center gap-1">
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>{selectedStudentObj.school}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Phone className="w-3.5 h-3.5" />
+                      <span>Wali: {selectedStudentObj.parentName} ({selectedStudentObj.parentPhone})</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-right sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-border-whisper">
+                  <div className="flex items-center gap-1 text-text-muted text-[11px] justify-start sm:justify-end">
+                    <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                    <span className="truncate max-w-xs">{selectedStudentObj.address}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Location & Start Date Settings */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div>
+                <label className="font-semibold text-text-muted block mb-1">Tanggal Mulai Pertemuan Ke-1</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs text-primary"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold text-text-muted block mb-1">Wilayah Layanan</label>
+                <select
+                  value={locationArea}
+                  onChange={(e) => setLocationArea(e.target.value as 'Makassar' | 'Gowa')}
+                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs"
+                >
+                  <option value="Makassar">Kota Makassar</option>
+                  <option value="Gowa">Kabupaten Gowa</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="font-semibold text-text-muted block mb-1">Jumlah Pertemuan Paket</label>
+                <select
+                  value={packageCount}
+                  onChange={(e) => setPackageCount(Number(e.target.value))}
+                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white font-semibold text-xs"
+                >
+                  <option value={4}>Paket 4x Pertemuan (1x / minggu)</option>
+                  <option value={8}>Paket 8x Pertemuan (2x / minggu)</option>
+                  <option value={12}>Paket 12x Pertemuan (3x / minggu)</option>
+                  <option value={16}>Paket 16x Pertemuan (4x / minggu)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+              <div className="sm:col-span-8">
+                <label className="font-semibold text-text-muted flex items-center gap-1 mb-1">
+                  <MapPin className="w-3.5 h-3.5 text-red-500" />
+                  <span>Alamat Lengkap / Lokasi Mengajar</span>
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Contoh: Jl. Hertasning No. 25, dekat RS Grestelina"
+                  className="w-full p-2.5 rounded-xl border border-border-whisper bg-white text-xs"
+                />
+              </div>
+
+              <div className="sm:col-span-4 flex items-end">
+                <button
+                  type="button"
+                  onClick={handleGenerateRundown}
+                  className="w-full p-2.5 rounded-xl bg-primary-container hover:bg-primary-hover text-white font-bold text-xs transition-colors shadow-xs flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Generate Rundown</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Step 2: Schedule Table */}
+          {scheduleItems.length > 0 && (
+            <div className="space-y-4 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-wider">
+                  <Calendar className="w-4 h-4 text-primary-container" />
+                  <span>2. Rencana Pertemuan ({scheduleItems.length} Sesi Paket)</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddMeeting}
+                  className="inline-flex items-center gap-1 bg-surface-container-high hover:bg-border-whisper text-text-primary px-3 py-1.5 rounded-xl font-bold transition-all text-xs"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Tambah Pertemuan</span>
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-border-whisper overflow-hidden shadow-xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-[700px]">
+                    <thead className="bg-surface-container-low/70 border-b border-border-whisper text-[11px] text-text-muted uppercase tracking-wider font-semibold">
+                      <tr>
+                        <th className="px-4 py-3 text-center">Sesi</th>
+                        <th className="px-4 py-3">Tanggal Pertemuan</th>
+                        <th className="px-4 py-3">Jam Belajar</th>
+                        <th className="px-4 py-3">Mata Pelajaran</th>
+                        <th className="px-4 py-3">Tentor / Pengajar Target</th>
+                        <th className="px-4 py-3 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-whisper text-xs">
+                      {scheduleItems.map((item) => (
+                        <tr key={item.id} className="hover:bg-surface-container-low/30 transition-colors">
+                          <td className="px-4 py-3 text-center font-bold text-primary font-mono">
+                            #{item.meetingNumber}
+                          </td>
+                          <td className="px-4 py-3">
+                            <input
+                              type="date"
+                              value={item.date}
+                              onChange={(e) => handleItemChange(item.id, 'date', e.target.value)}
+                              className="p-1.5 rounded-lg border border-border-whisper text-xs font-semibold text-primary outline-none"
+                            />
+                          </td>
+                          <td className="px-4 py-3">
+                            <select
+                              value={item.time}
+                              onChange={(e) => handleItemChange(item.id, 'time', e.target.value)}
+                              className="p-1.5 rounded-lg border border-border-whisper text-xs outline-none bg-white"
+                            >
+                              {TIME_OPTIONS.map((t) => (
+                                <option key={t} value={t}>
+                                  {t}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="px-4 py-3">
+                            <select
+                              value={item.subject}
+                              onChange={(e) => handleItemChange(item.id, 'subject', e.target.value)}
+                              className="p-1.5 rounded-lg border border-border-whisper text-xs font-semibold text-primary outline-none bg-white"
+                            >
+                              {SUBJECT_OPTIONS.map((s) => (
+                                <option key={s} value={s}>
+                                  {s}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="px-4 py-3">
+                            <select
+                              value={item.tutorId}
+                              onChange={(e) => handleItemChange(item.id, 'tutorId', e.target.value)}
+                              className="p-1.5 rounded-lg border border-border-whisper text-xs outline-none bg-white w-full max-w-[200px]"
+                            >
+                              {verifiedTutors.map((t) => (
+                                <option key={t.id} value={t.id}>
+                                  {t.name}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveMeeting(item.id)}
+                              className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Hapus Pertemuan Ini"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Footer Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-border-whisper">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleCopyWA}
+                disabled={scheduleItems.length === 0}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-emerald-600/30 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 font-bold transition-all text-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
-                {TIME_OPTIONS.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
+                {copiedWA ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Format Terdisalin!</span>
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Salin Format WA Wali</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2.5 rounded-xl text-xs font-semibold text-text-muted hover:bg-surface-container-high transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={isSubmitting || scheduleItems.length === 0}
+                onClick={handleSave}
+                className="px-5 py-2.5 bg-primary-container hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-xs transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+              >
+                {isSubmitting ? (
+                  <span>Menyimpan Sesi...</span>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    <span>Simpan & Terbitkan Sesi ({scheduleItems.length})</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
+      </Modal>
 
-        {/* Step 2: Rundown Table Editor */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="font-headline text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-emerald-600" />
-              <span>Matriks Rundown ({scheduleItems.length} Pertemuan)</span>
-            </h4>
-
-            <button
-              type="button"
-              onClick={handleAddMeeting}
-              className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Tambah Sesi</span>
-            </button>
-          </div>
-
-          <div className="max-h-72 overflow-y-auto border border-border-whisper rounded-xl hide-scrollbar">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-surface-container-low text-text-muted font-bold uppercase text-[10px] sticky top-0 z-10 border-b border-border-whisper">
-                <tr>
-                  <th className="px-3 py-2.5 w-10">No</th>
-                  <th className="px-3 py-2.5">Tanggal (Datepicker)</th>
-                  <th className="px-3 py-2.5">Tampilan Hari & Tanggal</th>
-                  <th className="px-3 py-2.5">Jam Sesi</th>
-                  <th className="px-3 py-2.5">Mata Pelajaran</th>
-                  <th className="px-3 py-2.5">Pengajar (Tutor Terverifikasi)</th>
-                  <th className="px-3 py-2.5 w-10 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-whisper bg-white">
-                {scheduleItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-surface-container-lowest transition-colors">
-                    <td className="px-3 py-2 font-bold text-primary">{item.meetingNumber}</td>
-                    <td className="px-3 py-2">
-                      <input
-                        type="date"
-                        value={item.date}
-                        onChange={(e) => handleUpdateItem(item.id, 'date', e.target.value)}
-                        className="p-1.5 rounded-lg border border-border-whisper text-xs bg-white font-mono"
-                      />
-                    </td>
-                    <td className="px-3 py-2 font-semibold text-primary">
-                      {formatIndonesianDate(item.date)}
-                    </td>
-                    <td className="px-3 py-2">
-                      <select
-                        value={item.time}
-                        onChange={(e) => handleUpdateItem(item.id, 'time', e.target.value)}
-                        className="p-1.5 rounded-lg border border-border-whisper text-xs bg-white"
-                      >
-                        {TIME_OPTIONS.map((t) => (
-                          <option key={t} value={t}>
-                            {t}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-3 py-2">
-                      <select
-                        value={item.subject}
-                        onChange={(e) => handleUpdateItem(item.id, 'subject', e.target.value)}
-                        className="p-1.5 rounded-lg border border-border-whisper text-xs font-semibold bg-white"
-                      >
-                        {SUBJECT_OPTIONS.map((sub) => (
-                          <option key={sub} value={sub}>
-                            {sub}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-3 py-2">
-                      <select
-                        value={item.tutorId}
-                        onChange={(e) => handleUpdateItem(item.id, 'tutorId', e.target.value)}
-                        className="w-full p-1.5 rounded-lg border border-emerald-300 text-xs font-bold bg-emerald-50/50 text-emerald-900"
-                      >
-                        {verifiedTutors.map((tut) => (
-                          <option key={tut.id} value={tut.id}>
-                            {tut.name} ({tut.university || 'Terverifikasi'})
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMeeting(item.id)}
-                        className="text-red-500 hover:text-red-700 p-1 rounded-md hover:bg-red-50"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Action Footer */}
-        <div className="pt-3 border-t border-border-whisper flex flex-col sm:flex-row items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={handleCopyWA}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
-          >
-            {copiedWA ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-600" />
-                <span>Format WA Tersalin!</span>
-              </>
-            ) : (
-              <>
-                <MessageCircle className="w-4 h-4 text-emerald-600" />
-                <span>Salin Format Chat WA Ortu</span>
-              </>
-            )}
-          </button>
-
-          <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 text-xs font-semibold text-text-muted hover:text-text-primary"
-            >
-              Batal
-            </button>
-            <Button
-              type="button"
-              variant="primary"
-              size="md"
-              isLoading={isSubmitting}
-              onClick={handleSave}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Terbitkan & Simpan Rundown Sesi</span>
-            </Button>
-          </div>
-        </div>
-      </div>
-    </Modal>
+      {/* Modal Tambah Siswa Baru */}
+      <CreateStudentModal
+        isOpen={isAddStudentModalOpen}
+        onClose={() => setIsAddStudentModalOpen(false)}
+        onStudentCreated={handleStudentCreated}
+      />
+    </>
   );
 }
