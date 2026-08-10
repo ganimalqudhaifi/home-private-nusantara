@@ -608,3 +608,83 @@ export async function createStudentInDB(input: CreateStudentInput) {
 
   return studentRow[0];
 }
+
+export interface UpdateStudentInput {
+  name: string;
+  level: 'SD' | 'SMP';
+  grade: number;
+  school?: string;
+  parentName: string;
+  parentPhone: string;
+  address: string;
+  district?: string;
+  city?: string;
+}
+
+export async function updateStudentInDB(id: string, input: UpdateStudentInput) {
+  await sql`
+    UPDATE users
+    SET
+      full_name = ${input.name},
+      phone = ${input.parentPhone},
+      updated_at = NOW()
+    WHERE id = ${id};
+  `;
+
+  const updatedRows = await sql`
+    UPDATE students
+    SET
+      student_name = ${input.name},
+      level = ${input.level},
+      grade = ${input.grade},
+      school_name = ${input.school || (input.level === 'SD' ? 'SD Nusantara' : 'SMP Nusantara')},
+      parent_name = ${input.parentName},
+      parent_phone = ${input.parentPhone},
+      address = ${input.address},
+      district = ${input.district || 'Rappocini'},
+      city = ${input.city || 'Kota Makassar'},
+      updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING
+      id,
+      student_name as name,
+      level,
+      grade,
+      school_name as school,
+      parent_name as "parentName",
+      parent_phone as "parentPhone",
+      CONCAT(
+        address,
+        CASE WHEN district IS NOT NULL AND district != '' THEN CONCAT(', Kecamatan ', district) ELSE '' END,
+        CASE WHEN city IS NOT NULL AND city != '' THEN CONCAT(', ', city) ELSE '' END
+      ) as address,
+      0 as "totalSessions",
+      0 as "activeBookings",
+      TO_CHAR(created_at, 'DD Mon YYYY') as "joinDate";
+  `;
+
+  return updatedRows[0] || null;
+}
+
+export async function deleteStudentFromDB(id: string) {
+  // Delete associated bookings first to preserve foreign key constraints
+  await sql`
+    DELETE FROM bookings
+    WHERE student_id = ${id};
+  `;
+
+  // Delete student record
+  await sql`
+    DELETE FROM students
+    WHERE id = ${id};
+  `;
+
+  // Delete user record
+  const deletedUser = await sql`
+    DELETE FROM users
+    WHERE id = ${id}
+    RETURNING id;
+  `;
+
+  return deletedUser[0] || { id };
+}

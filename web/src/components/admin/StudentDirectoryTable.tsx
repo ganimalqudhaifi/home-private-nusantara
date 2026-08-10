@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Student } from '../../types';
-import { Search, GraduationCap, BookOpen, Phone, MapPin, Plus, UserPlus } from 'lucide-react';
+import { Search, GraduationCap, BookOpen, Phone, MapPin, Plus, UserPlus, Edit3, Trash2 } from 'lucide-react';
 import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
 import { CreateStudentModal } from './CreateStudentModal';
+import { EditStudentModal } from './EditStudentModal';
+import { DeleteStudentModal } from './DeleteStudentModal';
 
 export interface StudentDirectoryTableProps {
   readonly students: readonly Student[];
@@ -20,7 +22,10 @@ export function StudentDirectoryTable({
   const [studentList, setStudentList] = useState<Student[]>([...students]);
   const [filterLevel, setFilterLevel] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
   const [selectedStudentForRundown, setSelectedStudentForRundown] = useState<Student | null>(null);
+  const [selectedStudentForEdit, setSelectedStudentForEdit] = useState<Student | null>(null);
+  const [selectedStudentForDelete, setSelectedStudentForDelete] = useState<Student | null>(null);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -46,6 +51,16 @@ export function StudentDirectoryTable({
     if (onStudentAdded) {
       onStudentAdded(newStudent);
     }
+  };
+
+  const handleStudentUpdated = (updatedStudent: Student) => {
+    setStudentList((prev) =>
+      prev.map((s) => (s.id === updatedStudent.id ? updatedStudent : s))
+    );
+  };
+
+  const handleStudentDeleted = (studentId: string) => {
+    setStudentList((prev) => prev.filter((s) => s.id !== studentId));
   };
 
   const handleSaveRundownFromStudentsTable = async (sessionsPayload: any[]) => {
@@ -196,23 +211,44 @@ export function StudentDirectoryTable({
                         {student.totalSessions} Sesi
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             type="button"
                             onClick={() => setSelectedStudentForRundown(student)}
                             className="inline-flex items-center gap-1 bg-primary-container hover:bg-primary-hover text-white px-2.5 py-1.5 rounded-xl font-bold transition-all text-[11px]"
+                            title="Buat Rundown"
                           >
                             <Plus className="w-3 h-3" />
-                            <span>Buat Rundown</span>
+                            <span>Rundown</span>
                           </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelectedStudentForEdit(student)}
+                            className="p-1.5 text-primary hover:bg-surface-container-high rounded-xl transition-colors"
+                            title="Edit Data Siswa"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelectedStudentForDelete(student)}
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                            title="Hapus Data Siswa"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+
                           <a
                             href={`https://wa.me/${student.parentPhone.replace(/[^0-9]/g, '')}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-semibold transition-colors"
+                            className="inline-flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1.5 rounded-xl font-semibold transition-colors text-[11px]"
+                            title="Chat WA Orang Tua"
                           >
                             <Phone className="w-3.5 h-3.5" />
-                            <span>Chat WA</span>
+                            <span>WA</span>
                           </a>
                         </div>
                       </td>
@@ -241,6 +277,20 @@ export function StudentDirectoryTable({
         isOpen={isAddStudentModalOpen}
         onClose={() => setIsAddStudentModalOpen(false)}
         onStudentCreated={handleStudentCreated}
+      />
+
+      <EditStudentModal
+        isOpen={!!selectedStudentForEdit}
+        student={selectedStudentForEdit}
+        onClose={() => setSelectedStudentForEdit(null)}
+        onStudentUpdated={handleStudentUpdated}
+      />
+
+      <DeleteStudentModal
+        isOpen={!!selectedStudentForDelete}
+        student={selectedStudentForDelete}
+        onClose={() => setSelectedStudentForDelete(null)}
+        onStudentDeleted={handleStudentDeleted}
       />
     </div>
   );
