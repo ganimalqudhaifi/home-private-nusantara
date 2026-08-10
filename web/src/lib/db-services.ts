@@ -501,3 +501,106 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
 
   return createdBookings;
 }
+
+export async function getAllStudentsFromDB() {
+  try {
+    const rows = await sql`
+      SELECT 
+        s.id,
+        COALESCE(s.student_name, u.full_name, 'Siswa Nusantara') as name,
+        s.level,
+        s.grade,
+        COALESCE(s.school_name, 'SD/SMP Nusantara') as school,
+        COALESCE(s.parent_name, 'Wali Murid') as "parentName",
+        COALESCE(s.parent_phone, u.phone, '-') as "parentPhone",
+        CONCAT(s.address, ', ', COALESCE(s.district, ''), ' ', COALESCE(s.city, '')) as address,
+        COUNT(b.id) as "totalSessions",
+        COUNT(b.id) FILTER (WHERE b.status = 'scheduled' OR b.status = 'in_progress') as "activeBookings",
+        TO_CHAR(s.created_at, 'DD Mon YYYY') as "joinDate"
+      FROM students s
+      LEFT JOIN users u ON s.id = u.id
+      LEFT JOIN bookings b ON s.id = b.student_id
+      GROUP BY s.id, s.student_name, u.full_name, s.level, s.grade, s.school_name, s.parent_name, s.parent_phone, u.phone, s.address, s.district, s.city, s.created_at
+      ORDER BY s.created_at DESC;
+    `;
+    return rows;
+  } catch (err) {
+    console.error('Error fetching students from database:', err);
+    return [];
+  }
+}
+
+export interface CreateStudentInput {
+  name: string;
+  level: 'SD' | 'SMP';
+  grade: number;
+  school?: string;
+  parentName: string;
+  parentPhone: string;
+  address: string;
+  district?: string;
+  city?: string;
+}
+
+export async function createStudentInDB(input: CreateStudentInput) {
+  const studentEmail = `siswa_${Date.now()}_${Math.floor(Math.random() * 1000)}@homeprivatenusantara.com`;
+
+  const userRow = await sql`
+    INSERT INTO users (id, email, full_name, phone, role, created_at, updated_at)
+    VALUES (
+      gen_random_uuid(),
+      ${studentEmail},
+      ${input.name},
+      ${input.parentPhone},
+      'student',
+      NOW(),
+      NOW()
+    )
+    RETURNING id;
+  `;
+  const userId = userRow[0]?.id;
+
+  const studentRow = await sql`
+    INSERT INTO students (
+      id,
+      parent_name,
+      parent_phone,
+      student_name,
+      level,
+      grade,
+      school_name,
+      address,
+      district,
+      city,
+      created_at,
+      updated_at
+    ) VALUES (
+      ${userId},
+      ${input.parentName},
+      ${input.parentPhone},
+      ${input.name},
+      ${input.level},
+      ${input.grade},
+      ${input.school || (input.level === 'SD' ? 'SD Nusantara' : 'SMP Nusantara')},
+      ${input.address},
+      ${input.district || 'Rappocini'},
+      ${input.city || 'Kota Makassar'},
+      NOW(),
+      NOW()
+    )
+    RETURNING 
+      id,
+      student_name as name,
+      level,
+      grade,
+      school_name as school,
+      parent_name as "parentName",
+      parent_phone as "parentPhone",
+      address,
+      0 as "totalSessions",
+      0 as "activeBookings",
+      TO_CHAR(created_at, 'DD Mon YYYY') as "joinDate";
+  `;
+
+  return studentRow[0];
+}
