@@ -113,7 +113,8 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
 };
 
 export function QuickBookingFormSection() {
-  const [levelId, setLevelId] = useState<'calistung' | 'sd' | 'smp'>('sd');
+  const [levelId1, setLevelId1] = useState<'calistung' | 'sd' | 'smp'>('sd');
+  const [levelId2, setLevelId2] = useState<'calistung' | 'sd' | 'smp'>('sd');
   const [bookingPeriod, setBookingPeriod] = useState<'monthly' | '3months'>('monthly');
   const [frequency, setFrequency] = useState<'2x' | '3x'>('2x');
   const [studentCount, setStudentCount] = useState<1 | 2>(1);
@@ -136,16 +137,29 @@ export function QuickBookingFormSection() {
   const [notes, setNotes] = useState('');
 
   const requiredDayCount = frequency === '2x' ? 2 : 3;
-  const currentConfig = LEVEL_CONFIGS[levelId];
+  const config1 = LEVEL_CONFIGS[levelId1];
+  const config2 = LEVEL_CONFIGS[levelId2];
 
-  // When user changes program level, synchronize grade and subjects defaults
-  const handleLevelChange = (newLevel: 'calistung' | 'sd' | 'smp') => {
-    setLevelId(newLevel);
+  // Synchronize grade and subjects defaults when student 1 level changes
+  const handleLevelChange1 = (newLevel: 'calistung' | 'sd' | 'smp') => {
+    setLevelId1(newLevel);
     const config = LEVEL_CONFIGS[newLevel];
     setSelectedGrade1(config.grades[0]);
     setSelectedSubjects1([config.subjects[0].name]);
-    setSelectedGrade2(config.grades[1] || config.grades[0]);
+  };
+
+  // Synchronize grade and subjects defaults when student 2 level changes
+  const handleLevelChange2 = (newLevel: 'calistung' | 'sd' | 'smp') => {
+    setLevelId2(newLevel);
+    const config = LEVEL_CONFIGS[newLevel];
+    setSelectedGrade2(config.grades[0]);
     setSelectedSubjects2([config.subjects[0].name]);
+  };
+
+  // Master level selector handler (Step 1)
+  const handleMasterLevelChange = (newLevel: 'calistung' | 'sd' | 'smp') => {
+    handleLevelChange1(newLevel);
+    handleLevelChange2(newLevel);
   };
 
   // Toggle Subject selection for Student 1
@@ -197,10 +211,17 @@ export function QuickBookingFormSection() {
 
   // Calculate Price with Promo 3 Months (Discount Rp 102.000)
   const { estimatedPrice, originalPrice, totalSessions, discountAmount } = useMemo(() => {
-    const pkg = PRICING_PACKAGES.find((p) => p.levelId === levelId);
-    if (!pkg) return { estimatedPrice: 0, originalPrice: 0, totalSessions: 8, discountAmount: 0 };
-    const rateData = frequency === '2x' ? pkg.rates.twoDays : pkg.rates.threeDays;
-    const baseMonthly = studentCount === 1 ? rateData.oneStudent : rateData.twoStudents;
+    const pkg1 = PRICING_PACKAGES.find((p) => p.levelId === levelId1);
+    const pkg2 = PRICING_PACKAGES.find((p) => p.levelId === levelId2);
+    if (!pkg1 || !pkg2) return { estimatedPrice: 0, originalPrice: 0, totalSessions: 8, discountAmount: 0 };
+
+    const rateData1 = frequency === '2x' ? pkg1.rates.twoDays : pkg1.rates.threeDays;
+    const rateData2 = frequency === '2x' ? pkg2.rates.twoDays : pkg2.rates.threeDays;
+
+    const baseMonthly =
+      studentCount === 1
+        ? rateData1.oneStudent
+        : Math.max(rateData1.twoStudents, rateData2.twoStudents);
 
     if (bookingPeriod === '3months') {
       const raw3Months = baseMonthly * 3;
@@ -222,18 +243,26 @@ export function QuickBookingFormSection() {
       totalSessions: sessions,
       discountAmount: 0,
     };
-  }, [levelId, frequency, studentCount, bookingPeriod]);
+  }, [levelId1, levelId2, frequency, studentCount, bookingPeriod]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const selectedPkg = PRICING_PACKAGES.find((p) => p.levelId === levelId);
+    const pkg1 = PRICING_PACKAGES.find((p) => p.levelId === levelId1);
+    const pkg2 = PRICING_PACKAGES.find((p) => p.levelId === levelId2);
     const daysStr = selectedDays.join(', ') || 'Belum dipilih';
+
+    const programSummary =
+      studentCount === 1
+        ? pkg1?.levelName || levelId1.toUpperCase()
+        : levelId1 === levelId2
+        ? pkg1?.levelName || levelId1.toUpperCase()
+        : `${pkg1?.levelName || levelId1.toUpperCase()} & ${pkg2?.levelName || levelId2.toUpperCase()}`;
 
     const gradeSummary =
       studentCount === 1
-        ? `${selectedGrade1} (${selectedPkg?.levelName || levelId.toUpperCase()})`
-        : `Siswa 1: ${selectedGrade1}, Siswa 2: ${selectedGrade2} (${selectedPkg?.levelName || levelId.toUpperCase()})`;
+        ? `${selectedGrade1} (${pkg1?.levelName || levelId1.toUpperCase()})`
+        : `Siswa 1: ${selectedGrade1} (${pkg1?.levelName}), Siswa 2: ${selectedGrade2} (${pkg2?.levelName})`;
 
     try {
       await fetch('/api/consultation', {
@@ -252,11 +281,11 @@ export function QuickBookingFormSection() {
 
     const studentDetailsMsg =
       studentCount === 1
-        ? `- Tingkatan / Kelas: ${selectedGrade1}
+        ? `- Tingkatan / Kelas: ${selectedGrade1} (${pkg1?.levelName || levelId1.toUpperCase()})
 - Mata Pelajaran / Fokus: ${selectedSubjects1.join(', ') || 'Semua Materi'}
 - Nama Siswa: ${studentName1 || '-'}`
-        : `- Rincian Siswa 1: ${studentName1 || 'Siswa 1'} (${selectedGrade1} - ${selectedSubjects1.join(', ') || 'Semua Materi'})
-- Rincian Siswa 2: ${studentName2 || 'Siswa 2'} (${selectedGrade2} - ${selectedSubjects2.join(', ') || 'Semua Materi'})`;
+        : `- Rincian Siswa 1: ${studentName1 || 'Siswa 1'} (${selectedGrade1} [${pkg1?.levelName || levelId1.toUpperCase()}] - ${selectedSubjects1.join(', ') || 'Semua Materi'})
+- Rincian Siswa 2: ${studentName2 || 'Siswa 2'} (${selectedGrade2} [${pkg2?.levelName || levelId2.toUpperCase()}] - ${selectedSubjects2.join(', ') || 'Semua Materi'})`;
 
     const periodMsg =
       bookingPeriod === '3months'
@@ -266,7 +295,7 @@ export function QuickBookingFormSection() {
     const message = `Halo Admin Home Private Nusantara, saya ingin mendaftar/konsultasi les privat di rumah dengan formulir berikut:
 
 *Rincian Paket & Jadwal:*
-- Program: ${selectedPkg?.levelName || levelId.toUpperCase()} (${periodMsg})
+- Program: ${programSummary} (${periodMsg})
 ${studentDetailsMsg}
 - Frekuensi: ${frequency} seminggu (${studentCount} Siswa)
 - Estimasi Biaya: Rp ${estimatedPrice.toLocaleString('id-ID')} ${bookingPeriod === '3months' ? '(Potongan Hemat Rp 102.000)' : '/ bulan'}
@@ -323,12 +352,15 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
             {/* Level Selector */}
             <div className="grid grid-cols-3 gap-3">
               {PRICING_PACKAGES.map((pkg) => {
-                const isCurrent = levelId === pkg.levelId;
+                const isCurrent =
+                  studentCount === 1
+                    ? levelId1 === pkg.levelId
+                    : levelId1 === pkg.levelId && levelId2 === pkg.levelId;
                 return (
                   <button
                     key={pkg.levelId}
                     type="button"
-                    onClick={() => handleLevelChange(pkg.levelId as 'calistung' | 'sd' | 'smp')}
+                    onClick={() => handleMasterLevelChange(pkg.levelId as 'calistung' | 'sd' | 'smp')}
                     className={`p-3.5 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1 ${
                       isCurrent
                         ? 'border-primary-container bg-primary-container text-white shadow-xs'
@@ -594,10 +626,10 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                 {/* Class Chips for Student 1 */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                    <span>Pilih Tingkatan Kelas ({levelId.toUpperCase()}):</span>
+                    <span>Pilih Tingkatan Kelas ({levelId1.toUpperCase()}):</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {currentConfig.grades.map((gr) => {
+                    {config1.grades.map((gr) => {
                       const isSelected = selectedGrade1 === gr;
                       return (
                         <button
@@ -624,7 +656,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                     <span>Mata Pelajaran / Fokus Bimbingan:</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {currentConfig.subjects.map((sub) => {
+                    {config1.subjects.map((sub) => {
                       const isSelected = selectedSubjects1.includes(sub.name);
                       return (
                         <button
@@ -659,7 +691,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                     <span>Data Murid 1 & Murid 2 (2 Siswa dalam 1 Sesi)</span>
                   </label>
                   <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
-                    Bisa Beda Kelas & Beda Mapel
+                    Bisa Beda Jenjang, Beda Kelas & Beda Mapel
                   </span>
                 </div>
 
@@ -671,6 +703,32 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                         1
                       </span>
                       <h4 className="font-bold text-xs text-primary uppercase">Siswa Pertama</h4>
+                    </div>
+
+                    {/* Program Level Selector for Student 1 */}
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+                        Program Jenjang Siswa 1:
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {(['calistung', 'sd', 'smp'] as const).map((lvl) => {
+                          const isSelected = levelId1 === lvl;
+                          return (
+                            <button
+                              key={lvl}
+                              type="button"
+                              onClick={() => handleLevelChange1(lvl)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                                isSelected
+                                  ? 'border-primary-container bg-primary-container text-white shadow-xs'
+                                  : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
+                              }`}
+                            >
+                              {lvl === 'calistung' ? 'Calistung' : lvl.toUpperCase()}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     <div className="space-y-1">
@@ -693,7 +751,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                         Tingkatan Kelas Siswa 1:
                       </label>
                       <div className="flex flex-wrap gap-1.5">
-                        {currentConfig.grades.map((gr) => {
+                        {config1.grades.map((gr) => {
                           const isSelected = selectedGrade1 === gr;
                           return (
                             <button
@@ -719,7 +777,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                         Mata Pelajaran Siswa 1:
                       </label>
                       <div className="flex flex-wrap gap-1.5">
-                        {currentConfig.subjects.map((sub) => {
+                        {config1.subjects.map((sub) => {
                           const isSelected = selectedSubjects1.includes(sub.name);
                           return (
                             <button
@@ -755,6 +813,32 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                       <h4 className="font-bold text-xs text-emerald-800 uppercase">Siswa Kedua</h4>
                     </div>
 
+                    {/* Program Level Selector for Student 2 */}
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+                        Program Jenjang Siswa 2:
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {(['calistung', 'sd', 'smp'] as const).map((lvl) => {
+                          const isSelected = levelId2 === lvl;
+                          return (
+                            <button
+                              key={lvl}
+                              type="button"
+                              onClick={() => handleLevelChange2(lvl)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                                isSelected
+                                  ? 'border-emerald-600 bg-emerald-600 text-white shadow-xs'
+                                  : 'border-border-whisper bg-surface-container-low hover:bg-surface-container text-text-primary'
+                              }`}
+                            >
+                              {lvl === 'calistung' ? 'Calistung' : lvl.toUpperCase()}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                         Nama Siswa 2
@@ -775,7 +859,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                         Tingkatan Kelas Siswa 2:
                       </label>
                       <div className="flex flex-wrap gap-1.5">
-                        {currentConfig.grades.map((gr) => {
+                        {config2.grades.map((gr) => {
                           const isSelected = selectedGrade2 === gr;
                           return (
                             <button
@@ -801,7 +885,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                         Mata Pelajaran Siswa 2:
                       </label>
                       <div className="flex flex-wrap gap-1.5">
-                        {currentConfig.subjects.map((sub) => {
+                        {config2.subjects.map((sub) => {
                           const isSelected = selectedSubjects2.includes(sub.name);
                           return (
                             <button
@@ -870,7 +954,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder={currentConfig.placeholderNote}
+                placeholder={config1.placeholderNote}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-border-whisper bg-surface-container-lowest text-xs resize-none"
               />
             </div>
@@ -907,8 +991,8 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
               </div>
               <p className="text-[11px] text-emerald-700 font-semibold mt-1">
                 {studentCount === 1
-                  ? `*Program: ${selectedGrade1} • ${selectedSubjects1.join(', ')}`
-                  : `*Siswa 1: ${selectedGrade1} (${selectedSubjects1.join(', ')}) • Siswa 2: ${selectedGrade2} (${selectedSubjects2.join(', ')})`}
+                  ? `*Program: ${selectedGrade1} (${levelId1.toUpperCase()}) • ${selectedSubjects1.join(', ')}`
+                  : `*Siswa 1: ${selectedGrade1} [${levelId1.toUpperCase()}] (${selectedSubjects1.join(', ')}) • Siswa 2: ${selectedGrade2} [${levelId2.toUpperCase()}] (${selectedSubjects2.join(', ')})`}
               </p>
             </div>
 
