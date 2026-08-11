@@ -53,6 +53,10 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
         name: 'Calistung',
         desc: 'Membaca, menulis dan menghitung dengan menyenangkan',
       },
+      {
+        name: 'Mengaji',
+        desc: 'Bimbingan mengaji / Iqra, Al-Qur\'an, dan tajwid',
+      },
     ],
     placeholderNote:
       'Contoh: Anak belum lancar mengeja 2 suku kata, butuh metode belajar visual yang menyenangkan.',
@@ -75,6 +79,10 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
         name: 'Bahasa Inggris',
         desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami',
       },
+      {
+        name: 'Mengaji',
+        desc: 'Bimbingan mengaji / Iqra, Al-Qur\'an, dan tajwid',
+      },
     ],
     placeholderNote:
       'Contoh: Butuh bimbingan intensif materi pecahan campuran dan persiapan ulangan harian matematika.',
@@ -93,6 +101,10 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
       {
         name: 'Bahasa Inggris',
         desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami',
+      },
+      {
+        name: 'Mengaji',
+        desc: 'Bimbingan mengaji / Iqra, Al-Qur\'an, dan tajwid',
       },
     ],
     placeholderNote:
