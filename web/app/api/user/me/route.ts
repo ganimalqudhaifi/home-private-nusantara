@@ -5,9 +5,6 @@ import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
 export async function GET() {
   try {
     const { data, error } = await auth.getSession();
-    if (data) {
-      console.log('[User] session data:', data);
-    }
     if (error || !data || !data.user) {
       return NextResponse.json({ authenticated: false, user: null }, { status: 401 });
     }

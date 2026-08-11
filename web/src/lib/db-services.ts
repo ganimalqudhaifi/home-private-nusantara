@@ -18,7 +18,7 @@ export async function saveQuickConsultation(input: CreateConsultationInput) {
 export async function getUserById(userId: string, email?: string) {
   if (email) {
     const rows = await sql`
-      SELECT u.id, u.email, u.full_name, u.phone, u.role, u.avatar_url, u.created_at, t.status
+      SELECT u.id, u.email, u.full_name, t.phone, u.role, u.avatar_url, u.created_at, t.status
       FROM users u
       LEFT JOIN tutors t ON u.id = t.id
       WHERE u.id = ${userId} OR (LOWER(u.email) = LOWER(${email}) AND u.email IS NOT NULL)
@@ -29,7 +29,7 @@ export async function getUserById(userId: string, email?: string) {
   }
 
   const rows = await sql`
-    SELECT u.id, u.email, u.full_name, u.phone, u.role, u.avatar_url, u.created_at, t.status
+    SELECT u.id, u.email, u.full_name, t.phone, u.role, u.avatar_url, u.created_at, t.status
     FROM users u
     LEFT JOIN tutors t ON u.id = t.id
     WHERE u.id = ${userId}
@@ -105,26 +105,24 @@ export interface RegisterTutorInput {
 
 export async function registerTutorProfile(input: RegisterTutorInput) {
   await sql`
-    INSERT INTO users (id, email, full_name, phone, role, avatar_url, updated_at)
+    INSERT INTO users (id, email, full_name, role, avatar_url, updated_at)
     VALUES (
       ${input.userId},
       ${input.email || null},
       ${input.fullName},
-      ${input.phone},
       'tutor',
       ${input.avatarUrl || null},
       NOW()
     )
     ON CONFLICT (id) DO UPDATE SET
       full_name = EXCLUDED.full_name,
-      phone = EXCLUDED.phone,
       role = 'tutor',
       avatar_url = COALESCE(EXCLUDED.avatar_url, users.avatar_url),
       updated_at = NOW();
   `;
 
   await sql`
-    INSERT INTO tutors (id, title, university, degree, subjects, portfolio_url, status, updated_at)
+    INSERT INTO tutors (id, title, university, degree, subjects, portfolio_url, status, updated_at, phone)
     VALUES (
       ${input.userId},
       ${input.major},
@@ -133,7 +131,8 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
       ${input.selectedSubjects || []},
       ${input.portfolioUrl || input.cvFileName || null},
       'pending',
-      NOW()
+      NOW(),
+      ${input.phone}
     )
     ON CONFLICT (id) DO UPDATE SET
       title = EXCLUDED.title,
@@ -141,6 +140,7 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
       degree = EXCLUDED.degree,
       subjects = EXCLUDED.subjects,
       portfolio_url = EXCLUDED.portfolio_url,
+      phone = EXCLUDED.phone,
       updated_at = NOW();
   `;
 
@@ -153,7 +153,7 @@ export async function getAllTutorsFromDB() {
       t.id,
       u.full_name as name,
       u.email,
-      u.phone,
+      t.phone,
       u.avatar_url as avatar,
       t.university,
       t.degree as major,
@@ -183,12 +183,11 @@ export async function syncUserRoleWithAuth(
       const initialRole = isInitialAdmin ? 'admin' : 'student';
 
       const rows = await sql`
-        INSERT INTO users (id, email, full_name, phone, role, avatar_url, created_at, updated_at)
+        INSERT INTO users (id, email, full_name, role, avatar_url, created_at, updated_at)
         VALUES (
           ${userId},
           ${email || null},
           ${fullName || 'Pengguna'},
-          '-',
           ${initialRole},
           ${avatarUrl || null},
           NOW(),
@@ -197,7 +196,7 @@ export async function syncUserRoleWithAuth(
         ON CONFLICT (id) DO UPDATE SET
           avatar_url = COALESCE(${avatarUrl || null}, users.avatar_url),
           updated_at = NOW()
-        RETURNING id, email, full_name, phone, role, avatar_url, created_at;
+        RETURNING id, email, full_name, role, avatar_url, created_at;
       `;
       user = rows[0] || null;
     } catch (err) {
@@ -647,7 +646,6 @@ export async function updateTutorProfileInDB(tutorId: string, input: UpdateTutor
     UPDATE users
     SET
       full_name = ${input.name},
-      phone = ${input.phone},
       avatar_url = COALESCE(${input.avatarUrl || null}, avatar_url),
       updated_at = NOW()
     WHERE id = ${tutorId};
@@ -658,6 +656,7 @@ export async function updateTutorProfileInDB(tutorId: string, input: UpdateTutor
     SET
       university = ${input.university},
       degree = ${input.degree},
+      phone = ${input.phone},
       subjects = COALESCE(${input.subjects ? input.subjects : null}, subjects),
       status = COALESCE(${input.status || null}, status),
       updated_at = NOW()
