@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TopNavBar } from '../../../src/components/shared/TopNavBar';
+import { AdminTopNavBar } from '../../../src/components/admin/AdminTopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
 import { StudentDirectoryTable } from '../../../src/components/admin/StudentDirectoryTable';
 import { MOCK_STUDENTS } from '../../../src/data/mockData';
@@ -39,12 +39,7 @@ export default function AdminStudentsPage() {
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Header */}
-      <TopNavBar
-        activeRoute="/admin/students"
-        role="admin"
-        userName="Administrator Pusat"
-        userBadge="Admin Master"
-      />
+      <AdminTopNavBar activeRoute="/admin/students" />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border-whisper">

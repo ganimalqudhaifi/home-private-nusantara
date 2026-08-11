@@ -2,7 +2,7 @@ import React from'react';
 import Link from'next/link';
 import Image from'next/image';
 import { notFound } from'next/navigation';
-import { TopNavBar } from'../../../../src/components/shared/TopNavBar';
+import { AdminTopNavBar } from'../../../../src/components/admin/AdminTopNavBar';
 import { Footer } from'../../../../src/components/shared/Footer';
 import { MOCK_TUTORS } from'../../../../src/data/mockData';
 import { ArrowLeft, ShieldCheck, School, Phone, Calendar, Clock, Star, FileText, CheckCircle2 } from'lucide-react';
@@ -17,12 +17,7 @@ export default async function AdminTutorDetailPage({ params }: AdminTutorDetailP
 
  return (
  <div className="bg-surface text-text-primary min-h-screen flex flex-col">
- <TopNavBar
- activeRoute="/admin/tutors"
- role="admin"
- userName="Administrator Pusat"
- userBadge="Admin Master"
- />
+ <AdminTopNavBar activeRoute="/admin/tutors" />
 
  <main className="flex-1 w-full max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
  <div className="flex items-center gap-2 text-xs font-semibold text-text-muted">
