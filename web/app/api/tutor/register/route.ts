@@ -1,15 +1,40 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/src/lib/auth-server';
-import { registerTutorProfile } from '@/src/lib/db-services';
+import { getUserById, registerTutorProfile, syncUserRoleWithAuth } from '@/src/lib/db-services';
+
+interface SessionUser {
+  id: string;
+  email?: string;
+  name?: string;
+  image?: string;
+  role?: string;
+  avatarUrl?: string;
+  picture?: string;
+}
 
 export async function POST(request: Request) {
   try {
-    let sessionUser: any = null;
+    let sessionUser: SessionUser | null = null;
     try {
       const { data } = await auth.getSession();
-      if (data?.user) sessionUser = data.user;
+      if (data?.user) sessionUser = data.user as SessionUser;
     } catch (e) {
       console.warn('Session lookup during tutor register notice:', e);
+    }
+
+    if (sessionUser) {
+      const authRole = sessionUser.role;
+      const dbUser =
+        (await syncUserRoleWithAuth(sessionUser.id, sessionUser.email, authRole)) ||
+        (await getUserById(sessionUser.id, sessionUser.email));
+      const userRole = dbUser?.role || authRole;
+
+      if (userRole === 'admin') {
+        return NextResponse.json(
+          { error: 'Sesi Admin sedang aktif. Silakan keluar (Log Out) terlebih dahulu untuk mendaftar sebagai pengajar.' },
+          { status: 403 }
+        );
+      }
     }
 
     const body = await request.json();
@@ -25,7 +50,7 @@ export async function POST(request: Request) {
 
     const email = sessionUser?.email || body.email || null;
     const avatarUrl =
-      sessionUser?.image || (sessionUser as any)?.avatarUrl || (sessionUser as any)?.picture || null;
+      sessionUser?.image || sessionUser?.avatarUrl || sessionUser?.picture || null;
 
     const result = await registerTutorProfile({
       userId,
@@ -40,7 +65,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, result, userId });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error registering tutor profile:', error);
     return NextResponse.json(
       { error: 'Gagal menyimpan data pendaftaran pengajar ke database.' },
