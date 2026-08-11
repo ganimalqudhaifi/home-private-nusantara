@@ -1,15 +1,16 @@
-import type { Metadata } from"next";
-import { Geist, Geist_Mono } from"next/font/google";
-import"./globals.css";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { AuthUrlCleaner } from "@/src/components/shared/AuthUrlCleaner";
 
 const geistSans = Geist({
- variable:"--font-geist-sans",
- subsets: ["latin"],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
- variable:"--font-geist-mono",
- subsets: ["latin"],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -27,13 +28,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
- return (
+  return (
     <html
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
       data-scroll-behavior="smooth"
     >
- <body className="min-h-full flex flex-col">{children}</body>
- </html>
- );
+      <body className="min-h-full flex flex-col">
+        <AuthUrlCleaner />
+        {children}
+      </body>
+    </html>
+  );
 }
