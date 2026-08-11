@@ -10,3 +10,7 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## Next.js Conventions
+
+- **Middleware**: In this version of Next.js, the middleware file has been renamed to `proxy.ts` (previously `middleware.ts`). Ensure you export a `proxy` function (e.g., `export const proxy = ...` or `export async function proxy(req) { ... }`) instead of a default export.

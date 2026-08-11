@@ -1,10 +1,6 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { auth } from '@/src/lib/auth-server';
 
-export async function proxy(request: NextRequest) {
-  // Admin role and session verification is handled safely in app/admin/layout.tsx
-  return NextResponse.next();
-}
+export const proxy = auth.middleware({ loginUrl: '/auth/sign-in' });
 
 export const config = {
   matcher: ['/admin/:path*'],

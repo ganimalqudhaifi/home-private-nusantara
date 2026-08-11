@@ -1,4 +1,4 @@
-import { createNeonAuth } from '@neondatabase/neon-js/auth/next/server';
+import { createNeonAuth } from '@neondatabase/auth/next/server';
 
 if (!process.env.NEXT_PUBLIC_NEON_AUTH_URL) {
   throw new Error('NEXT_PUBLIC_NEON_AUTH_URL environment variable is missing.');
