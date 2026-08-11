@@ -2,5 +2,15 @@
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
     ".opencode/plugins/graphify.js"
-  ]
+  ],
+  "mcp": {
+    "Neon": {
+      "type": "remote",
+      "url": "https://mcp.neon.tech/mcp?projectId=lingering-river-38682142",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer napi_hov1gqfbt98em87hpstyp0n1v72cuy5x3oqv9cl9xzdg9kzn1ajhqg0jy3rv24g1"
+      }
+    }
+  }
 }
