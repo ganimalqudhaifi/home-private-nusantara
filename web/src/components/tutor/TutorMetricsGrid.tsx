@@ -1,5 +1,5 @@
 import React from'react';
-import { CheckCircle2, Users, CalendarCheck, Star } from'lucide-react';
+import { CheckCircle2, Users, CalendarCheck } from'lucide-react';
 
 export interface TutorMetricsGridProps {
  readonly completedSessions?: number;
@@ -7,24 +7,22 @@ export interface TutorMetricsGridProps {
  readonly sdStudentsCount?: number;
  readonly smpStudentsCount?: number;
  readonly activeDaysCount?: number;
- readonly rating?: number;
  readonly className?: string;
 }
 
 export function TutorMetricsGrid({
- completedSessions = 18,
- activeStudentsCount = 4,
- sdStudentsCount = 2,
- smpStudentsCount = 2,
- activeDaysCount = 4,
- rating = 4.9,
+ completedSessions = 0,
+ activeStudentsCount = 0,
+ sdStudentsCount = 0,
+ smpStudentsCount = 0,
+ activeDaysCount = 0,
  className ='',
 }: TutorMetricsGridProps) {
  const metrics = [
  {
  title:'Total Sesi Selesai',
  value: completedSessions.toString(),
- subtext:'Bulan Ini',
+ subtext:'Keseluruhan',
  icon: CheckCircle2,
  iconColor:'bg-blue-50 text-blue-900',
  },
@@ -39,23 +37,16 @@ export function TutorMetricsGrid({
  iconColor:'bg-indigo-50 text-indigo-900',
  },
  {
- title:'Slot Ketersediaan',
+ title:'Ketersediaan Mengajar',
  value:`${activeDaysCount} Hari Aktif`,
- subtext:'9 Slot Jam Tersedia',
+ subtext:'Telah Diatur',
  icon: CalendarCheck,
  iconColor:'bg-emerald-50 text-emerald-800',
- },
- {
- title:'Rating Kepuasan',
- value:`${rating} / 5.0`,
- subtext:'Berdasarkan 48 ulasan',
- icon: Star,
- iconColor:'bg-amber-50 text-status-warning',
  },
  ];
 
  return (
- <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 ${className}`}>
+ <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 ${className}`}>
  {metrics.map((m, idx) => {
  const Icon = m.icon;
  return (

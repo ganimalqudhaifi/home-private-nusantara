@@ -21,19 +21,28 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
   const [tutorStatus, setTutorStatus] = useState<string>('verified');
   const [sessions, setSessions] = useState<StudentSession[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
+  const [stats, setStats] = useState({
+    completedSessions: 0,
+    activeStudentsCount: 0,
+    sdStudentsCount: 0,
+    smpStudentsCount: 0,
+    activeDaysCount: 0,
+  });
   const [isLoadingData, setIsLoadingData] = useState(true);
 
   useEffect(() => {
-    // In a real app, you would fetch these from specific endpoints for the tutor.
-    // For now, we simulate fetching with a timeout and empty arrays.
     const fetchData = async () => {
       setIsLoadingData(true);
       try {
-        // Simulate fetching tutor specific sessions and students
-        // const resSessions = await fetch('/api/tutor/sessions');
-        // const resStudents = await fetch('/api/tutor/students');
-        setSessions([]);
-        setStudents([]);
+        const res = await fetch('/api/tutor/dashboard-data');
+        const data = await res.json();
+        if (data.success) {
+          setSessions(data.sessions || []);
+          setStudents(data.students || []);
+          if (data.stats) {
+            setStats(data.stats);
+          }
+        }
       } catch (err) {
         console.error('Failed to fetch tutor data:', err);
       } finally {
@@ -208,12 +217,11 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
 
         {/* Metrics Grid */}
         <TutorMetricsGrid
-          completedSessions={18}
-          activeStudentsCount={4}
-          sdStudentsCount={2}
-          smpStudentsCount={2}
-          activeDaysCount={4}
-          rating={4.9}
+          completedSessions={stats.completedSessions}
+          activeStudentsCount={stats.activeStudentsCount}
+          sdStudentsCount={stats.sdStudentsCount}
+          smpStudentsCount={stats.smpStudentsCount}
+          activeDaysCount={stats.activeDaysCount}
         />
 
         {/* 2-Column Content Grid: Upcoming Sessions & Recent Students */}

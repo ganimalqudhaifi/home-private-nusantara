@@ -686,3 +686,102 @@ export async function deleteTutorFromDB(tutorId: string) {
 
   return deletedUser[0] || { id: tutorId };
 }
+
+export async function getTutorDashboardData(tutorId: string) {
+  try {
+    // Get upcoming sessions for this tutor
+    const sessions = await sql`
+      SELECT 
+        b.id,
+        b.booking_code as code,
+        b.student_id as "studentId",
+        COALESCE(s.student_name, u_st.full_name, 'Siswa Nusantara') as "studentName",
+        b.tutor_id as "tutorId",
+        COALESCE(u_tu.full_name, 'Pengajar') as "tutorName",
+        b.level,
+        b.grade,
+        b.subject,
+        TO_CHAR(b.booking_date, 'YYYY-MM-DD') as date,
+        b.day,
+        CONCAT(TO_CHAR(b.start_time, 'HH24:MI'), ' - ', TO_CHAR(b.end_time, 'HH24:MI')) as time,
+        b.address,
+        b.district,
+        b.city,
+        b.status
+      FROM bookings b
+      LEFT JOIN students s ON b.student_id = s.id
+      LEFT JOIN users u_st ON b.student_id = u_st.id
+      LEFT JOIN users u_tu ON b.tutor_id = u_tu.id
+      WHERE b.tutor_id = ${tutorId} AND b.status IN ('scheduled', 'confirmed')
+      ORDER BY b.booking_date ASC, b.start_time ASC
+      LIMIT 10;
+    `;
+
+    // Get unique students for this tutor
+    const studentsRows = await sql`
+      SELECT DISTINCT 
+        s.id,
+        COALESCE(s.student_name, u_st.full_name, 'Siswa Nusantara') as name,
+        s.level,
+        s.grade,
+        s.school,
+        b.address,
+        b.district,
+        b.city,
+        b.status as "sessionStatus"
+      FROM bookings b
+      LEFT JOIN students s ON b.student_id = s.id
+      LEFT JOIN users u_st ON b.student_id = u_st.id
+      WHERE b.tutor_id = ${tutorId} AND s.id IS NOT NULL
+      ORDER BY s.id
+      LIMIT 10;
+    `;
+    
+    // Fallback if distinct query has issues with undefined s.id
+    const students = studentsRows.map(row => ({
+      id: row.id,
+      name: row.name,
+      level: row.level || 'SD',
+      grade: row.grade || 1,
+      school: row.school || '-',
+      parentName: 'Wali Murid', // Simplified
+      address: row.address || '-',
+      district: row.district || '-',
+      status: 'active'
+    }));
+
+    // Stats
+    const statsResult = await sql`
+      SELECT
+        COUNT(CASE WHEN b.status = 'completed' THEN 1 END) as completed_sessions,
+        COUNT(DISTINCT s.id) as total_students,
+        COUNT(DISTINCT CASE WHEN s.level = 'SD' THEN s.id END) as sd_students,
+        COUNT(DISTINCT CASE WHEN s.level = 'SMP' THEN s.id END) as smp_students
+      FROM bookings b
+      LEFT JOIN students s ON b.student_id = s.id
+      WHERE b.tutor_id = ${tutorId}
+    `;
+    
+    // Active days (from tutor schedules)
+    let activeDays = 0;
+    try {
+      const scheduleResult = await sql`SELECT COUNT(DISTINCT day) as active_days FROM tutor_schedules WHERE tutor_id = ${tutorId} AND is_available = true`;
+      activeDays = Number(scheduleResult[0]?.active_days || 0);
+    } catch(e) {
+      // Ignore if tutor_schedules doesn't exist
+    }
+
+    const stats = {
+      completedSessions: Number(statsResult[0]?.completed_sessions || 0),
+      activeStudentsCount: Number(statsResult[0]?.total_students || 0),
+      sdStudentsCount: Number(statsResult[0]?.sd_students || 0),
+      smpStudentsCount: Number(statsResult[0]?.smp_students || 0),
+      activeDaysCount: activeDays
+    };
+
+    return { success: true, sessions, students, stats };
+  } catch (error) {
+    console.error('Error fetching tutor dashboard data:', error);
+    return { success: false, error: 'Failed to fetch tutor data' };
+  }
+}
