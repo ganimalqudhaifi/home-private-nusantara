@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../shared/Modal';
 import { Tutor, StudentSession, Student } from '../../types';
-import { MOCK_TUTORS } from '../../data/mockData';
 import { CreateStudentModal } from './CreateStudentModal';
 import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
 import {
@@ -140,13 +139,14 @@ export function CreateScheduleRundownModal({
               subjects: t.subjects || ['Matematika SD'],
               status: t.status,
             }));
-          setTutorsList(verified.length > 0 ? verified : MOCK_TUTORS);
+          setTutorsList(verified);
         } else {
-          setTutorsList(MOCK_TUTORS.filter((t) => t.isVerified));
+          setTutorsList([]);
         }
       })
-      .catch(() => {
-        setTutorsList(MOCK_TUTORS.filter((t) => t.isVerified));
+      .catch((err) => {
+        console.error('Failed to fetch verified tutors', err);
+        setTutorsList([]);
       });
   }, []);
 
@@ -172,7 +172,7 @@ export function CreateScheduleRundownModal({
     setLocationArea(newStudent.address.toLowerCase().includes('gowa') ? 'Gowa' : 'Makassar');
   };
 
-  const verifiedTutors = tutorsList.length > 0 ? tutorsList : MOCK_TUTORS.filter((t) => t.isVerified);
+  const verifiedTutors = tutorsList;
 
   const formatIndonesianDate = (isoDate: string) => {
     if (!isoDate) return '-';

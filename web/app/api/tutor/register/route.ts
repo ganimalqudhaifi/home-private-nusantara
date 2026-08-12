@@ -48,9 +48,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const email = sessionUser?.email || body.email || null;
+    const email = sessionUser?.email || body.email || undefined;
     const avatarUrl =
-      sessionUser?.image || sessionUser?.avatarUrl || sessionUser?.picture || null;
+      sessionUser?.image || sessionUser?.avatarUrl || sessionUser?.picture || undefined;
 
     const result = await registerTutorProfile({
       userId,

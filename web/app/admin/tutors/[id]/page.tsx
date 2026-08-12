@@ -4,7 +4,7 @@ import Image from'next/image';
 import { notFound } from'next/navigation';
 import { AdminTopNavBar } from'../../../../src/components/admin/AdminTopNavBar';
 import { Footer } from'../../../../src/components/shared/Footer';
-import { MOCK_TUTORS } from'../../../../src/data/mockData';
+import { getAllTutorsFromDB } from'../../../../src/lib/db-services';
 import { ArrowLeft, ShieldCheck, School, Phone, Calendar, Clock, Star, FileText, CheckCircle2 } from'lucide-react';
 
 export interface AdminTutorDetailPageProps {
@@ -13,7 +13,12 @@ export interface AdminTutorDetailPageProps {
 
 export default async function AdminTutorDetailPage({ params }: AdminTutorDetailPageProps) {
  const { id } = await params;
- const tutor = MOCK_TUTORS.find((t) => t.id === id) || MOCK_TUTORS[0];
+ const allTutors = await getAllTutorsFromDB();
+ const tutor = allTutors.find((t) => t.id === id);
+
+ if (!tutor) {
+   notFound();
+ }
 
  return (
  <div className="bg-surface text-text-primary min-h-screen flex flex-col">
@@ -81,7 +86,7 @@ export default async function AdminTutorDetailPage({ params }: AdminTutorDetailP
  Mata Pelajaran & Jenjang
  </h4>
  <div className="flex flex-wrap gap-1.5">
- {tutor.subjects.map((sub) => (
+ {tutor.subjects?.map((sub: string) => (
  <span
  key={sub}
  className="px-2.5 py-1 rounded-lg bg-surface-container-low text-xs font-semibold text-primary"

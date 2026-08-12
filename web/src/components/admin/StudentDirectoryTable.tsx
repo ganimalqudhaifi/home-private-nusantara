@@ -12,12 +12,14 @@ export interface StudentDirectoryTableProps {
   readonly students: readonly Student[];
   readonly className?: string;
   readonly onStudentAdded?: (newStudent: Student) => void;
+  readonly isLoading?: boolean;
 }
 
 export function StudentDirectoryTable({
   students,
   className = '',
   onStudentAdded,
+  isLoading = false,
 }: StudentDirectoryTableProps) {
   const [studentList, setStudentList] = useState<Student[]>([...students]);
   const [filterLevel, setFilterLevel] = useState<string>('all');
@@ -153,7 +155,29 @@ export function StudentDirectoryTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-border-whisper text-xs">
-              {filteredStudents.length === 0 ? (
+              {isLoading ? (
+                [1, 2, 3].map((i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-gray-200 shrink-0"></div>
+                        <div className="space-y-1.5 flex-1">
+                          <div className="h-4 bg-gray-200 rounded w-32"></div>
+                          <div className="h-3 bg-gray-100 rounded w-24"></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-20"></div></td>
+                    <td className="px-6 py-4 space-y-1.5">
+                      <div className="h-4 bg-gray-200 rounded w-28"></div>
+                      <div className="h-3 bg-gray-100 rounded w-20"></div>
+                    </td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-full max-w-[150px]"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16 mx-auto"></div></td>
+                    <td className="px-6 py-4"><div className="h-8 bg-gray-200 rounded-xl w-32 ml-auto"></div></td>
+                  </tr>
+                ))
+              ) : filteredStudents.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-text-muted">
                     Tidak ditemukan data siswa.

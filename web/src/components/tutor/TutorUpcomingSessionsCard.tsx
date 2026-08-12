@@ -9,12 +9,14 @@ export interface TutorUpcomingSessionsCardProps {
  readonly sessions: readonly StudentSession[];
  readonly onSelectSession?: (session: StudentSession) => void;
  readonly className?: string;
+ readonly isLoading?: boolean;
 }
 
 export function TutorUpcomingSessionsCard({
  sessions,
  onSelectSession,
  className ='',
+ isLoading = false,
 }: TutorUpcomingSessionsCardProps) {
  const upcomingSessions = sessions.filter((s) => s.status ==='scheduled');
 
@@ -41,7 +43,31 @@ export function TutorUpcomingSessionsCard({
  </div>
 
  <div className="space-y-4 flex-1">
- {upcomingSessions.map((session) => (
+ {isLoading ? (
+ [1, 2].map((i) => (
+ <div key={i} className="p-4 rounded-xl border border-border-whisper bg-gray-50 flex animate-pulse flex-col sm:flex-row justify-between gap-4">
+ <div className="flex gap-3.5">
+ <div className="w-11 h-11 rounded-xl bg-gray-200 shrink-0"></div>
+ <div className="space-y-2">
+ <div className="h-4 bg-gray-200 rounded w-32"></div>
+ <div className="h-3 bg-gray-200 rounded w-24"></div>
+ <div className="h-3 bg-gray-200 rounded w-40"></div>
+ </div>
+ </div>
+ <div className="space-y-2 sm:text-right">
+ <div className="h-4 bg-gray-200 rounded w-24 ml-auto"></div>
+ <div className="h-3 bg-gray-200 rounded w-16 ml-auto"></div>
+ </div>
+ </div>
+ ))
+ ) : upcomingSessions.length === 0 ? (
+ <div className="py-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-border-whisper">
+ <Calendar className="w-8 h-8 text-text-muted mx-auto mb-2" />
+ <p className="text-sm font-semibold text-primary">Tidak Ada Jadwal Mengajar Terdekat</p>
+ <p className="text-xs text-text-muted">Jadwal yang telah dikonfirmasi akan muncul di sini.</p>
+ </div>
+ ) : (
+ upcomingSessions.map((session) => (
  <div
  key={session.id}
  onClick={() => onSelectSession && onSelectSession(session)}
@@ -81,7 +107,8 @@ export function TutorUpcomingSessionsCard({
  </div>
  </div>
  </div>
- ))}
+ )))
+ }
  </div>
  </div>
  );

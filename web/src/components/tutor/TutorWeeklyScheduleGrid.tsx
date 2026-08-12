@@ -8,12 +8,14 @@ export interface TutorWeeklyScheduleGridProps {
  readonly sessions: readonly StudentSession[];
  readonly onSelectSession: (session: StudentSession) => void;
  readonly className?: string;
+ readonly isLoading?: boolean;
 }
 
 export function TutorWeeklyScheduleGrid({
  sessions,
  onSelectSession,
  className ='',
+ isLoading = false,
 }: TutorWeeklyScheduleGridProps) {
  const days = [
  { day:'Sen', date: 10, full:'Senin' },
@@ -134,7 +136,22 @@ export function TutorWeeklyScheduleGrid({
 
  {/* Floating Session Cards Overlay */}
  <div className="absolute inset-0 min-w-[760px] pointer-events-none">
- {sessions
+ {isLoading ? (
+ <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm z-30 pointer-events-auto">
+ <div className="flex flex-col items-center gap-2">
+ <div className="w-6 h-6 border-2 border-primary-container border-t-transparent rounded-full animate-spin"></div>
+ <span className="text-xs font-semibold text-primary">Memuat jadwal...</span>
+ </div>
+ </div>
+ ) : sessions.length === 0 ? (
+ <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm z-30 pointer-events-auto">
+ <div className="bg-white p-6 rounded-2xl border border-border-whisper shadow-sm text-center">
+ <h3 className="text-sm font-bold text-primary mb-1">Belum Ada Sesi</h3>
+ <p className="text-xs text-text-muted">Tidak ada jadwal bimbingan pada rentang tanggal ini.</p>
+ </div>
+ </div>
+ ) : (
+ sessions
  .filter((s) => s.status ==='scheduled')
  .map((session) => {
  // Map session to grid coordinates
@@ -204,7 +221,8 @@ export function TutorWeeklyScheduleGrid({
  </div>
  </div>
  );
- })}
+ })
+ )}
  </div>
  </div>
  </div>

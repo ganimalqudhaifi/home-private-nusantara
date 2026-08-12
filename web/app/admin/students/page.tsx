@@ -5,14 +5,15 @@ import Link from 'next/link';
 import { AdminTopNavBar } from '../../../src/components/admin/AdminTopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
 import { StudentDirectoryTable } from '../../../src/components/admin/StudentDirectoryTable';
-import { MOCK_STUDENTS } from '../../../src/data/mockData';
 import { Student } from '../../../src/types';
 import { ArrowLeft } from 'lucide-react';
 
 export default function AdminStudentsPage() {
-  const [students, setStudents] = useState<readonly Student[]>(MOCK_STUDENTS);
+  const [students, setStudents] = useState<readonly Student[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    setIsLoading(true);
     fetch('/api/admin/students')
       .then((res) => res.json())
       .then((data) => {
@@ -33,7 +34,8 @@ export default function AdminStudentsPage() {
           setStudents(dbStudents);
         }
       })
-      .catch((err) => console.error('Failed to fetch students list:', err));
+      .catch((err) => console.error('Failed to fetch students list:', err))
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
@@ -69,7 +71,7 @@ export default function AdminStudentsPage() {
         </div>
 
         {/* Students Table */}
-        <StudentDirectoryTable students={students} />
+        <StudentDirectoryTable students={students} isLoading={isLoading} />
       </main>
 
       <Footer />

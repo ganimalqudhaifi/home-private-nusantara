@@ -1,12 +1,11 @@
 'use client';
 
-import React from'react';
+import React, { useState, useEffect } from'react';
 import { TopNavBar } from'../../../src/components/shared/TopNavBar';
 import { Footer } from'../../../src/components/shared/Footer';
 import { TutorWeeklyScheduleGrid } from'../../../src/components/tutor/TutorWeeklyScheduleGrid';
 import { TutorStudentDrawer } from'../../../src/components/tutor/TutorStudentDrawer';
 import { useDrawer } from'../../../src/hooks/useDrawer';
-import { MOCK_SESSIONS } from'../../../src/data/mockData';
 import { StudentSession } from'../../../src/types';
 import Link from'next/link';
 import { Calendar, Clock, Sparkles } from'lucide-react';
@@ -18,6 +17,17 @@ export interface TutorSchedulePageProps {
 export default function TutorSchedulePage({
  initialSessionId,
 }: TutorSchedulePageProps) {
+ const [sessions, setSessions] = useState<StudentSession[]>([]);
+ const [isLoading, setIsLoading] = useState(true);
+
+ useEffect(() => {
+  setIsLoading(true);
+  // Fetch sessions for this tutor. Currently simulated.
+  // fetch('/api/tutor/sessions').then(...)
+  setSessions([]);
+  setIsLoading(false);
+ }, []);
+
  const {
  isOpen: isDrawerOpen,
  data: selectedSession,
@@ -25,7 +35,7 @@ export default function TutorSchedulePage({
  close: closeDrawer,
  } = useDrawer<StudentSession>({
  initialOpen: false,
- initialData: MOCK_SESSIONS[0],
+ initialData: null,
  });
 
  const handleSelectSession = (session: StudentSession) => {
@@ -66,7 +76,8 @@ export default function TutorSchedulePage({
 
  {/* Weekly Calendar Schedule Grid */}
  <TutorWeeklyScheduleGrid
- sessions={MOCK_SESSIONS}
+ sessions={sessions}
+ isLoading={isLoading}
  onSelectSession={handleSelectSession}
  />
  </main>

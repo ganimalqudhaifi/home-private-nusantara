@@ -6,7 +6,6 @@ import { Footer } from'../../../src/components/shared/Footer';
 import { TutorAvailabilityMatrix } from'../../../src/components/tutor/TutorAvailabilityMatrix';
 import { TutorTimeSlotBuilder } from'../../../src/components/tutor/TutorTimeSlotBuilder';
 import { useAvailability } from'../../../src/hooks/useAvailability';
-import { MOCK_TUTORS } from'../../../src/data/mockData';
 import { Info, CheckCircle2 } from'lucide-react';
 import { Button } from'../../../src/components/shared/Button';
 
@@ -17,7 +16,7 @@ export interface TutorAvailabilityPageProps {
 export default function TutorAvailabilityPage({
  initialDay ='Senin',
 }: TutorAvailabilityPageProps) {
- const initialSlots = MOCK_TUTORS[0].availableSlots;
+ const initialSlots: any[] = [];
  const {
  selectedDay,
  setSelectedDay,

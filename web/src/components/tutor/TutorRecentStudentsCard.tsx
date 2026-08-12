@@ -7,11 +7,13 @@ import { Student } from'../../types';
 export interface TutorRecentStudentsCardProps {
  readonly students: readonly Student[];
  readonly className?: string;
+ readonly isLoading?: boolean;
 }
 
 export function TutorRecentStudentsCard({
  students,
  className ='',
+ isLoading = false,
 }: TutorRecentStudentsCardProps) {
  return (
  <div
@@ -29,7 +31,27 @@ export function TutorRecentStudentsCard({
  </div>
 
  <div className="space-y-3.5 flex-1">
- {students.slice(0, 4).map((student) => {
+ {isLoading ? (
+ [1, 2, 3].map((i) => (
+ <div key={i} className="p-3.5 rounded-xl border border-border-whisper flex items-center justify-between gap-3 bg-gray-50 animate-pulse">
+ <div className="flex items-center gap-3">
+ <div className="w-9 h-9 rounded-xl bg-gray-200 shrink-0"></div>
+ <div className="space-y-2">
+ <div className="h-4 bg-gray-200 rounded w-24"></div>
+ <div className="h-3 bg-gray-200 rounded w-40"></div>
+ </div>
+ </div>
+ <div className="w-8 h-8 rounded-xl bg-gray-200 shrink-0"></div>
+ </div>
+ ))
+ ) : students.length === 0 ? (
+ <div className="py-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-border-whisper">
+ <GraduationCap className="w-8 h-8 text-text-muted mx-auto mb-2" />
+ <p className="text-sm font-semibold text-primary">Belum Ada Siswa Bimbingan</p>
+ <p className="text-xs text-text-muted">Data siswa akan muncul jika ada sesi yang disetujui.</p>
+ </div>
+ ) : (
+ students.slice(0, 4).map((student) => {
  const isSD = student.level ==='SD';
  return (
  <div
@@ -73,7 +95,8 @@ export function TutorRecentStudentsCard({
  </a>
  </div>
  );
- })}
+ }))
+ }
  </div>
  </div>
  );

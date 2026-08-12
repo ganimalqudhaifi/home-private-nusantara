@@ -8,7 +8,7 @@ import { TutorMetricsGrid } from '../../../src/components/tutor/TutorMetricsGrid
 import { TutorUpcomingSessionsCard } from '../../../src/components/tutor/TutorUpcomingSessionsCard';
 import { TutorRecentStudentsCard } from '../../../src/components/tutor/TutorRecentStudentsCard';
 import { CalendarPlus, ShieldCheck, Coffee, AlertTriangle, UserX, PhoneCall } from 'lucide-react';
-import { MOCK_SESSIONS, MOCK_STUDENTS } from '../../../src/data/mockData';
+import { StudentSession, Student } from '../../../src/types';
 
 export interface TutorDashboardPageProps {
   readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -19,6 +19,29 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
   const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
   const [isVerified, setIsVerified] = useState(true);
   const [tutorStatus, setTutorStatus] = useState<string>('verified');
+  const [sessions, setSessions] = useState<StudentSession[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  useEffect(() => {
+    // In a real app, you would fetch these from specific endpoints for the tutor.
+    // For now, we simulate fetching with a timeout and empty arrays.
+    const fetchData = async () => {
+      setIsLoadingData(true);
+      try {
+        // Simulate fetching tutor specific sessions and students
+        // const resSessions = await fetch('/api/tutor/sessions');
+        // const resStudents = await fetch('/api/tutor/students');
+        setSessions([]);
+        setStudents([]);
+      } catch (err) {
+        console.error('Failed to fetch tutor data:', err);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     fetch('/api/user/me')
@@ -196,11 +219,11 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
         {/* 2-Column Content Grid: Upcoming Sessions & Recent Students */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7">
-            <TutorUpcomingSessionsCard sessions={MOCK_SESSIONS} />
+            <TutorUpcomingSessionsCard sessions={sessions} isLoading={isLoadingData} />
           </div>
 
           <div className="lg:col-span-5">
-            <TutorRecentStudentsCard students={MOCK_STUDENTS} />
+            <TutorRecentStudentsCard students={students} isLoading={isLoadingData} />
           </div>
         </div>
       </main>

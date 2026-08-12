@@ -11,7 +11,6 @@ import { TutorActionModal, ActionType } from '../../../src/components/admin/Tuto
 import { CreateScheduleRundownModal } from '../../../src/components/admin/CreateScheduleRundownModal';
 import { useDrawer } from '../../../src/hooks/useDrawer';
 import { useModal } from '../../../src/hooks/useModal';
-import { ADMIN_STATS } from '../../../src/data/mockData';
 import { Tutor, TutorStatus, StudentSession } from '../../../src/types';
 import { Calendar, Users, GraduationCap, ShieldCheck, ArrowRight, Clock, MapPin, Plus } from 'lucide-react';
 
@@ -24,7 +23,13 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
   const [isLoadingTutors, setIsLoadingTutors] = useState<boolean>(true);
   const [isLoadingStats, setIsLoadingStats] = useState<boolean>(true);
   const [isLoadingSessions, setIsLoadingSessions] = useState<boolean>(true);
-  const [stats, setStats] = useState(ADMIN_STATS);
+  const [stats, setStats] = useState({
+    activeTutors: 0,
+    pendingTutors: 0,
+    registeredStudents: { total: 0, sd: 0, smp: 0 },
+    totalBookings: 0,
+    doubleBookingRate: '0%',
+  });
   const [weeklySessions, setWeeklySessions] = useState<StudentSession[]>([]);
   const [isRundownModalOpen, setIsRundownModalOpen] = useState(false);
 
