@@ -20,12 +20,16 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
   const [userName, setUserName] = useState('Calon Pengajar');
   const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
   const [userId, setUserId] = useState<string | undefined>(undefined);
+  const [userRole, setUserRole] = useState<'guest' | 'student' | 'tutor' | 'admin'>('tutor');
 
   useEffect(() => {
     fetch('/api/user/me')
       .then((res) => res.json())
       .then((data) => {
         if (data.authenticated && data.user) {
+          if (data.user.role) {
+            setUserRole(data.user.role);
+          }
           if (data.user.id) {
             setUserId(data.user.id);
           }
@@ -50,6 +54,7 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
         preloadedUser={{
           name: userName,
           avatar: userAvatar,
+          role: userRole,
           status: 'pending'
         }}
       />
