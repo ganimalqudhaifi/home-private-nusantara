@@ -8,6 +8,7 @@ import { CurriculumSection } from '../src/components/landing/CurriculumSection';
 import { CurationStepsSection } from '../src/components/landing/CurationStepsSection';
 import { TestimonialsSection } from '../src/components/landing/TestimonialsSection';
 import { QuickBookingFormSection } from '../src/components/landing/QuickBookingFormSection';
+import { auth } from '../src/lib/auth-server';
 
 export interface HomePageProps {
   readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -18,10 +19,21 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     await searchParams;
   }
 
+  const { data: session } = await auth.getSession();
+  const role = ((session?.user as any)?.role as 'guest' | 'student' | 'tutor' | 'admin') || 'guest';
+  const userName = session?.user?.name || undefined;
+  const userAvatar = session?.user?.image || (session?.user as any)?.avatarUrl || undefined;
+
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col selection:bg-red-100 selection:text-red-900">
       {/* Top Navigation Bar */}
-      <TopNavBar activeRoute="/" role="guest" />
+      <TopNavBar 
+        activeRoute="/" 
+        role={role} 
+        userName={userName}
+        userAvatar={userAvatar}
+        hideUserName={true}
+      />
 
       {/* Main Content Flow */}
       <main className="flex-1 flex flex-col">

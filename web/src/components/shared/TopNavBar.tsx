@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, HelpCircle, Menu, X, LogOut } from 'lucide-react';
+import { ShieldCheck, Menu, X, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { BRAND_INFO, NAV_LINKS } from '../../data/mockData';
 import { authClient } from '../../lib/auth-client';
 
@@ -14,6 +14,7 @@ export interface TopNavBarProps {
   readonly userName?: string;
   readonly userBadge?: string;
   readonly userAvatar?: string;
+  readonly hideUserName?: boolean;
 }
 
 export function TopNavBar({
@@ -22,17 +23,33 @@ export function TopNavBar({
   userName,
   userBadge,
   userAvatar,
+  hideUserName = false,
 }: TopNavBarProps) {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -77,7 +94,7 @@ export function TopNavBar({
         </Link>
 
         {/* Navigation Links for Public Pages */}
-        {role === 'guest' && (
+        {(role === 'guest' || activeRoute === '/') && (
           <nav className="hidden md:flex gap-6 items-center">
             {NAV_LINKS.map((link) => {
               const isActive = activeRoute === link.href;
@@ -98,85 +115,142 @@ export function TopNavBar({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 md:gap-3">
+          {(role === 'guest' || activeRoute === '/') && (
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              className="md:hidden p-2 rounded-xl border border-border-whisper text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
+              aria-label={isMobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
+              aria-expanded={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          )}
+
           {role === 'guest' ? (
-            <>
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen((open) => !open)}
-                className="md:hidden p-2 rounded-xl border border-border-whisper text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
-                aria-label={isMobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
-                aria-expanded={isMobileMenuOpen}
+            <div className="hidden md:flex items-center gap-3">
+              <Link
+                href="/auth"
+                className="hidden sm:inline-flex text-xs md:text-sm font-semibold text-primary hover:text-primary-hover px-3 py-2 rounded-xl transition-colors"
               >
-                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
-              <div className="hidden md:flex items-center gap-3">
-                <Link
-                  href="/auth"
-                  className="hidden sm:inline-flex text-xs md:text-sm font-semibold text-primary hover:text-primary-hover px-3 py-2 rounded-xl transition-colors"
-                >
-                  Masuk Portal
-                </Link>
-                <a
-                  href="#daftar"
-                  className="bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs md:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm active:scale-95 transition-all duration-150 inline-flex items-center gap-1.5"
-                >
-                  Daftar Sekarang
-                </a>
-              </div>
-            </>
+                Masuk Portal
+              </Link>
+              <a
+                href="#daftar"
+                className="bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs md:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm active:scale-95 transition-all duration-150 inline-flex items-center gap-1.5"
+              >
+                Daftar Sekarang
+              </a>
+            </div>
           ) : (
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3" ref={profileMenuRef}>
               {userBadge && (
                 <div className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs px-2.5 py-1 rounded-full font-medium">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>{userBadge}</span>
                 </div>
               )}
+
               {userName && (
-                <div className="flex items-center gap-2 pl-2 border-l border-border-whisper">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-xs font-semibold text-text-primary leading-tight">
-                      {userName}
-                    </p>
-                    <p className="text-[10px] text-text-muted capitalize">{role}</p>
-                  </div>
-                  {userAvatar ? (
-                    <Image
-                      src={userAvatar}
-                      alt={userName}
-                      width={36}
-                      height={36}
-                      className="w-9 h-9 rounded-full object-cover border border-border-whisper shadow-xs"
-                    />
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                      {userName.substring(0, 2).toUpperCase()}
+                <div className="relative border-l border-border-whisper pl-2 ml-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                    className="flex items-center gap-2 hover:bg-surface-container-low p-1.5 rounded-xl transition-colors focus:outline-none"
+                  >
+                    {!hideUserName && (
+                      <div className="text-right hidden sm:block">
+                        <p className="text-xs font-semibold text-text-primary leading-tight">
+                          {userName}
+                        </p>
+                        <p className="text-[10px] text-text-muted capitalize">{role}</p>
+                      </div>
+                    )}
+                    {userAvatar ? (
+                      <Image
+                        src={userAvatar}
+                        alt={userName}
+                        width={36}
+                        height={36}
+                        className="w-9 h-9 rounded-full object-cover border border-border-whisper shadow-xs"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                        {userName.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    <ChevronDown className="w-4 h-4 text-text-muted hidden sm:block" />
+                  </button>
+
+                  {/* Profile Dropdown */}
+                  {isProfileMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-border-whisper rounded-xl shadow-lg py-2 z-50 animate-fade-in">
+                      {role === 'admin' && (
+                        <>
+                          <Link
+                            href="/admin/dashboard"
+                            onClick={() => setIsProfileMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-primary hover:bg-surface-container-low hover:text-primary transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4" />
+                            <span>Dashboard Admin</span>
+                          </Link>
+                          <Link
+                            href="/tutor/dashboard"
+                            onClick={() => setIsProfileMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-primary hover:bg-surface-container-low hover:text-primary transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4" />
+                            <span>Dashboard Tutor</span>
+                          </Link>
+                        </>
+                      )}
+                      
+                      {role === 'tutor' && (
+                        <Link
+                          href="/tutor/dashboard"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-primary hover:bg-surface-container-low hover:text-primary transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4" />
+                          <span>Dashboard Tutor</span>
+                        </Link>
+                      )}
+
+                      {role === 'student' && (
+                        <Link
+                          href="/student/dashboard"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-primary hover:bg-surface-container-low hover:text-primary transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4" />
+                          <span>Dashboard Siswa</span>
+                        </Link>
+                      )}
+
+                      <div className="h-px bg-border-whisper my-1" />
+                      
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          handleSignOut();
+                        }}
+                        className="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Keluar</span>
+                      </button>
                     </div>
                   )}
                 </div>
               )}
-              <Link
-                href="/#faq"
-                className="p-2 rounded-xl border border-border-whisper text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
-                title="Bantuan"
-              >
-                <HelpCircle className="w-4 h-4" />
-              </Link>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="p-2 rounded-xl border border-red-100 text-red-500 hover:text-white hover:bg-red-500 hover:border-red-500 transition-all shadow-sm flex items-center gap-1.5 text-xs font-medium"
-                title="Keluar (Log Out)"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Keluar</span>
-              </button>
             </div>
           )}
         </div>
       </div>
 
-      {role === 'guest' && isMobileMenuOpen && (
+      {(role === 'guest' || activeRoute === '/') && isMobileMenuOpen && (
         <>
           <button
             type="button"
@@ -199,22 +273,24 @@ export function TopNavBar({
                   </Link>
                 );
               })}
-              <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border-whisper pt-3">
-                <Link
-                  href="/auth"
-                  onClick={closeMobileMenu}
-                  className="rounded-xl border border-border-whisper px-3 py-2.5 text-center text-xs font-bold text-primary hover:bg-surface-container-low"
-                >
-                  Masuk Portal
-                </Link>
-                <a
-                  href="#daftar"
-                  onClick={closeMobileMenu}
-                  className="rounded-xl bg-[#DC2626] px-3 py-2.5 text-center text-xs font-bold text-white hover:bg-[#B91C1C]"
-                >
-                  Daftar Sekarang
-                </a>
-              </div>
+              {role === 'guest' && (
+                <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border-whisper pt-3">
+                  <Link
+                    href="/auth"
+                    onClick={closeMobileMenu}
+                    className="rounded-xl border border-border-whisper px-3 py-2.5 text-center text-xs font-bold text-primary hover:bg-surface-container-low"
+                  >
+                    Masuk Portal
+                  </Link>
+                  <a
+                    href="#daftar"
+                    onClick={closeMobileMenu}
+                    className="rounded-xl bg-[#DC2626] px-3 py-2.5 text-center text-xs font-bold text-white hover:bg-[#B91C1C]"
+                  >
+                    Daftar Sekarang
+                  </a>
+                </div>
+              )}
             </div>
           </nav>
         </>
