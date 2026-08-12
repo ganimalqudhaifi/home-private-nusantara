@@ -177,6 +177,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
         customRoleLabel={displayRoleLabel}
         userName={userName}
         userAvatar={userAvatar}
+        isLoadingUser={isLoadingUser}
         userBadge={
           tutorStatus === 'on_leave'
             ? 'Sedang Cuti'

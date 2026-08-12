@@ -16,6 +16,7 @@ export interface TopNavBarProps {
   readonly userAvatar?: string;
   readonly hideUserName?: boolean;
   readonly customRoleLabel?: string;
+  readonly isLoadingUser?: boolean;
 }
 
 export function TopNavBar({
@@ -26,6 +27,7 @@ export function TopNavBar({
   userAvatar,
   hideUserName = false,
   customRoleLabel,
+  isLoadingUser = false,
 }: TopNavBarProps) {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -146,14 +148,27 @@ export function TopNavBar({
             </div>
           ) : (
             <div className="flex items-center gap-2 sm:gap-3" ref={profileMenuRef}>
-              {userBadge && (
+              {isLoadingUser ? (
+                <div className="hidden sm:inline-flex items-center w-32 h-6 bg-gray-200 rounded-full animate-pulse" />
+              ) : userBadge ? (
                 <div className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs px-2.5 py-1 rounded-full font-medium">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>{userBadge}</span>
                 </div>
-              )}
+              ) : null}
 
-              {userName && (
+              {isLoadingUser ? (
+                <div className="relative border-l border-border-whisper pl-2 ml-1 flex items-center gap-2 p-1.5 animate-pulse">
+                  {!hideUserName && (
+                    <div className="text-right hidden sm:block">
+                      <div className="h-3 w-32 bg-gray-200 rounded mb-1" />
+                      <div className="h-2 w-16 bg-gray-200 rounded ml-auto" />
+                    </div>
+                  )}
+                  <div className="w-9 h-9 rounded-full bg-gray-200 shadow-xs" />
+                  <div className="w-4 h-4 bg-gray-200 rounded hidden sm:block" />
+                </div>
+              ) : userName ? (
                 <div className="relative border-l border-border-whisper pl-2 ml-1">
                   <button
                     type="button"
@@ -246,7 +261,7 @@ export function TopNavBar({
                     </div>
                   )}
                 </div>
-              )}
+              ) : null}
             </div>
           )}
         </div>
