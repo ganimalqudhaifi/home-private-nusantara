@@ -229,6 +229,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
 
         {/* Metrics Grid */}
         <TutorMetricsGrid
+          isLoading={isLoadingData}
           completedSessions={stats.completedSessions}
           activeStudentsCount={stats.activeStudentsCount}
           sdStudentsCount={stats.sdStudentsCount}

@@ -7,6 +7,7 @@ export interface TutorMetricsGridProps {
  readonly sdStudentsCount?: number;
  readonly smpStudentsCount?: number;
  readonly activeDaysCount?: number;
+ readonly isLoading?: boolean;
  readonly className?: string;
 }
 
@@ -16,6 +17,7 @@ export function TutorMetricsGrid({
  sdStudentsCount = 0,
  smpStudentsCount = 0,
  activeDaysCount = 0,
+ isLoading = false,
  className ='',
 }: TutorMetricsGridProps) {
  const metrics = [
@@ -44,6 +46,29 @@ export function TutorMetricsGrid({
  iconColor:'bg-emerald-50 text-emerald-800',
  },
  ];
+
+ if (isLoading) {
+   return (
+     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 ${className}`}>
+       {[1, 2, 3].map((i) => (
+         <div key={i} className="bg-white rounded-2xl p-6 border border-border-whisper shadow-sm flex flex-col justify-between animate-pulse">
+           <div className="flex items-center justify-between mb-3">
+             <div className="w-10 h-10 rounded-xl bg-gray-200" />
+             <div className="h-3 w-16 bg-gray-200 rounded" />
+           </div>
+           <div>
+             <div className="h-3 w-32 bg-gray-200 rounded mb-2" />
+             <div className="h-8 w-24 bg-gray-200 rounded mb-2" />
+             <div className="flex gap-2 mt-2">
+               <div className="h-5 w-12 bg-gray-200 rounded" />
+               <div className="h-5 w-12 bg-gray-200 rounded" />
+             </div>
+           </div>
+         </div>
+       ))}
+     </div>
+   );
+ }
 
  return (
  <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 ${className}`}>
