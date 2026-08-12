@@ -15,9 +15,9 @@ export interface TutorDashboardPageProps {
 }
 
 export default function TutorDashboardPage({ searchParams }: TutorDashboardPageProps) {
-  const [userName, setUserName] = useState('Pengajar Nusantara');
+  const [userName, setUserName] = useState('');
   const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
-  const [isVerified, setIsVerified] = useState(true);
+  const [isVerified, setIsVerified] = useState(false);
   const [tutorStatus, setTutorStatus] = useState<string>('verified');
   const [sessions, setSessions] = useState<StudentSession[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -29,6 +29,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
     activeDaysCount: 0,
   });
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +54,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
   }, []);
 
   useEffect(() => {
+    setIsLoadingUser(true);
     fetch('/api/user/me')
       .then((res) => res.json())
       .then((data) => {
@@ -69,7 +71,8 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
           }
         }
       })
-      .catch((err) => console.error('Error fetching user profile:', err));
+      .catch((err) => console.error('Error fetching user profile:', err))
+      .finally(() => setIsLoadingUser(false));
   }, []);
 
   const renderStatusBanner = () => {
@@ -182,12 +185,21 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
         {/* Welcome Section */}
         <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-border-whisper">
           <div className="flex flex-col gap-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold w-fit border border-emerald-200">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{getStatusBadgeText()}</span>
-            </div>
-            <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
-              Halo, {userName}
+            {isLoadingUser ? (
+              <div className="h-6 w-40 bg-gray-200 rounded-full animate-pulse" />
+            ) : (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold w-fit border border-emerald-200">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>{getStatusBadgeText()}</span>
+              </div>
+            )}
+            
+            <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary flex items-center gap-2">
+              Halo, {isLoadingUser ? (
+                <span className="h-8 md:h-10 w-48 md:w-64 bg-gray-200 rounded-lg animate-pulse inline-block" />
+              ) : (
+                userName || 'Pengajar Nusantara'
+              )}
             </h1>
             <p className="text-sm text-text-muted">
               Berikut ringkasan performa bimbingan dan jadwal mengajar Anda hari ini.
