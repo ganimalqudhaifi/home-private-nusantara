@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TopNavBar } from '../../../src/components/shared/TopNavBar';
-import { Footer } from '../../../src/components/shared/Footer';
-import { TutorPendingAlert } from '../../../src/components/tutor/TutorPendingAlert';
-import { TutorPendingSync } from '../../../src/components/tutor/TutorPendingSync';
-import { TutorVerificationSteps } from '../../../src/components/tutor/TutorVerificationSteps';
+import { TopNavBar } from '@/src/components/shared/TopNavBar';
+import { Footer } from '@/src/components/shared/Footer';
+import { TutorPendingAlert } from '@/src/components/tutor/TutorPendingAlert';
+import { TutorPendingSync } from '@/src/components/tutor/TutorPendingSync';
+import { TutorVerificationSteps } from '@/src/components/tutor/TutorVerificationSteps';
 import { Lock, ArrowRight } from 'lucide-react';
 
 export interface TutorPendingPageProps {

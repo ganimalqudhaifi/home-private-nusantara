@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from'react';
-import { TopNavBar } from'../../../src/components/shared/TopNavBar';
-import { Footer } from'../../../src/components/shared/Footer';
-import { TutorWeeklyScheduleGrid } from'../../../src/components/tutor/TutorWeeklyScheduleGrid';
-import { TutorStudentDrawer } from'../../../src/components/tutor/TutorStudentDrawer';
-import { useDrawer } from'../../../src/hooks/useDrawer';
-import { StudentSession } from'../../../src/types';
+import { TopNavBar } from'@/src/components/shared/TopNavBar';
+import { Footer } from'@/src/components/shared/Footer';
+import { TutorWeeklyScheduleGrid } from'@/src/components/tutor/TutorWeeklyScheduleGrid';
+import { TutorStudentDrawer } from'@/src/components/tutor/TutorStudentDrawer';
+import { useDrawer } from'@/src/hooks/useDrawer';
+import { StudentSession } from'@/src/types';
 import Link from'next/link';
 import { Calendar, Clock, Sparkles } from'lucide-react';
 

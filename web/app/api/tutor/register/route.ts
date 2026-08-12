@@ -24,17 +24,7 @@ export async function POST(request: Request) {
 
     if (sessionUser) {
       const authRole = sessionUser.role;
-      const dbUser =
-        (await syncUserRoleWithAuth(sessionUser.id, sessionUser.email, authRole)) ||
-        (await getUserById(sessionUser.id, sessionUser.email));
-      const userRole = dbUser?.role || authRole;
-
-      if (userRole === 'admin') {
-        return NextResponse.json(
-          { error: 'Sesi Admin sedang aktif. Silakan keluar (Log Out) terlebih dahulu untuk mendaftar sebagai pengajar.' },
-          { status: 403 }
-        );
-      }
+      await syncUserRoleWithAuth(sessionUser.id, sessionUser.email, authRole);
     }
 
     const body = await request.json();

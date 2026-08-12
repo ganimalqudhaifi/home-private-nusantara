@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState } from'react';
-import { TopNavBar } from'../../../src/components/shared/TopNavBar';
-import { Footer } from'../../../src/components/shared/Footer';
-import { TutorAvailabilityMatrix } from'../../../src/components/tutor/TutorAvailabilityMatrix';
-import { TutorTimeSlotBuilder } from'../../../src/components/tutor/TutorTimeSlotBuilder';
-import { useAvailability } from'../../../src/hooks/useAvailability';
+import { TopNavBar } from'@/src/components/shared/TopNavBar';
+import { Footer } from'@/src/components/shared/Footer';
+import { TutorAvailabilityMatrix } from'@/src/components/tutor/TutorAvailabilityMatrix';
+import { TutorTimeSlotBuilder } from'@/src/components/tutor/TutorTimeSlotBuilder';
+import { useAvailability } from'@/src/hooks/useAvailability';
 import { Info, CheckCircle2 } from'lucide-react';
-import { Button } from'../../../src/components/shared/Button';
+import { Button } from'@/src/components/shared/Button';
 
 export interface TutorAvailabilityPageProps {
  readonly initialDay?: string;

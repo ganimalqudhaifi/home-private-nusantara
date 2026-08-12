@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TopNavBar } from '../../../src/components/shared/TopNavBar';
-import { Footer } from '../../../src/components/shared/Footer';
-import { TutorMetricsGrid } from '../../../src/components/tutor/TutorMetricsGrid';
-import { TutorUpcomingSessionsCard } from '../../../src/components/tutor/TutorUpcomingSessionsCard';
-import { TutorRecentStudentsCard } from '../../../src/components/tutor/TutorRecentStudentsCard';
+import { TopNavBar } from '@/src/components/shared/TopNavBar';
+import { Footer } from '@/src/components/shared/Footer';
+import { TutorMetricsGrid } from '@/src/components/tutor/TutorMetricsGrid';
+import { TutorUpcomingSessionsCard } from '@/src/components/tutor/TutorUpcomingSessionsCard';
+import { TutorRecentStudentsCard } from '@/src/components/tutor/TutorRecentStudentsCard';
 import { CalendarPlus, ShieldCheck, Coffee, AlertTriangle, UserX, PhoneCall } from 'lucide-react';
-import { StudentSession, Student } from '../../../src/types';
+import { StudentSession, Student } from '@/src/types';
 
 export interface TutorDashboardPageProps {
   readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
