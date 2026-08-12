@@ -4,9 +4,14 @@ import { BRAND_INFO } from'../../data/mockData';
 
 export interface TutorPendingAlertProps {
  readonly className?: string;
+ readonly userId?: string;
 }
 
-export function TutorPendingAlert({ className ='' }: TutorPendingAlertProps) {
+export function TutorPendingAlert({ className ='', userId }: TutorPendingAlertProps) {
+ const registrationId = userId 
+ ? `#TUTOR-${new Date().getFullYear()}-${userId.substring(0, 8).toUpperCase()}`
+ : 'Memuat ID...';
+
  return (
  <div
  className={`bg-white rounded-2xl p-6 border-l-4 border-l-status-warning border border-border-whisper shadow-sm relative overflow-hidden ${className}`}
@@ -40,7 +45,7 @@ export function TutorPendingAlert({ className ='' }: TutorPendingAlertProps) {
  <Phone className="w-3.5 h-3.5" />
  <span>Hubungi Admin Koordinator (WhatsApp)</span>
  </a>
- <span className="text-xs text-text-muted">ID Pendaftaran: #TUTOR-2026-088</span>
+ <span className="text-xs text-text-muted">ID Pendaftaran: {registrationId}</span>
  </div>
  </div>
  </div>

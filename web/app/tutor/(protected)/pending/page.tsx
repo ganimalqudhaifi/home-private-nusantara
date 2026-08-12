@@ -19,12 +19,16 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
   const router = useRouter();
   const [userName, setUserName] = useState('Calon Pengajar');
   const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     fetch('/api/user/me')
       .then((res) => res.json())
       .then((data) => {
         if (data.authenticated && data.user) {
+          if (data.user.id) {
+            setUserId(data.user.id);
+          }
           if (data.user.full_name || data.user.name) {
             setUserName(data.user.full_name || data.user.name);
           }
@@ -54,7 +58,7 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
         {/* Left Column: Alerts & Steps */}
         <div className="lg:col-span-8 flex flex-col gap-6">
           <TutorPendingSync />
-          <TutorPendingAlert />
+          <TutorPendingAlert userId={userId} />
           <TutorVerificationSteps currentStep={2} />
         </div>
 
