@@ -15,6 +15,7 @@ export interface TopNavBarProps {
   readonly userBadge?: string;
   readonly userAvatar?: string;
   readonly hideUserName?: boolean;
+  readonly customRoleLabel?: string;
 }
 
 export function TopNavBar({
@@ -24,6 +25,7 @@ export function TopNavBar({
   userBadge,
   userAvatar,
   hideUserName = false,
+  customRoleLabel,
 }: TopNavBarProps) {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -163,7 +165,7 @@ export function TopNavBar({
                         <p className="text-xs font-semibold text-text-primary leading-tight">
                           {userName}
                         </p>
-                        <p className="text-[10px] text-text-muted capitalize">{role}</p>
+                        <p className="text-[10px] text-text-muted capitalize">{customRoleLabel || role}</p>
                       </div>
                     )}
                     {userAvatar ? (

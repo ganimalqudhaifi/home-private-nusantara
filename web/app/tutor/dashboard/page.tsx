@@ -17,6 +17,7 @@ export interface TutorDashboardPageProps {
 export default function TutorDashboardPage({ searchParams }: TutorDashboardPageProps) {
   const [userName, setUserName] = useState('');
   const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
+  const [userRole, setUserRole] = useState<'guest' | 'student' | 'tutor' | 'admin'>('tutor');
   const [isVerified, setIsVerified] = useState(false);
   const [tutorStatus, setTutorStatus] = useState<string>('verified');
   const [sessions, setSessions] = useState<StudentSession[]>([]);
@@ -59,6 +60,9 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
       .then((res) => res.json())
       .then((data) => {
         if (data.authenticated && data.user) {
+          if (data.user.role) {
+            setUserRole(data.user.role);
+          }
           if (data.user.full_name || data.user.name) {
             setUserName(data.user.full_name || data.user.name);
           }
@@ -157,12 +161,20 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
     }
   };
 
+  let displayRoleLabel = userRole as string;
+  if (userRole === 'admin') {
+    displayRoleLabel = isVerified ? 'Admin & Tutor' : 'Admin';
+  } else if (userRole === 'tutor') {
+    displayRoleLabel = 'Tutor';
+  }
+
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Header */}
       <TopNavBar
         activeRoute="/tutor/dashboard"
-        role="tutor"
+        role={userRole}
+        customRoleLabel={displayRoleLabel}
         userName={userName}
         userAvatar={userAvatar}
         userBadge={
