@@ -194,9 +194,14 @@ export function TutorAuditDrawer({
               Status: {isAlreadyVerified ? 'Terverifikasi' : 'Menunggu Audit Wawancara Tatap Muka'}
             </span>
           </div>
-          {tutor.registerDate && (
-            <span className="font-mono text-text-muted">{tutor.registerDate}</span>
-          )}
+          <div className="flex flex-col items-end gap-0.5">
+            <span className="font-mono font-bold text-primary">
+              #TUTOR-{new Date(tutor.registerDate || new Date()).getFullYear()}-{tutor.id.substring(0, 8).toUpperCase()}
+            </span>
+            {tutor.registerDate && (
+              <span className="font-mono text-[10px] text-text-muted">{tutor.registerDate}</span>
+            )}
+          </div>
         </div>
 
         {/* Integrated Edit Form */}

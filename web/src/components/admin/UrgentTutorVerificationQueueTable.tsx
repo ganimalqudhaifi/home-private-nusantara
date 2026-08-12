@@ -85,6 +85,9 @@ export function UrgentTutorVerificationQueueTable({
             <div>
               <p className="font-bold">{tutor.name}</p>
               <p className="text-[11px] text-text-muted font-normal">{tutor.title}</p>
+              <p className="text-[10px] text-text-muted font-mono mt-0.5">
+                #TUTOR-{new Date(tutor.registerDate || new Date()).getFullYear()}-{tutor.id.substring(0, 8).toUpperCase()}
+              </p>
             </div>
           </td>
           <td className="py-4 text-text-primary">{tutor.university}</td>
