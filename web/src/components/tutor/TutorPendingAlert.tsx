@@ -32,7 +32,7 @@ export function TutorPendingAlert({ className ='' }: TutorPendingAlertProps) {
 
  <div className="mt-4 flex flex-wrap items-center gap-3">
  <a
- href={`https://wa.me/${BRAND_INFO.contact.whatsapp}?text=Halo%20Admin%20Home%20Private%20Nusantara,%20saya%20ingin%20menanyakan%20status%20verifikasi%20tutor%20saya.`}
+ href={`https://wa.me/${BRAND_INFO.contact.whatsappRaw}?text=Halo%20Admin%20Home%20Private%20Nusantara,%20saya%20ingin%20menanyakan%20status%20verifikasi%20tutor%20saya.`}
  target="_blank"
  rel="noreferrer"
  className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-xs transition-colors"

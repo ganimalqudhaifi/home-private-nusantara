@@ -9,6 +9,7 @@ import { TutorUpcomingSessionsCard } from '@/src/components/tutor/TutorUpcomingS
 import { TutorRecentStudentsCard } from '@/src/components/tutor/TutorRecentStudentsCard';
 import { CalendarPlus, ShieldCheck, Coffee, AlertTriangle, UserX, PhoneCall } from 'lucide-react';
 import { StudentSession, Student } from '@/src/types';
+import { BRAND_INFO } from '@/src/data/mockData';
 
 export interface TutorDashboardPageProps {
   readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -113,7 +114,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
             </div>
           </div>
           <a
-            href="https://wa.me/6281234567890"
+            href={`https://wa.me/${BRAND_INFO.contact.whatsappRaw}`}
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0"

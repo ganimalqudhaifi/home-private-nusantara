@@ -9,6 +9,7 @@ import { TutorPendingAlert } from '@/src/components/tutor/TutorPendingAlert';
 import { TutorPendingSync } from '@/src/components/tutor/TutorPendingSync';
 import { TutorVerificationSteps } from '@/src/components/tutor/TutorVerificationSteps';
 import { Lock, ArrowRight } from 'lucide-react';
+import { BRAND_INFO } from '@/src/data/mockData';
 
 export interface TutorPendingPageProps {
   readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -99,7 +100,7 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
  Jika ada kendala unggah dokumen atau perubahan nomor WhatsApp, hubungi tim helpdesk kami.
  </p>
  <a
- href="https://wa.me/6281234567890"
+ href={`https://wa.me/${BRAND_INFO.contact.whatsappRaw}`}
  target="_blank"
  rel="noreferrer"
  className="text-xs font-bold text-emerald-600 hover:underline"
