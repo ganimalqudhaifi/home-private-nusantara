@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from'react';
-import { TopNavBar } from'@/src/components/shared/TopNavBar';
+import { TutorTopNavBar } from'@/src/components/tutor/TutorTopNavBar';
 import { Footer } from'@/src/components/shared/Footer';
 import { TutorAvailabilityMatrix } from'@/src/components/tutor/TutorAvailabilityMatrix';
 import { TutorTimeSlotBuilder } from'@/src/components/tutor/TutorTimeSlotBuilder';
@@ -41,12 +41,7 @@ export default function TutorAvailabilityPage({
  return (
  <div className="bg-surface text-text-primary min-h-screen flex flex-col pb-24">
  {/* Top Header */}
- <TopNavBar
- activeRoute="/tutor/availability"
- role="tutor"
- userName="Sarah Amanda, S.Pd."
- userBadge="Pengajar Terverifikasi"
- />
+ <TutorTopNavBar activeRoute="/tutor/availability" />
 
  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8">
  <div>

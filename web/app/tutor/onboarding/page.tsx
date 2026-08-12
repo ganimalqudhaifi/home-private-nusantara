@@ -2,7 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
 import { getUserById } from '@/src/lib/db-services';
-import { TopNavBar } from '@/src/components/shared/TopNavBar';
+import { TutorTopNavBar } from '@/src/components/tutor/TutorTopNavBar';
 import { Footer } from '@/src/components/shared/Footer';
 import { TutorOnboardingForm } from '@/src/components/tutor/TutorOnboardingForm';
 import { GraduationCap } from 'lucide-react';
@@ -25,7 +25,7 @@ export default async function TutorOnboardingPage() {
 
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
-      <TopNavBar activeRoute="/tutor/onboarding" role="tutor" />
+      <TutorTopNavBar activeRoute="/tutor/onboarding" />
       <main className="flex-1 flex items-center justify-center py-12 px-4 md:px-8 max-w-7xl mx-auto w-full">
         <div className="bg-white rounded-3xl p-6 md:p-8 border border-border-whisper shadow-sm w-full max-w-2xl">
           <div className="flex flex-col items-center text-center gap-3 mb-8">

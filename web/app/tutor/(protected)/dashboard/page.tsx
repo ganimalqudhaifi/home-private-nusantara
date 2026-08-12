@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TopNavBar } from '@/src/components/shared/TopNavBar';
+import { TutorTopNavBar } from '@/src/components/tutor/TutorTopNavBar';
 import { Footer } from '@/src/components/shared/Footer';
 import { TutorMetricsGrid } from '@/src/components/tutor/TutorMetricsGrid';
 import { TutorUpcomingSessionsCard } from '@/src/components/tutor/TutorUpcomingSessionsCard';
@@ -162,34 +162,18 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
     }
   };
 
-  let displayRoleLabel = userRole as string;
-  if (userRole === 'admin') {
-    displayRoleLabel = isVerified ? 'Admin & Tutor' : 'Admin';
-  } else if (userRole === 'tutor') {
-    displayRoleLabel = 'Tutor';
-  }
-
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Header */}
-      <TopNavBar
+      <TutorTopNavBar
         activeRoute="/tutor/dashboard"
-        role={userRole}
-        customRoleLabel={displayRoleLabel}
-        userName={userName}
-        userAvatar={userAvatar}
-        isLoadingUser={isLoadingUser}
-        userBadge={
-          tutorStatus === 'on_leave'
-            ? 'Sedang Cuti'
-            : tutorStatus === 'suspended'
-            ? 'Dibekukan'
-            : tutorStatus === 'inactive'
-            ? 'Nonaktif'
-            : isVerified
-            ? 'Pengajar Terverifikasi'
-            : 'Menunggu Verifikasi'
-        }
+        preloadedUser={{
+          name: userName,
+          avatar: userAvatar,
+          role: userRole,
+          status: tutorStatus,
+        }}
+        isLoadingPreloaded={isLoadingUser}
       />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col gap-8">
