@@ -116,7 +116,7 @@ export async function registerTutorProfile(input: RegisterTutorInput) {
     )
     ON CONFLICT (id) DO UPDATE SET
       full_name = EXCLUDED.full_name,
-      role = CASE WHEN users.role = 'admin' THEN 'admin' ELSE 'tutor' END,
+      role = (CASE WHEN users.role = 'admin' THEN 'admin' ELSE 'tutor' END)::user_role,
       avatar_url = COALESCE(EXCLUDED.avatar_url, users.avatar_url),
       updated_at = NOW();
   `;
