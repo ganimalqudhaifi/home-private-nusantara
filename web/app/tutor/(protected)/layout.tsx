@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
 import { getUserById } from '@/src/lib/db-services';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProtectedTutorLayout({
   children,
 }: {

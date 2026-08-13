@@ -1,6 +1,8 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
+
+export const dynamic = 'force-dynamic';
 import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
 import { TopNavBar } from '../../../src/components/shared/TopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
