@@ -8,7 +8,7 @@ import { TutorStudentDrawer } from'@/src/components/tutor/TutorStudentDrawer';
 import { useDrawer } from'@/src/hooks/useDrawer';
 import { StudentSession } from'@/src/types';
 import Link from'next/link';
-import { Calendar, Clock, Sparkles } from'lucide-react';
+import { Calendar, Clock, Sparkles, ChevronLeft } from 'lucide-react';
 
 export interface TutorSchedulePageProps {
  readonly initialSessionId?: string;
@@ -64,6 +64,13 @@ export default function TutorSchedulePage({
  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
  <div>
+ <Link 
+ href="/tutor/dashboard" 
+ className="inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors mb-3"
+ >
+ <ChevronLeft className="w-4 h-4" />
+ Kembali ke Dashboard
+ </Link>
  <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
  Kalender Jadwal Mengajar
  </h1>
