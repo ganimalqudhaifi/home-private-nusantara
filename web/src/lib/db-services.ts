@@ -712,7 +712,7 @@ export async function getTutorDashboardData(tutorId: string) {
       LEFT JOIN students s ON b.student_id = s.id
       LEFT JOIN users u_st ON b.student_id = u_st.id
       LEFT JOIN users u_tu ON b.tutor_id = u_tu.id
-      WHERE b.tutor_id = ${tutorId} AND b.status IN ('scheduled', 'confirmed')
+      WHERE b.tutor_id = ${tutorId} AND b.status IN ('scheduled', 'in_progress')
       ORDER BY b.booking_date ASC, b.start_time ASC
       LIMIT 10;
     `;
