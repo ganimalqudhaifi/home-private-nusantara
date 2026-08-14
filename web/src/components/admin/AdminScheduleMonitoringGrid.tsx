@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { StudentSession } from '../../types';
 import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
 import { DeleteBookingModal } from './DeleteBookingModal';
+import { EditBookingModal } from './EditBookingModal';
 import {
   Calendar,
   Clock,
@@ -16,6 +17,7 @@ import {
   Plus,
   RefreshCw,
   Trash2,
+  Edit3,
 } from 'lucide-react';
 
 export interface AdminScheduleMonitoringGridProps {
@@ -39,6 +41,7 @@ export function AdminScheduleMonitoringGrid({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState<StudentSession | null>(null);
+  const [bookingToEdit, setBookingToEdit] = useState<StudentSession | null>(null);
   const [deleteError, setDeleteError] = useState('');
 
   // Fetch real booking data from Neon Database via /api/admin/bookings
@@ -418,19 +421,30 @@ export function AdminScheduleMonitoringGrid({
                           <span>{isCompleted ? 'SELESAI' : 'TERKONFIRMASI'}</span>
                         </span>
                       </td>
-                      <td className="p-4 text-center">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setDeleteError('');
-                            setBookingToDelete(ses);
-                          }}
-                          className="inline-flex items-center gap-1 rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
-                          aria-label={`Hapus sesi ${ses.code}`}
-                          title="Hapus sesi"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                      <td className="p-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setBookingToEdit(ses)}
+                            className="inline-flex items-center gap-1 rounded-lg p-2 text-primary transition-colors hover:bg-surface-container-high"
+                            aria-label={`Edit sesi ${ses.code}`}
+                            title="Edit sesi"
+                          >
+                            <Edit3 className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDeleteError('');
+                              setBookingToDelete(ses);
+                            }}
+                            className="inline-flex items-center gap-1 rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+                            aria-label={`Hapus sesi ${ses.code}`}
+                            title="Hapus sesi"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -451,6 +465,16 @@ export function AdminScheduleMonitoringGrid({
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSaveRundown={handleSaveRundownToDB}
+      />
+
+      <EditBookingModal
+        isOpen={Boolean(bookingToEdit)}
+        onClose={() => setBookingToEdit(null)}
+        booking={bookingToEdit}
+        onSaveSuccess={() => {
+          setBookingToEdit(null);
+          fetchBookingsFromDB();
+        }}
       />
 
       <DeleteBookingModal

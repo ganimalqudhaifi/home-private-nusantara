@@ -297,6 +297,83 @@ export async function deleteBookingById(id: string) {
   return rows[0] || null;
 }
 
+export interface UpdateBookingInput {
+  tutorId?: string;
+  date?: string;
+  time?: string;
+  subject?: string;
+  status?: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  notes?: string;
+}
+
+export async function updateBookingInDB(bookingId: string, input: UpdateBookingInput) {
+  const currentRows = await sql`SELECT * FROM bookings WHERE id = ${bookingId}::uuid LIMIT 1`;
+  if (currentRows.length === 0) return { success: false, error: 'Sesi tidak ditemukan' };
+  const current = currentRows[0];
+
+  const tutorIdToUse = input.tutorId || current.tutor_id;
+  const bookingDateStr = input.date || current.booking_date.toISOString().split('T')[0];
+  const timeRange = input.time || `${current.start_time.substring(0, 5)} - ${current.end_time.substring(0, 5)}`;
+  const [startTimeRaw, endTimeRaw] = timeRange.split(' - ');
+  const startTime = (startTimeRaw || '16:00').trim();
+  const endTime = (endTimeRaw || '17:30').trim();
+  const statusToUse = input.status || current.status;
+  const studentIdToUse = current.student_id;
+
+  if (statusToUse !== 'cancelled') {
+    const tutorCollision = await sql`
+      SELECT id FROM bookings
+      WHERE tutor_id = ${tutorIdToUse}
+        AND booking_date = ${bookingDateStr}::date
+        AND start_time < ${endTime}::time
+        AND end_time > ${startTime}::time
+        AND status <> 'cancelled'
+        AND id != ${bookingId}::uuid
+      LIMIT 1;
+    `;
+    if (tutorCollision.length > 0) {
+      return { success: false, error: 'Pengajar sudah memiliki jadwal aktif pada tanggal dan jam tersebut.' };
+    }
+
+    const studentCollision = await sql`
+      SELECT id FROM bookings
+      WHERE student_id = ${studentIdToUse}
+        AND booking_date = ${bookingDateStr}::date
+        AND start_time < ${endTime}::time
+        AND end_time > ${startTime}::time
+        AND status <> 'cancelled'
+        AND id != ${bookingId}::uuid
+      LIMIT 1;
+    `;
+    if (studentCollision.length > 0) {
+      return { success: false, error: 'Siswa sudah memiliki jadwal aktif pada tanggal dan jam tersebut.' };
+    }
+  }
+
+  const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const [y, m, d] = bookingDateStr.split('-').map(Number);
+  const dateObj = new Date(y, m - 1, d);
+  const dayName = dayNames[dateObj.getDay()];
+
+  const updatedRows = await sql`
+    UPDATE bookings
+    SET
+      tutor_id = ${tutorIdToUse},
+      booking_date = ${bookingDateStr}::date,
+      day = ${dayName}::day_of_week,
+      start_time = ${startTime}::time,
+      end_time = ${endTime}::time,
+      subject = ${input.subject || current.subject},
+      status = ${statusToUse},
+      notes = COALESCE(${input.notes || null}, notes),
+      updated_at = NOW()
+    WHERE id = ${bookingId}::uuid
+    RETURNING *;
+  `;
+
+  return { success: true, booking: updatedRows[0] };
+}
+
 export async function getWeeklySessionsFromDB() {
   try {
     const rows = await sql`
