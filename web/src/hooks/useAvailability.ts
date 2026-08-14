@@ -1,51 +1,35 @@
 'use client';
 
-import { useState } from'react';
-import { TimeSlot } from'../types';
+import { useState } from 'react';
 
 export interface UseAvailabilityProps {
- readonly initialSlots?: readonly TimeSlot[];
+  readonly initialSubjects?: readonly string[];
+  readonly initialTimeSlots?: readonly string[];
 }
 
-export function useAvailability({ initialSlots = [] }: UseAvailabilityProps = {}) {
- const [selectedDay, setSelectedDay] = useState<string>('Senin');
- const [slots, setSlots] = useState<readonly TimeSlot[]>(initialSlots);
- const [activeLevels, setActiveLevels] = useState<readonly string[]>([
-'SD Kelas 3',
-'SD Kelas 4',
-'SD Kelas 5',
-'SD Kelas 6',
-'SMP Kelas 7',
-'SMP Kelas 8',
- ]);
+export function useAvailability({
+  initialSubjects = [],
+  initialTimeSlots = [],
+}: UseAvailabilityProps = {}) {
+  const [activeSubjects, setActiveSubjects] = useState<readonly string[]>(initialSubjects);
+  const [activeTimeSlots, setActiveTimeSlots] = useState<readonly string[]>(initialTimeSlots);
 
- const toggleLevel = (level: string) => {
- setActiveLevels((prev) =>
- prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
- );
- };
+  const toggleSubject = (subject: string) => {
+    setActiveSubjects((prev) =>
+      prev.includes(subject) ? prev.filter((s) => s !== subject) : [...prev, subject]
+    );
+  };
 
- const removeSlot = (slotId: string) => {
- setSlots((prev) => prev.filter((s) => s.id !== slotId));
- };
+  const toggleTimeSlot = (slot: string) => {
+    setActiveTimeSlots((prev) =>
+      prev.includes(slot) ? prev.filter((s) => s !== slot) : [...prev, slot]
+    );
+  };
 
- const addSlot = (day: TimeSlot['day'], startTime: string, endTime: string) => {
- const newSlot: TimeSlot = {
- id:`slot-${Date.now()}`,
- day,
- startTime,
- endTime,
- };
- setSlots((prev) => [...prev, newSlot]);
- };
-
- return {
- selectedDay,
- setSelectedDay,
- slots,
- activeLevels,
- toggleLevel,
- removeSlot,
- addSlot,
- };
+  return {
+    activeSubjects,
+    toggleSubject,
+    activeTimeSlots,
+    toggleTimeSlot,
+  };
 }

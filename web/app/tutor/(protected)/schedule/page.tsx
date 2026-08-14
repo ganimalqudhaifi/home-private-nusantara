@@ -81,7 +81,7 @@ export default function TutorSchedulePage({
 
  <div className="flex items-center gap-3">
  <Link
- href="/tutor/availability"
+ href="/tutor/availability?from=schedule"
  className="bg-surface-container-low hover:bg-primary-container hover:text-white text-primary text-xs font-bold px-4 py-2.5 rounded-xl border border-border-whisper transition-all flex items-center gap-2"
  >
  <Clock className="w-4 h-4" />
