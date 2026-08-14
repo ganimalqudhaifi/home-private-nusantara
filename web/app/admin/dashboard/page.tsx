@@ -141,9 +141,13 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
       const data = await res.json();
       if (data.success) {
         fetchWeeklySessions();
+        return { success: true };
+      } else {
+        return { success: false, error: data.error, collisions: data.collisions };
       }
     } catch (err) {
       console.error('Error saving rundown from dashboard:', err);
+      return { success: false, error: 'Gagal menghubungi server.' };
     } finally {
       setIsLoadingSessions(false);
     }

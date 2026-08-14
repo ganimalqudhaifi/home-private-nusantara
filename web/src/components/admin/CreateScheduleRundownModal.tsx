@@ -23,6 +23,7 @@ import {
   Phone,
   GraduationCap,
   School,
+  AlertCircle,
 } from 'lucide-react';
 
 const DAYS_OF_WEEK = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
@@ -48,7 +49,7 @@ export interface ScheduleItem {
 export interface CreateScheduleRundownModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
-  readonly onSaveRundown?: (sessions: Partial<StudentSession>[]) => void;
+  readonly onSaveRundown?: (sessions: any[]) => Promise<any> | void;
   readonly defaultStudentName?: string;
   readonly defaultParentName?: string;
   readonly defaultParentPhone?: string;
@@ -87,6 +88,8 @@ export function CreateScheduleRundownModal({
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
   const [copiedWA, setCopiedWA] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [topError, setTopError] = useState<string | null>(null);
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
 
   // Fetch real students from DB
   useEffect(() => {
@@ -248,6 +251,15 @@ export function CreateScheduleRundownModal({
   };
 
   const handleItemChange = (id: string, field: keyof ScheduleItem, value: any) => {
+    // Clear error for this row when user edits it
+    if (rowErrors[id]) {
+      setRowErrors((prev) => {
+        const newErrs = { ...prev };
+        delete newErrs[id];
+        return newErrs;
+      });
+    }
+
     setScheduleItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
@@ -308,29 +320,47 @@ export function CreateScheduleRundownModal({
     setTimeout(() => setCopiedWA(false), 2000);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSubmitting(true);
-    setTimeout(() => {
-      if (onSaveRundown) {
-        onSaveRundown(
-          scheduleItems.map((item) => ({
-            studentName,
-            parentName,
-            parentPhone,
-            tutorId: item.tutorId,
-            tutorName: item.tutorName,
-            subject: item.subject,
-            date: item.date,
-            time: item.time,
-            address,
-            city: locationArea,
-            status: 'scheduled',
-          }))
-        );
-      }
+    setTopError(null);
+    setRowErrors({});
+    
+    if (onSaveRundown) {
+      const payload = scheduleItems.map((item) => ({
+        localId: item.id,
+        studentName,
+        parentName,
+        parentPhone,
+        tutorId: item.tutorId,
+        tutorName: item.tutorName,
+        subject: item.subject,
+        date: item.date,
+        time: item.time,
+        address,
+        city: locationArea,
+        status: 'scheduled',
+      }));
+
+      const res = await onSaveRundown(payload);
       setIsSubmitting(false);
-      onClose();
-    }, 600);
+
+      if (res && res.success === false) {
+        setTopError(res.error || 'Terjadi kesalahan saat menyimpan jadwal.');
+        if (res.collisions && Array.isArray(res.collisions)) {
+          const errorsMap: Record<string, string> = {};
+          res.collisions.forEach((c: any) => {
+            if (c.localId) {
+              errorsMap[c.localId] = c.reason || 'Jadwal bentrok';
+            }
+          });
+          setRowErrors(errorsMap);
+        }
+        return; // Abort close
+      }
+    }
+    
+    setIsSubmitting(false);
+    onClose();
   };
 
   const selectedStudentObj = studentsList.find((s) => s.id === selectedStudentId);
@@ -344,6 +374,16 @@ export function CreateScheduleRundownModal({
         title="Generator Rundown & Pembuat Jadwal Sesi"
       >
         <div className="space-y-6 pt-2 text-xs">
+          {topError && (
+            <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-red-700 animate-fade-in">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-600" />
+              <div>
+                <h4 className="font-bold text-sm">Gagal Menyimpan Jadwal</h4>
+                <p className="text-xs mt-0.5">{topError}</p>
+              </div>
+            </div>
+          )}
+
           {/* Step 1: Base Configuration */}
           <div className="p-4 rounded-2xl bg-surface-container-low border border-border-whisper space-y-4">
             <div className="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-wider">
@@ -579,68 +619,77 @@ export function CreateScheduleRundownModal({
                     </thead>
                     <tbody className="divide-y divide-border-whisper text-xs">
                       {scheduleItems.map((item) => (
-                        <tr key={item.id} className="hover:bg-surface-container-low/30 transition-colors">
-                          <td className="px-4 py-3 text-center font-bold text-primary font-mono">
-                            #{item.meetingNumber}
-                          </td>
-                          <td className="px-4 py-3">
-                            <input
-                              type="date"
-                              value={item.date}
-                              onChange={(e) => handleItemChange(item.id, 'date', e.target.value)}
-                              className="p-1.5 rounded-lg border border-border-whisper text-xs font-semibold text-primary outline-none"
-                            />
-                          </td>
-                          <td className="px-4 py-3">
-                            <select
-                              value={item.time}
-                              onChange={(e) => handleItemChange(item.id, 'time', e.target.value)}
-                              className="p-1.5 rounded-lg border border-border-whisper text-xs outline-none bg-white"
-                            >
-                              {TIME_OPTIONS.map((t) => (
-                                <option key={t} value={t}>
-                                  {t}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="px-4 py-3">
-                            <select
-                              value={item.subject}
-                              onChange={(e) => handleItemChange(item.id, 'subject', e.target.value)}
-                              className="p-1.5 rounded-lg border border-border-whisper text-xs font-semibold text-primary outline-none bg-white"
-                            >
-                              {TUTOR_SUBJECT_NAMES.map((s) => (
-                                <option key={s} value={s}>
-                                  {s}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="px-4 py-3">
-                            <select
-                              value={item.tutorId}
-                              onChange={(e) => handleItemChange(item.id, 'tutorId', e.target.value)}
-                              className="p-1.5 rounded-lg border border-border-whisper text-xs outline-none bg-white w-full max-w-[200px]"
-                            >
-                              {verifiedTutors.map((t) => (
-                                <option key={t.id} value={t.id}>
-                                  {t.name}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveMeeting(item.id)}
-                              className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Hapus Pertemuan Ini"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
+                        <React.Fragment key={item.id}>
+                          <tr className={`transition-colors ${rowErrors[item.id] ? 'bg-red-50/50 border-t border-b border-red-200' : 'hover:bg-surface-container-low/30'}`}>
+                            <td className="px-4 py-3 text-center font-bold text-primary font-mono">
+                              #{item.meetingNumber}
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                type="date"
+                                value={item.date}
+                                onChange={(e) => handleItemChange(item.id, 'date', e.target.value)}
+                                className={`p-1.5 rounded-lg border text-xs font-semibold outline-none ${rowErrors[item.id] ? 'border-red-300 text-red-700 bg-white' : 'border-border-whisper text-primary'}`}
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <select
+                                value={item.time}
+                                onChange={(e) => handleItemChange(item.id, 'time', e.target.value)}
+                                className={`p-1.5 rounded-lg border text-xs outline-none bg-white ${rowErrors[item.id] ? 'border-red-300 text-red-700' : 'border-border-whisper'}`}
+                              >
+                                {TIME_OPTIONS.map((t) => (
+                                  <option key={t} value={t}>
+                                    {t}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-4 py-3">
+                              <select
+                                value={item.subject}
+                                onChange={(e) => handleItemChange(item.id, 'subject', e.target.value)}
+                                className={`p-1.5 rounded-lg border text-xs font-semibold outline-none bg-white ${rowErrors[item.id] ? 'border-red-300 text-red-700' : 'border-border-whisper text-primary'}`}
+                              >
+                                {TUTOR_SUBJECT_NAMES.map((s) => (
+                                  <option key={s} value={s}>
+                                    {s}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-4 py-3">
+                              <select
+                                value={item.tutorId}
+                                onChange={(e) => handleItemChange(item.id, 'tutorId', e.target.value)}
+                                className={`p-1.5 rounded-lg border text-xs outline-none bg-white w-full max-w-[200px] ${rowErrors[item.id] ? 'border-red-300 text-red-700' : 'border-border-whisper'}`}
+                              >
+                                {verifiedTutors.map((t) => (
+                                  <option key={t.id} value={t.id}>
+                                    {t.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveMeeting(item.id)}
+                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Hapus Pertemuan Ini"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                          {rowErrors[item.id] && (
+                            <tr className="bg-red-50/50 border-b border-red-200">
+                              <td colSpan={6} className="px-4 pb-2 pt-0 text-red-600 text-[11px] font-medium text-center">
+                                ⚠️ {rowErrors[item.id]}
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
                       ))}
                     </tbody>
                   </table>

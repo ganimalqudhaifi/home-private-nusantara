@@ -67,13 +67,20 @@ export function StudentDirectoryTable({
 
   const handleSaveRundownFromStudentsTable = async (sessionsPayload: any[]) => {
     try {
-      await fetch('/api/admin/bookings', {
+      const res = await fetch('/api/admin/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sessionsPayload),
       });
+      const data = await res.json();
+      if (data.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: data.error, collisions: data.collisions };
+      }
     } catch (err) {
       console.error('Error saving rundown from students directory:', err);
+      return { success: false, error: 'Gagal menghubungi server.' };
     }
   };
 

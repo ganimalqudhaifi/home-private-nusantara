@@ -337,6 +337,7 @@ export async function getWeeklySessionsFromDB() {
 }
 
 export interface CreateBookingInput {
+  localId?: string;
   studentName?: string;
   parentName?: string;
   parentPhone?: string;
@@ -352,7 +353,7 @@ export interface CreateBookingInput {
 }
 
 export async function createBatchBookings(sessions: CreateBookingInput[]) {
-  if (!sessions || sessions.length === 0) return [];
+  if (!sessions || sessions.length === 0) return { success: true, bookings: [] };
 
   let defaultTutorId: string | null = null;
   const tutorRows = await sql`SELECT id FROM tutors LIMIT 1;`;
@@ -407,6 +408,73 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
     }
   }
 
+  // Pre-flight check for collisions
+  const collisions: Array<{ localId: string, reason: string }> = [];
+  const seenTutorSlots = new Set<string>();
+  const seenStudentSlots = new Set<string>();
+
+  for (const s of sessions) {
+    const tutorIdToUse = s.tutorId && s.tutorId.length === 36 ? s.tutorId : defaultTutorId;
+    if (!tutorIdToUse || !studentIdToUse) continue;
+
+    const bookingDateStr = s.date && s.date.includes('-') ? s.date : new Date().toISOString().split('T')[0];
+    const timeRange = s.time || '16:00 - 17:30';
+    const [startTimeRaw, endTimeRaw] = timeRange.split(' - ');
+    const startTime = (startTimeRaw || '16:00').trim();
+    const endTime = (endTimeRaw || '17:30').trim();
+
+    // Check internal batch collision (Tutor)
+    const tutorKey = `${tutorIdToUse}-${bookingDateStr}-${startTime}`;
+    if (seenTutorSlots.has(tutorKey)) {
+      collisions.push({ localId: s.localId || '', reason: 'Pengajar dipilih lebih dari 1 kali di jam yang sama pada form ini' });
+      continue;
+    }
+    seenTutorSlots.add(tutorKey);
+
+    // Check internal batch collision (Student)
+    const studentKey = `${studentIdToUse}-${bookingDateStr}-${startTime}`;
+    if (seenStudentSlots.has(studentKey)) {
+      collisions.push({ localId: s.localId || '', reason: 'Siswa dijadwalkan lebih dari 1 kali di jam yang sama pada form ini' });
+      continue;
+    }
+    seenStudentSlots.add(studentKey);
+
+    // DB Collision Check: Tutor
+    const tutorCollision = await sql`
+      SELECT id FROM bookings
+      WHERE tutor_id = ${tutorIdToUse}
+        AND booking_date = ${bookingDateStr}::date
+        AND start_time < ${endTime}::time
+        AND end_time > ${startTime}::time
+        AND status <> 'cancelled'
+      LIMIT 1;
+    `;
+    if (tutorCollision.length > 0) {
+      collisions.push({ localId: s.localId || '', reason: 'Pengajar sudah memiliki jadwal pada tanggal & jam ini' });
+      continue;
+    }
+
+    // DB Collision Check: Student
+    const studentCollision = await sql`
+      SELECT id FROM bookings
+      WHERE student_id = ${studentIdToUse}
+        AND booking_date = ${bookingDateStr}::date
+        AND start_time < ${endTime}::time
+        AND end_time > ${startTime}::time
+        AND status <> 'cancelled'
+      LIMIT 1;
+    `;
+    if (studentCollision.length > 0) {
+      collisions.push({ localId: s.localId || '', reason: 'Siswa sudah memiliki jadwal pada tanggal & jam ini' });
+    }
+  }
+
+  // If any collisions detected, abort transaction
+  if (collisions.length > 0) {
+    return { success: false, collisions };
+  }
+
+  // Execution Phase (No collisions)
   const createdBookings = [];
   const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
@@ -477,7 +545,7 @@ export async function createBatchBookings(sessions: CreateBookingInput[]) {
     }
   }
 
-  return createdBookings;
+  return { success: true, bookings: createdBookings };
 }
 
 export async function getAllStudentsFromDB() {

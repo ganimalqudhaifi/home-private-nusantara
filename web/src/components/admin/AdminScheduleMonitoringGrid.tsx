@@ -93,9 +93,13 @@ export function AdminScheduleMonitoringGrid({
       const data = await res.json();
       if (data.success) {
         fetchBookingsFromDB();
+        return { success: true };
+      } else {
+        return { success: false, error: data.error, collisions: data.collisions };
       }
     } catch (err) {
       console.error('Failed to save batch bookings to DB:', err);
+      return { success: false, error: 'Gagal menghubungi server.' };
     } finally {
       setIsLoading(false);
     }

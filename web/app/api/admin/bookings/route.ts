@@ -85,7 +85,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const created = await createBatchBookings(sessionsInput);
+    const result = await createBatchBookings(sessionsInput);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Terdapat jadwal yang bentrok. Silakan periksa kembali.', 
+          collisions: result.collisions 
+        },
+        { status: 409 }
+      );
+    }
+
+    const created = result.bookings || [];
     return NextResponse.json({ success: true, count: created.length, bookings: created });
   } catch (error: any) {
     console.error('Error creating batch bookings:', error);
