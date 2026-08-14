@@ -136,28 +136,30 @@ export function TutorWeeklyScheduleGrid({
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={prevWeek}
-            type="button"
-            className="p-2 rounded-xl border border-border-whisper text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+        <div className="flex items-center gap-3">
           <button
             onClick={setThisWeek}
             type="button" 
-            className="text-xs font-bold px-3 py-2 bg-surface-container-high hover:bg-surface-container-highest transition-colors rounded-xl"
+            className="text-xs font-bold px-4 py-2.5 border border-border-whisper bg-white text-text-primary hover:bg-surface-container-low hover:text-primary transition-colors rounded-xl shadow-sm"
           >
-            Minggu Ini
+            Hari Ini
           </button>
-          <button
-            onClick={nextWeek}
-            type="button"
-            className="p-2 rounded-xl border border-border-whisper text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={prevWeek}
+              type="button"
+              className="p-2.5 rounded-xl border border-border-whisper bg-white text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors shadow-sm"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={nextWeek}
+              type="button"
+              className="p-2.5 rounded-xl border border-border-whisper bg-white text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors shadow-sm"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
