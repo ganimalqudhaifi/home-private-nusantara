@@ -169,6 +169,7 @@ export function TutorAuditDrawer({
               height={56}
               className="object-cover w-full h-full"
               unoptimized
+              referrerPolicy="no-referrer"
             />
           </div>
           <div>
@@ -347,6 +348,46 @@ export function TutorAuditDrawer({
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {!isEditing && (
+          <div className="p-4 rounded-2xl border border-border-whisper space-y-3 text-xs">
+            <h4 className="font-bold text-text-muted uppercase tracking-wider">
+              Jadwal Mengajar (Ketersediaan)
+            </h4>
+            
+            {tutor.availability_slots && tutor.availability_slots.length > 0 ? (
+              <div className="space-y-2">
+                {Object.entries(
+                  tutor.availability_slots.reduce((acc: any, slot: string) => {
+                    const separatorIndex = slot.indexOf(':');
+                    if (separatorIndex !== -1) {
+                      const day = slot.substring(0, separatorIndex);
+                      const time = slot.substring(separatorIndex + 1);
+                      if (!acc[day]) acc[day] = [];
+                      acc[day].push(time);
+                    }
+                    return acc;
+                  }, {})
+                ).map(([day, times]: [string, any]) => (
+                  <div key={day} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 p-2.5 rounded-xl bg-surface-container-low">
+                    <span className="font-bold text-primary w-16 shrink-0">{day}</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {times.map((time: string) => (
+                        <span key={time} className="px-2 py-0.5 rounded-md bg-white border border-border-whisper text-text-primary text-[10px] font-mono shadow-xs">
+                          {time}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-3 bg-surface-container-low rounded-xl text-text-muted italic flex items-center justify-center">
+                Pengajar ini belum mengatur jadwal ketersediaannya.
+              </div>
+            )}
           </div>
         )}
 

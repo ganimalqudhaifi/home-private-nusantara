@@ -26,6 +26,7 @@ export function InteractiveTutorPreviewCard({
  height={56}
  className="object-cover w-full h-full"
  unoptimized
+ referrerPolicy="no-referrer"
  />
  </div>
 

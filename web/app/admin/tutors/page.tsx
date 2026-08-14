@@ -25,18 +25,19 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
       .then((res) => res.json())
       .then((data) => {
         if (data.tutors && data.tutors.length > 0) {
-          const dbTutors: Tutor[] = data.tutors.map((t: any) => ({
-            id: t.id,
-            name: t.name || 'Pengajar',
-            phone: t.phone || '-',
-            title: t.major || t.title || 'S1',
-            portfolioUrl: t.portfolioUrl,
-            avatar: t.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-            university: t.university || '-',
-            subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
-            isVerified: t.status === 'verified' || t.status === 'active',
-            status: t.status || 'pending',
-          }));
+            const dbTutors: Tutor[] = data.tutors.map((t: any) => ({
+              id: t.id,
+              name: t.name || 'Pengajar',
+              phone: t.phone || '-',
+              title: t.major || t.title || 'S1',
+              portfolioUrl: t.portfolioUrl,
+              avatar: t.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+              university: t.university || '-',
+              subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
+              isVerified: t.status === 'verified' || t.status === 'active',
+              status: t.status || 'pending',
+              availability_slots: t.availability_slots || [],
+            }));
           setTutors(dbTutors);
         }
       })

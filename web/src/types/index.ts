@@ -38,6 +38,7 @@ export type Tutor = {
   readonly experienceYears?: number;
   readonly availableDays?: readonly string[];
   readonly availableSlots?: readonly TimeSlot[];
+  readonly availability_slots?: string[];
   readonly portfolioUrl?: string;
 };
 

@@ -160,6 +160,7 @@ export async function getAllTutorsFromDB() {
       t.status,
       t.subjects,
       t.portfolio_url as "portfolioUrl",
+      t.availability_slots,
       t.created_at as "createdAt"
     FROM tutors t
     JOIN users u ON t.id = u.id;

@@ -102,6 +102,7 @@ export function DeleteTutorModal({
                 height={40}
                 className="object-cover w-full h-full"
                 unoptimized
+                referrerPolicy="no-referrer"
               />
             </div>
             <div>

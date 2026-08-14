@@ -190,6 +190,7 @@ export function TopNavBar({
                         width={36}
                         height={36}
                         className="w-9 h-9 rounded-full object-cover border border-border-whisper shadow-xs"
+                        referrerPolicy="no-referrer"
                       />
                     ) : (
                       <div className="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold shadow-xs">
