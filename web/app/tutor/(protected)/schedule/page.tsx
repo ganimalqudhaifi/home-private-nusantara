@@ -20,13 +20,27 @@ export default function TutorSchedulePage({
  const [sessions, setSessions] = useState<StudentSession[]>([]);
  const [isLoading, setIsLoading] = useState(true);
 
- useEffect(() => {
-  setIsLoading(true);
-  // Fetch sessions for this tutor. Currently simulated.
-  // fetch('/api/tutor/sessions').then(...)
-  setSessions([]);
-  setIsLoading(false);
- }, []);
+  useEffect(() => {
+    async function fetchSchedule() {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/tutor/schedule');
+        const data = await response.json();
+        if (data.success && data.sessions) {
+          setSessions(data.sessions);
+        } else {
+          setSessions([]);
+        }
+      } catch (error) {
+        console.error('Failed to load schedule', error);
+        setSessions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    fetchSchedule();
+  }, []);
 
  const {
  isOpen: isDrawerOpen,

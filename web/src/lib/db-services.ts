@@ -788,3 +788,50 @@ export async function getTutorDashboardData(tutorId: string) {
     return { success: false, error: 'Failed to fetch tutor data' };
   }
 }
+
+export async function getTutorSchedule(tutorId: string) {
+  try {
+    const sessionsRows = await sql`
+      SELECT 
+        b.id,
+        b.booking_code as code,
+        b.student_id as "studentId",
+        COALESCE(s.student_name, u_st.full_name, 'Siswa Nusantara') as "studentName",
+        s.parent_name as "parentName",
+        s.parent_phone as "parentPhone",
+        b.tutor_id as "tutorId",
+        COALESCE(u_tu.full_name, 'Pengajar') as "tutorName",
+        b.level,
+        b.grade,
+        b.subject,
+        TO_CHAR(b.booking_date, 'YYYY-MM-DD') as date,
+        b.day,
+        CONCAT(TO_CHAR(b.start_time, 'HH24:MI'), ' - ', TO_CHAR(b.end_time, 'HH24:MI')) as time,
+        b.address,
+        b.district,
+        b.city,
+        b.status,
+        b.amount,
+        b.notes
+      FROM bookings b
+      LEFT JOIN students s ON b.student_id = s.id
+      LEFT JOIN users u_st ON b.student_id = u_st.id
+      LEFT JOIN users u_tu ON b.tutor_id = u_tu.id
+      WHERE b.tutor_id = ${tutorId}
+      ORDER BY b.booking_date ASC, b.start_time ASC;
+    `;
+
+    return {
+      success: true,
+      sessions: sessionsRows.map(row => ({
+        ...row,
+        parentName: row.parentName || 'Wali Murid',
+        parentPhone: row.parentPhone || '',
+        amount: Number(row.amount) || 0
+      }))
+    };
+  } catch (error) {
+    console.error('Error fetching tutor schedule:', error);
+    return { success: false, error: 'Failed to fetch tutor schedule' };
+  }
+}
