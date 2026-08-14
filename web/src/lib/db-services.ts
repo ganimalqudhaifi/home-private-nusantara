@@ -724,7 +724,9 @@ export async function getTutorDashboardData(tutorId: string) {
         COALESCE(s.student_name, u_st.full_name, 'Siswa Nusantara') as name,
         s.level,
         s.grade,
-        s.school,
+        s.school_name as school,
+        s.parent_name as "parentName",
+        s.parent_phone as "parentPhone",
         b.address,
         b.district,
         b.city,
@@ -744,7 +746,8 @@ export async function getTutorDashboardData(tutorId: string) {
       level: row.level || 'SD',
       grade: row.grade || 1,
       school: row.school || '-',
-      parentName: 'Wali Murid', // Simplified
+      parentName: row.parentName || 'Wali Murid',
+      parentPhone: row.parentPhone || '',
       address: row.address || '-',
       district: row.district || '-',
       status: 'active'
