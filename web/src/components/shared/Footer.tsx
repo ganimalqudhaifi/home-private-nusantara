@@ -8,7 +8,7 @@ export interface FooterProps {
   readonly className?: string;
 }
 
-function InstagramIcon({ className = 'w-4 h-4' }: { readonly className?: string }) {
+function InstagramIcon({ className = 'w-5 h-5' }: { readonly className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -18,7 +18,7 @@ function InstagramIcon({ className = 'w-4 h-4' }: { readonly className?: string 
   );
 }
 
-function TikTokIcon({ className = 'w-4 h-4' }: { readonly className?: string }) {
+function TikTokIcon({ className = 'w-5 h-5' }: { readonly className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
       <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.87-4.49v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.87-.09z" />
@@ -26,10 +26,10 @@ function TikTokIcon({ className = 'w-4 h-4' }: { readonly className?: string }) 
   );
 }
 
-function FacebookIcon({ className = 'w-4 h-4' }: { readonly className?: string }) {
+function FacebookIcon({ className = 'w-5 h-5' }: { readonly className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.704 0-1.634.246-1.634 1.428v2.552h4.544l-.459 3.667h-4.085v7.98c-1.333.155-2.689.155-4.022 0z" />
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12c0-5.523-4.477-10-10-10z" />
     </svg>
   );
 }
@@ -65,33 +65,33 @@ export function Footer({ className = '' }: FooterProps) {
           </p>
 
           {/* Social Media Links with Authentic Icons */}
-          <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center gap-6 pt-2">
+            <a
+              href={BRAND_INFO.contact.facebookUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+              aria-label="Facebook"
+            >
+              <FacebookIcon className="w-6 h-6" />
+            </a>
             <a
               href={BRAND_INFO.contact.instagramUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-pink-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl"
+              className="text-gray-400 hover:text-white transition-colors"
+              aria-label="Instagram"
             >
-              <InstagramIcon className="w-4 h-4" />
-              <span>{BRAND_INFO.contact.instagram}</span>
+              <InstagramIcon className="w-6 h-6" />
             </a>
             <a
               href={BRAND_INFO.contact.tiktokUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-teal-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl"
+              className="text-gray-400 hover:text-white transition-colors"
+              aria-label="TikTok"
             >
-              <TikTokIcon className="w-4 h-4" />
-              <span>{BRAND_INFO.contact.tiktok}</span>
-            </a>
-            <a
-              href={BRAND_INFO.contact.facebookUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-blue-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl"
-            >
-              <FacebookIcon className="w-4 h-4" />
-              <span>{BRAND_INFO.contact.facebook}</span>
+              <TikTokIcon className="w-6 h-6" />
             </a>
           </div>
         </div>

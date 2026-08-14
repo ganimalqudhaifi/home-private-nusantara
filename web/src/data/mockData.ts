@@ -8,7 +8,7 @@ export const BRAND_INFO = {
   contact: {
     whatsapp: '0851-8303-0246',
     whatsappRaw: '6285183030246',
-    email: 'bantuan@homeprivatenusantara.id',
+    email: 'homeprivatnusantara@gmail.com',
     serviceArea: 'Kota Makassar & Kabupaten Gowa',
     instagram: '@home_privatnusantara',
     instagramUrl: 'https://instagram.com/home_privatnusantara',
