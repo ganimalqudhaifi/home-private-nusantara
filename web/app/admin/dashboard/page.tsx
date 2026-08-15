@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import Link from 'next/link';
 import { AdminTopNavBar } from '../../../src/components/admin/AdminTopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
@@ -19,120 +20,95 @@ export interface AdminDashboardPageProps {
 }
 
 export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashboardPageProps) {
-  const [tutorsList, setTutorsList] = useState<readonly Tutor[]>([]);
-  const [isLoadingTutors, setIsLoadingTutors] = useState<boolean>(true);
-  const [isLoadingStats, setIsLoadingStats] = useState<boolean>(true);
-  const [isLoadingSessions, setIsLoadingSessions] = useState<boolean>(true);
-  const [stats, setStats] = useState({
-    activeTutors: 0,
-    pendingTutors: 0,
-    registeredStudents: { total: 0, calistung: 0, sd: 0, smp: 0 },
-    totalBookings: 0,
-    doubleBookingRate: '0%',
-  });
-  const [weeklySessions, setWeeklySessions] = useState<StudentSession[]>([]);
-  const [isRundownModalOpen, setIsRundownModalOpen] = useState(false);
+  const { data: statsData, isLoading: isLoadingStats } = useSWR('/api/admin/stats');
+  const { data: tutorsData, isLoading: isLoadingTutors, mutate: mutateTutors } = useSWR('/api/admin/tutors');
+  const { data: sessionsData, isLoading: isLoadingSessions, mutate: mutateSessions } = useSWR('/api/admin/bookings?view=weekly');
 
+  const stats = React.useMemo(() => {
+    if (statsData?.stats) {
+      return {
+        activeTutors: Number(statsData.stats.activeTutors || 0),
+        pendingTutors: Number(statsData.stats.pendingTutors || 0),
+        registeredStudents: {
+          total: Number(statsData.stats.registeredStudents?.total || 0),
+          calistung: Number(statsData.stats.registeredStudents?.calistung || 0),
+          sd: Number(statsData.stats.registeredStudents?.sd || 0),
+          smp: Number(statsData.stats.registeredStudents?.smp || 0),
+        },
+        totalBookings: Number(statsData.stats.totalBookings || 0),
+        doubleBookingRate: '0%',
+      };
+    }
+    return {
+      activeTutors: 0,
+      pendingTutors: 0,
+      registeredStudents: { total: 0, calistung: 0, sd: 0, smp: 0 },
+      totalBookings: 0,
+      doubleBookingRate: '0%',
+    };
+  }, [statsData]);
+
+  const tutorsList: Tutor[] = React.useMemo(() => {
+    if (tutorsData?.tutors && Array.isArray(tutorsData.tutors)) {
+      return tutorsData.tutors.map((t: any) => ({
+        id: t.id,
+        name: t.name || 'Pengajar',
+        phone: t.phone || '-',
+        portfolioUrl: t.portfolioUrl,
+        avatar: t.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        degree: t.major || t.degree || 'S1',
+        university: t.university || '-',
+        gpa: 3.8,
+        subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
+        grades: Array.isArray(t.grades) && t.grades.length > 0 ? t.grades : ['SD (1-6)', 'SMP (7-9)'],
+        teachingArea: 'Makassar & Gowa',
+        rating: Number(t.rating || 5.0),
+        reviewCount: Number(t.reviewCount || 0),
+        hourlyRate: Number(t.hourlyRate || 150000),
+        isVerified: t.status === 'verified',
+        status: t.status || 'pending',
+        experienceYears: Number(t.experienceYears || 1),
+        avatarUrl: t.avatar || undefined,
+        documents: {
+          cvUploaded: !!t.portfolioUrl,
+          diplomaUploaded: true,
+          idCardUploaded: true,
+          certificateUploaded: false,
+        },
+      }));
+    }
+    return [];
+  }, [tutorsData]);
+
+  const weeklySessions: StudentSession[] = React.useMemo(() => {
+    if (sessionsData?.success && Array.isArray(sessionsData.bookings)) {
+      return sessionsData.bookings.map((b: any) => ({
+        id: b.id,
+        code: b.code || `SES-${Math.floor(1000 + Math.random() * 9000)}`,
+        studentId: b.studentId || 'st-1',
+        studentName: b.studentName || 'Siswa Nusantara',
+        tutorId: b.tutorId || 'tu-1',
+        tutorName: b.tutorName || 'Pengajar',
+        level: b.level || 'SD',
+        grade: Number(b.grade ?? 4),
+        subject: b.subject || 'Matematika SD',
+        date: b.date || new Date().toISOString().split('T')[0],
+        day: b.day || 'Senin',
+        time: b.time || '16:00 - 17:30',
+        address: b.address || 'Jl. Hertasning No. 25',
+        district: b.district || 'Rappocini',
+        city: b.city || 'Kota Makassar',
+        status: b.status || 'scheduled',
+        amount: Number(b.amount || 150000),
+      }));
+    }
+    return [];
+  }, [sessionsData]);
+
+  const [isRundownModalOpen, setIsRundownModalOpen] = useState(false);
   const pendingTutors = tutorsList.filter((t) => t.status === 'pending');
 
-  const fetchWeeklySessions = () => {
-    setIsLoadingSessions(true);
-    fetch('/api/admin/bookings?view=weekly')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.bookings)) {
-          const sessionsData: StudentSession[] = data.bookings.map((b: any) => ({
-            id: b.id,
-            code: b.code || `SES-${Math.floor(1000 + Math.random() * 9000)}`,
-            studentId: b.studentId || 'st-1',
-            studentName: b.studentName || 'Siswa Nusantara',
-            tutorId: b.tutorId || 'tu-1',
-            tutorName: b.tutorName || 'Pengajar',
-            level: b.level || 'SD',
-            grade: Number(b.grade ?? 4),
-            subject: b.subject || 'Matematika SD',
-            date: b.date || new Date().toISOString().split('T')[0],
-            day: b.day || 'Senin',
-            time: b.time || '16:00 - 17:30',
-            address: b.address || 'Jl. Hertasning No. 25',
-            district: b.district || 'Rappocini',
-            city: b.city || 'Kota Makassar',
-            status: b.status || 'scheduled',
-            amount: Number(b.amount || 150000),
-          }));
-          setWeeklySessions(sessionsData);
-        }
-      })
-      .catch((err) => console.error('Failed to fetch weekly sessions:', err))
-      .finally(() => setIsLoadingSessions(false));
-  };
-
-  useEffect(() => {
-    // Fetch real stats from database
-    setIsLoadingStats(true);
-    fetch('/api/admin/stats')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.stats) {
-          setStats({
-            activeTutors: Number(data.stats.activeTutors || 0),
-            pendingTutors: Number(data.stats.pendingTutors || 0),
-            registeredStudents: {
-              total: Number(data.stats.registeredStudents?.total || 0),
-              calistung: Number(data.stats.registeredStudents?.calistung || 0),
-              sd: Number(data.stats.registeredStudents?.sd || 0),
-              smp: Number(data.stats.registeredStudents?.smp || 0),
-            },
-            totalBookings: Number(data.stats.totalBookings || 0),
-            doubleBookingRate: '0%',
-          });
-        }
-      })
-      .catch((err) => console.error('Failed to fetch admin stats:', err))
-      .finally(() => setIsLoadingStats(false));
-
-    // Fetch real tutors from database
-    fetch('/api/admin/tutors')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.tutors && data.tutors.length > 0) {
-          const dbTutors: Tutor[] = data.tutors.map((t: any) => ({
-            id: t.id,
-            name: t.name || 'Pengajar',
-            phone: t.phone || '-',
-            portfolioUrl: t.portfolioUrl,
-            avatar: t.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-            degree: t.major || t.degree || 'S1',
-            university: t.university || '-',
-            gpa: 3.8,
-            subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
-            grades: Array.isArray(t.grades) && t.grades.length > 0 ? t.grades : ['SD (1-6)', 'SMP (7-9)'],
-            teachingArea: 'Makassar & Gowa',
-            rating: Number(t.rating || 5.0),
-            reviewCount: Number(t.reviewCount || 0),
-            hourlyRate: Number(t.hourlyRate || 150000),
-            isVerified: t.status === 'verified',
-            status: t.status || 'pending',
-            experienceYears: Number(t.experienceYears || 1),
-            avatarUrl: t.avatar || undefined,
-            documents: {
-              cvUploaded: !!t.portfolioUrl,
-              diplomaUploaded: true,
-              idCardUploaded: true,
-              certificateUploaded: false,
-            },
-          }));
-          setTutorsList(dbTutors);
-        }
-      })
-      .catch((err) => console.error('Failed to fetch admin tutors:', err))
-      .finally(() => setIsLoadingTutors(false));
-
-    fetchWeeklySessions();
-  }, []);
-
   const handleSaveRundownFromDashboard = async (newSessionsPayload: Partial<StudentSession>[]) => {
-    setIsLoadingSessions(true);
     try {
       const res = await fetch('/api/admin/bookings', {
         method: 'POST',
@@ -141,7 +117,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
       });
       const data = await res.json();
       if (data.success) {
-        fetchWeeklySessions();
+        await mutateSessions();
         return { success: true };
       } else {
         return { success: false, error: data.error, collisions: data.collisions };
@@ -149,8 +125,6 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
     } catch (err) {
       console.error('Error saving rundown from dashboard:', err);
       return { success: false, error: 'Gagal menghubungi server.' };
-    } finally {
-      setIsLoadingSessions(false);
     }
   };
 
@@ -200,22 +174,10 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
           rejectionReason: notes,
         }),
       });
+      await mutateTutors();
     } catch (err) {
       console.error('Error updating verification status in database:', err);
     }
-
-    setTutorsList((prev) =>
-      prev.map((t) => {
-        if (t.id === tutorId) {
-          return {
-            ...t,
-            status: targetStatus,
-            isVerified: targetStatus === 'verified' || targetStatus === 'active',
-          };
-        }
-        return t;
-      })
-    );
   };
 
   return (

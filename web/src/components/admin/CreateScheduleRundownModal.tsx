@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { Modal } from '../shared/Modal';
 import { Tutor, StudentSession, Student } from '../../types';
 import { CreateStudentModal } from './CreateStudentModal';
@@ -67,9 +68,45 @@ export function CreateScheduleRundownModal({
 }: CreateScheduleRundownModalProps) {
   const getTodayISO = () => new Date().toISOString().split('T')[0];
 
-  const [studentsList, setStudentsList] = useState<Student[]>([]);
+  const { data: studentsData, isLoading: isLoadingStudents, mutate: mutateStudents } = useSWR('/api/admin/students');
+  const { data: tutorsData } = useSWR('/api/admin/tutors');
+
+  const studentsList: Student[] = React.useMemo(() => {
+    if (studentsData?.students && Array.isArray(studentsData.students)) {
+      return studentsData.students.map((s: any) => ({
+        id: s.id,
+        name: s.name || 'Siswa',
+        level: s.level || 'SD',
+        grade: Number(s.grade ?? 4),
+        school: s.school || 'SD/SMP Nusantara',
+        parentName: s.parentName || 'Wali Murid',
+        parentPhone: s.parentPhone || '-',
+        address: s.address || 'Makassar',
+        totalSessions: Number(s.totalSessions || 0),
+        activeBookings: Number(s.activeBookings || 0),
+        joinDate: s.joinDate || '2025',
+      }));
+    }
+    return [];
+  }, [studentsData]);
+
+  const verifiedTutors: Tutor[] = React.useMemo(() => {
+    if (tutorsData?.tutors && Array.isArray(tutorsData.tutors)) {
+      return tutorsData.tutors
+        .filter((t: any) => t.status === 'verified' || t.status === 'active')
+        .map((t: any) => ({
+          id: t.id,
+          name: t.name || 'Pengajar',
+          university: t.university || '-',
+          title: t.major || t.degree || 'Pengajar',
+          subjects: t.subjects || ['Matematika SD'],
+          status: t.status,
+        }));
+    }
+    return [];
+  }, [tutorsData]);
+
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
-  const [isLoadingStudents, setIsLoadingStudents] = useState<boolean>(true);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState<boolean>(false);
 
   const [studentName, setStudentName] = useState(defaultStudentName);
@@ -84,74 +121,24 @@ export function CreateScheduleRundownModal({
   const [defaultTime, setDefaultTime] = useState<string>('16:00 - 17:30');
   const [defaultSubject, setDefaultSubject] = useState<string>('Matematika SD');
 
-  const [tutorsList, setTutorsList] = useState<readonly Tutor[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
   const [copiedWA, setCopiedWA] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [topError, setTopError] = useState<string | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
 
-  // Fetch real students from DB
+  // Auto-select first student when data loads
   useEffect(() => {
-    setIsLoadingStudents(true);
-    fetch('/api/admin/students')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.students && Array.isArray(data.students) && data.students.length > 0) {
-          const list: Student[] = data.students.map((s: any) => ({
-            id: s.id,
-            name: s.name || 'Siswa',
-            level: s.level || 'SD',
-            grade: Number(s.grade ?? 4),
-            school: s.school || 'SD/SMP Nusantara',
-            parentName: s.parentName || 'Wali Murid',
-            parentPhone: s.parentPhone || '-',
-            address: s.address || 'Makassar',
-            totalSessions: Number(s.totalSessions || 0),
-            activeBookings: Number(s.activeBookings || 0),
-            joinDate: s.joinDate || '2025',
-          }));
-          setStudentsList(list);
-
-          const first = list[0];
-          setSelectedStudentId(first.id);
-          setStudentName(first.name);
-          setParentName(first.parentName);
-          setParentPhone(first.parentPhone);
-          setAddress(first.address);
-          setLocationArea(first.address.toLowerCase().includes('gowa') ? 'Gowa' : 'Makassar');
-        }
-      })
-      .catch((err) => console.error('Failed to fetch students for rundown modal:', err))
-      .finally(() => setIsLoadingStudents(false));
-  }, []);
-
-  // Fetch verified tutors from database or fallback to mock data
-  useEffect(() => {
-    fetch('/api/admin/tutors')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.tutors && data.tutors.length > 0) {
-          const verified = data.tutors
-            .filter((t: any) => t.status === 'verified' || t.status === 'active')
-            .map((t: any) => ({
-              id: t.id,
-              name: t.name || 'Pengajar',
-              university: t.university || '-',
-              title: t.major || t.degree || 'Pengajar',
-              subjects: t.subjects || ['Matematika SD'],
-              status: t.status,
-            }));
-          setTutorsList(verified);
-        } else {
-          setTutorsList([]);
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to fetch verified tutors', err);
-        setTutorsList([]);
-      });
-  }, []);
+    if (!selectedStudentId && studentsList.length > 0) {
+      const first = studentsList[0];
+      setSelectedStudentId(first.id);
+      setStudentName(first.name);
+      setParentName(first.parentName);
+      setParentPhone(first.parentPhone);
+      setAddress(first.address);
+      setLocationArea(first.address.toLowerCase().includes('gowa') ? 'Gowa' : 'Makassar');
+    }
+  }, [studentsList, selectedStudentId]);
 
   const handleSelectStudent = (id: string) => {
     setSelectedStudentId(id);
@@ -165,8 +152,8 @@ export function CreateScheduleRundownModal({
     }
   };
 
-  const handleStudentCreated = (newStudent: Student) => {
-    setStudentsList((prev) => [newStudent, ...prev]);
+  const handleStudentCreated = async (newStudent: Student) => {
+    await mutateStudents(); // Refresh student list using SWR
     setSelectedStudentId(newStudent.id);
     setStudentName(newStudent.name);
     setParentName(newStudent.parentName);
@@ -174,8 +161,6 @@ export function CreateScheduleRundownModal({
     setAddress(newStudent.address);
     setLocationArea(newStudent.address.toLowerCase().includes('gowa') ? 'Gowa' : 'Makassar');
   };
-
-  const verifiedTutors = tutorsList;
 
   const formatIndonesianDate = (isoDate: string) => {
     if (!isoDate) return '-';

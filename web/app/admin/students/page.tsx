@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import Link from 'next/link';
 import { AdminTopNavBar } from '../../../src/components/admin/AdminTopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
@@ -9,34 +10,26 @@ import { Student } from '../../../src/types';
 import { ArrowLeft } from 'lucide-react';
 
 export default function AdminStudentsPage() {
-  const [students, setStudents] = useState<readonly Student[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { data: fetchResult, error, isLoading: isSwrLoading, mutate } = useSWR('/api/admin/students');
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetch('/api/admin/students')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.students && data.students.length > 0) {
-          const dbStudents: Student[] = data.students.map((s: any) => ({
-            id: s.id,
-            name: s.name || 'Siswa',
-            level: s.level || 'SD',
-            grade: Number(s.grade ?? 4),
-            school: s.school || 'SD/SMP Nusantara',
-            parentName: s.parentName || 'Wali Murid',
-            parentPhone: s.parentPhone || '-',
-            address: s.address || 'Makassar',
-            totalSessions: Number(s.totalSessions || 0),
-            activeBookings: Number(s.activeBookings || 0),
-            joinDate: s.joinDate || '2025',
-          }));
-          setStudents(dbStudents);
-        }
-      })
-      .catch((err) => console.error('Failed to fetch students list:', err))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const students: Student[] = React.useMemo(() => {
+    if (fetchResult?.students && Array.isArray(fetchResult.students)) {
+      return fetchResult.students.map((s: any) => ({
+        id: s.id,
+        name: s.name || 'Siswa',
+        level: s.level || 'SD',
+        grade: Number(s.grade ?? 4),
+        school: s.school || 'SD/SMP Nusantara',
+        parentName: s.parentName || 'Wali Murid',
+        parentPhone: s.parentPhone || '-',
+        address: s.address || 'Makassar',
+        totalSessions: Number(s.totalSessions || 0),
+        activeBookings: Number(s.activeBookings || 0),
+        joinDate: s.joinDate || '2025',
+      }));
+    }
+    return [];
+  }, [fetchResult]);
 
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
@@ -71,7 +64,13 @@ export default function AdminStudentsPage() {
         </div>
 
         {/* Students Table */}
-        <StudentDirectoryTable students={students} isLoading={isLoading} />
+        <StudentDirectoryTable 
+          students={students} 
+          isLoading={isSwrLoading} 
+          onStudentAdded={() => mutate()} 
+          onStudentUpdated={() => mutate()} 
+          onStudentDeleted={() => mutate()} 
+        />
       </main>
 
       <Footer />

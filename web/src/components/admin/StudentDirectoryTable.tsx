@@ -12,6 +12,8 @@ export interface StudentDirectoryTableProps {
   readonly students: readonly Student[];
   readonly className?: string;
   readonly onStudentAdded?: (newStudent: Student) => void;
+  readonly onStudentUpdated?: (updatedStudent: Student) => void;
+  readonly onStudentDeleted?: (studentId: string) => void;
   readonly isLoading?: boolean;
 }
 
@@ -19,6 +21,8 @@ export function StudentDirectoryTable({
   students,
   className = '',
   onStudentAdded,
+  onStudentUpdated,
+  onStudentDeleted,
   isLoading = false,
 }: StudentDirectoryTableProps) {
   const [studentList, setStudentList] = useState<Student[]>([...students]);
@@ -60,10 +64,12 @@ export function StudentDirectoryTable({
     setStudentList((prev) =>
       prev.map((s) => (s.id === updatedStudent.id ? updatedStudent : s))
     );
+    if (onStudentUpdated) onStudentUpdated(updatedStudent);
   };
 
   const handleStudentDeleted = (studentId: string) => {
     setStudentList((prev) => prev.filter((s) => s.id !== studentId));
+    if (onStudentDeleted) onStudentDeleted(studentId);
   };
 
   const handleSaveRundownFromStudentsTable = async (sessionsPayload: any[]) => {

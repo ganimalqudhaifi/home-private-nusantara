@@ -1,41 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { TopNavBar } from '../shared/TopNavBar';
+import { useUser } from '@/src/hooks/useUser';
 
 export interface AdminTopNavBarProps {
   readonly activeRoute?: string;
 }
 
 export function AdminTopNavBar({ activeRoute = '/admin/dashboard' }: AdminTopNavBarProps) {
-  const [adminName, setAdminName] = useState('Administrator Pusat');
-  const [adminAvatar, setAdminAvatar] = useState<string | undefined>(undefined);
-  const [tutorStatus, setTutorStatus] = useState<string | undefined>(undefined);
+  const { user } = useUser();
 
-  useEffect(() => {
-    fetch('/api/user/me')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated && data.user) {
-          const fetchedName = data.user.full_name || data.user.name;
-          if (fetchedName) {
-            setAdminName(fetchedName);
-          }
-          
-          const fetchedAvatar = data.user.avatar_url || data.user.image;
-          if (fetchedAvatar) {
-            setAdminAvatar(fetchedAvatar);
-          }
-
-          if (data.user.status) {
-            setTutorStatus(data.user.status);
-          }
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to fetch admin profile:', err);
-      });
-  }, []);
+  const adminName = user?.full_name || user?.name || 'Administrator Pusat';
+  const adminAvatar = user?.avatar_url || user?.image || undefined;
+  const tutorStatus = user?.status;
 
   const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
   const displayRoleLabel = isVerified ? 'Admin & Tutor' : 'Admin';

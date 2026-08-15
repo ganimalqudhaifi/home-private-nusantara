@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import { AdminTopNavBar } from '../../../src/components/admin/AdminTopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
 import { TutorDirectoryTable } from '../../../src/components/admin/TutorDirectoryTable';
@@ -17,33 +18,26 @@ export interface AdminTutorsPageProps {
 }
 
 export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPageProps) {
-  const [tutors, setTutors] = useState<readonly Tutor[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { data: fetchResult, isLoading: isSwrLoading, mutate } = useSWR('/api/admin/tutors');
 
-  useEffect(() => {
-    fetch('/api/admin/tutors')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.tutors && data.tutors.length > 0) {
-            const dbTutors: Tutor[] = data.tutors.map((t: any) => ({
-              id: t.id,
-              name: t.name || 'Pengajar',
-              phone: t.phone || '-',
-              title: t.major || t.title || 'S1',
-              portfolioUrl: t.portfolioUrl,
-              avatar: t.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-              university: t.university || '-',
-              subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
-              isVerified: t.status === 'verified' || t.status === 'active',
-              status: t.status || 'pending',
-              availability_slots: t.availability_slots || [],
-            }));
-          setTutors(dbTutors);
-        }
-      })
-      .catch((err) => console.error('Failed to fetch tutors list:', err))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const tutors: Tutor[] = React.useMemo(() => {
+    if (fetchResult?.tutors && Array.isArray(fetchResult.tutors)) {
+      return fetchResult.tutors.map((t: any) => ({
+        id: t.id,
+        name: t.name || 'Pengajar',
+        phone: t.phone || '-',
+        title: t.major || t.title || 'S1',
+        portfolioUrl: t.portfolioUrl,
+        avatar: t.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        university: t.university || '-',
+        subjects: Array.isArray(t.subjects) && t.subjects.length > 0 ? t.subjects : ['Matematika SD'],
+        isVerified: t.status === 'verified' || t.status === 'active',
+        status: t.status || 'pending',
+        availability_slots: t.availability_slots || [],
+      }));
+    }
+    return [];
+  }, [fetchResult]);
 
   const {
     isOpen: isAuditOpen,
@@ -61,16 +55,6 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
 
   const handleAuditTutor = (tutor: Tutor) => {
     openAudit(tutor);
-  };
-
-  const handleTutorUpdated = (updatedTutor: Tutor) => {
-    setTutors((prev) =>
-      prev.map((t) => (t.id === updatedTutor.id ? updatedTutor : t))
-    );
-  };
-
-  const handleTutorDeleted = (tutorId: string) => {
-    setTutors((prev) => prev.filter((t) => t.id !== tutorId));
   };
 
   const handleOpenActionModal = (actionType: ActionType, tutor: Tutor) => {
@@ -101,22 +85,10 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
           rejectionReason: notes,
         }),
       });
+      await mutate();
     } catch (err) {
       console.error('Error updating tutor status in database:', err);
     }
-
-    setTutors((prev) =>
-      prev.map((t) => {
-        if (t.id === tutorId) {
-          return {
-            ...t,
-            status: targetStatus,
-            isVerified: targetStatus === 'verified' || targetStatus === 'active',
-          };
-        }
-        return t;
-      })
-    );
   };
 
   return (
@@ -143,10 +115,10 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
         {/* Directory Table */}
         <TutorDirectoryTable
           tutors={tutors}
-          isLoading={isLoading}
+          isLoading={isSwrLoading}
           onAuditTutor={handleAuditTutor}
-          onTutorUpdated={handleTutorUpdated}
-          onTutorDeleted={handleTutorDeleted}
+          onTutorUpdated={() => mutate()}
+          onTutorDeleted={() => mutate()}
         />
       </main>
 
@@ -156,7 +128,7 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
         onClose={closeAudit}
         tutor={auditTutor}
         onOpenActionModal={handleOpenActionModal}
-        onTutorUpdated={handleTutorUpdated}
+        onTutorUpdated={() => mutate()}
       />
 
       {/* Action Modal */}

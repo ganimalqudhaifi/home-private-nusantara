@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { Modal } from '../shared/Modal';
 import { StudentSession } from '../../types';
 import {
@@ -45,10 +46,17 @@ export function EditBookingModal({
   const [status, setStatus] = useState<string>('scheduled');
   const [notes, setNotes] = useState('');
 
-  const [verifiedTutors, setVerifiedTutors] = useState<any[]>([]);
-  const [isLoadingTutors, setIsLoadingTutors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const { data: tutorsData, isLoading: isLoadingTutors } = useSWR(isOpen ? '/api/admin/tutors' : null);
+
+  const verifiedTutors = React.useMemo(() => {
+    if (tutorsData?.tutors && Array.isArray(tutorsData.tutors)) {
+      return tutorsData.tutors.filter((t: any) => t.status === 'verified' || t.status === 'active');
+    }
+    return [];
+  }, [tutorsData]);
 
   useEffect(() => {
     if (isOpen && booking) {
@@ -61,23 +69,6 @@ export function EditBookingModal({
       setErrorMsg(null);
     }
   }, [isOpen, booking]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setIsLoadingTutors(true);
-      fetch('/api/admin/tutors')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.tutors) {
-            setVerifiedTutors(
-              data.tutors.filter((t: any) => t.status === 'verified' || t.status === 'active')
-            );
-          }
-        })
-        .catch((err) => console.error('Failed to fetch tutors:', err))
-        .finally(() => setIsLoadingTutors(false));
-    }
-  }, [isOpen]);
 
   if (!booking) return null;
 
@@ -203,7 +194,7 @@ export function EditBookingModal({
                 {isLoadingTutors ? (
                   <option value="">Memuat...</option>
                 ) : (
-                  verifiedTutors.map((t) => (
+                  verifiedTutors.map((t: any) => (
                     <option key={t.id} value={t.id}>{t.name}</option>
                   ))
                 )}

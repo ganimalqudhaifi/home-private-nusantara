@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { StudentSession } from '../../types';
 import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
 import { DeleteBookingModal } from './DeleteBookingModal';
@@ -31,62 +32,46 @@ export function AdminScheduleMonitoringGrid({
   isLoadingInitial = false,
   className = '',
 }: AdminScheduleMonitoringGridProps) {
-  const [sessions, setSessions] = useState<StudentSession[]>(
-    initialSessions ? [...initialSessions] : []
-  );
-  const [isLoading, setIsLoading] = useState<boolean>(
-    isLoadingInitial || (!initialSessions || initialSessions.length === 0)
-  );
+  const { data: fetchResult, error, isLoading: isSwrLoading, mutate } = useSWR('/api/admin/bookings');
+
+  // We derive the sessions array from SWR data or initial sessions.
+  const sessions: StudentSession[] = React.useMemo(() => {
+    if (fetchResult?.success && Array.isArray(fetchResult.bookings)) {
+      return fetchResult.bookings.map((b: any) => ({
+        id: b.id,
+        code: b.code || `SES-${Math.floor(1000 + Math.random() * 9000)}`,
+        studentId: b.studentId || 'st-1',
+        studentName: b.studentName || 'Siswa Nusantara',
+        tutorId: b.tutorId || 'tu-1',
+        tutorName: b.tutorName || 'Pengajar',
+        level: b.level || 'SD',
+        grade: Number(b.grade ?? 4),
+        subject: b.subject || 'Matematika SD',
+        date: b.date || new Date().toISOString().split('T')[0],
+        day: b.day || 'Senin',
+        time: b.time || '16:00 - 17:30',
+        address: b.address || 'Jl. Hertasning No. 25, Makassar',
+        district: b.district || 'Rappocini',
+        city: b.city || 'Kota Makassar',
+        status: b.status || 'scheduled',
+        amount: Number(b.amount || 150000),
+      }));
+    }
+    return initialSessions ? [...initialSessions] : [];
+  }, [fetchResult, initialSessions]);
+
+  const isLoading = isLoadingInitial || isSwrLoading;
+
   const [statusFilter, setStatusFilter] = useState<'all' | 'scheduled' | 'completed'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState<StudentSession | null>(null);
   const [bookingToEdit, setBookingToEdit] = useState<StudentSession | null>(null);
   const [deleteError, setDeleteError] = useState('');
-
-  // Fetch real booking data from Neon Database via /api/admin/bookings
-  const fetchBookingsFromDB = () => {
-    setIsLoading(true);
-    fetch('/api/admin/bookings')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.bookings)) {
-          const dbItems: StudentSession[] = data.bookings.map((b: any) => ({
-            id: b.id,
-            code: b.code || `SES-${Math.floor(1000 + Math.random() * 9000)}`,
-            studentId: b.studentId || 'st-1',
-            studentName: b.studentName || 'Siswa Nusantara',
-            tutorId: b.tutorId || 'tu-1',
-            tutorName: b.tutorName || 'Pengajar',
-            level: b.level || 'SD',
-            grade: Number(b.grade ?? 4),
-            subject: b.subject || 'Matematika SD',
-            date: b.date || new Date().toISOString().split('T')[0],
-            day: b.day || 'Senin',
-            time: b.time || '16:00 - 17:30',
-            address: b.address || 'Jl. Hertasning No. 25, Makassar',
-            district: b.district || 'Rappocini',
-            city: b.city || 'Kota Makassar',
-            status: b.status || 'scheduled',
-            amount: Number(b.amount || 150000),
-          }));
-          setSessions(dbItems);
-        }
-      })
-      .catch((err) => {
-        console.error('Error fetching bookings from Neon DB:', err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchBookingsFromDB();
-  }, []);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveRundownToDB = async (newSessions: Partial<StudentSession>[]) => {
-    setIsLoading(true);
+    setIsSaving(true);
     try {
       const res = await fetch('/api/admin/bookings', {
         method: 'POST',
@@ -95,7 +80,7 @@ export function AdminScheduleMonitoringGrid({
       });
       const data = await res.json();
       if (data.success) {
-        fetchBookingsFromDB();
+        await mutate(); // Revalidate data automatically
         return { success: true };
       } else {
         return { success: false, error: data.error, collisions: data.collisions };
@@ -104,7 +89,7 @@ export function AdminScheduleMonitoringGrid({
       console.error('Failed to save batch bookings to DB:', err);
       return { success: false, error: 'Gagal menghubungi server.' };
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -116,7 +101,7 @@ export function AdminScheduleMonitoringGrid({
       setDeleteError(data.error || 'Gagal menghapus sesi.');
       throw new Error(data.error || 'Gagal menghapus sesi.');
     }
-    setSessions((current) => current.filter((session) => session.id !== id));
+    await mutate(); // Refetch automatically after delete
   };
 
   const filteredSessions = sessions.filter((s) => {
@@ -471,9 +456,9 @@ export function AdminScheduleMonitoringGrid({
         isOpen={Boolean(bookingToEdit)}
         onClose={() => setBookingToEdit(null)}
         booking={bookingToEdit}
-        onSaveSuccess={() => {
+        onSaveSuccess={async () => {
           setBookingToEdit(null);
-          fetchBookingsFromDB();
+          await mutate();
         }}
       />
 

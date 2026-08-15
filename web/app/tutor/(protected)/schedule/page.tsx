@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from'react';
+import React from'react';
+import useSWR from 'swr';
 import { TutorTopNavBar } from'@/src/components/tutor/TutorTopNavBar';
 import { Footer } from'@/src/components/shared/Footer';
 import { TutorWeeklyScheduleGrid } from'@/src/components/tutor/TutorWeeklyScheduleGrid';
@@ -17,30 +18,14 @@ export interface TutorSchedulePageProps {
 export default function TutorSchedulePage({
  initialSessionId,
 }: TutorSchedulePageProps) {
- const [sessions, setSessions] = useState<StudentSession[]>([]);
- const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchSchedule() {
-      setIsLoading(true);
-      try {
-        const response = await fetch('/api/tutor/schedule');
-        const data = await response.json();
-        if (data.success && data.sessions) {
-          setSessions(data.sessions);
-        } else {
-          setSessions([]);
-        }
-      } catch (error) {
-        console.error('Failed to load schedule', error);
-        setSessions([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    fetchSchedule();
-  }, []);
+ const { data, isLoading } = useSWR('/api/tutor/schedule');
+ 
+ const sessions: StudentSession[] = React.useMemo(() => {
+   if (data?.success && data.sessions) {
+     return data.sessions;
+   }
+   return [];
+ }, [data]);
 
  const {
  isOpen: isDrawerOpen,

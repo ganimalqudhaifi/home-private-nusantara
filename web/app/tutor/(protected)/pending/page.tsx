@@ -10,6 +10,7 @@ import { TutorPendingSync } from '@/src/components/tutor/TutorPendingSync';
 import { TutorVerificationSteps } from '@/src/components/tutor/TutorVerificationSteps';
 import { Lock, ArrowRight } from 'lucide-react';
 import { BRAND_INFO } from '@/src/data/mockData';
+import { useUser } from '@/src/hooks/useUser';
 
 export interface TutorPendingPageProps {
   readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -17,47 +18,22 @@ export interface TutorPendingPageProps {
 
 export default function TutorPendingPage({ searchParams }: TutorPendingPageProps) {
   const router = useRouter();
-  const [userName, setUserName] = useState('Calon Pengajar');
-  const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-  const [userRole, setUserRole] = useState<'guest' | 'student' | 'tutor' | 'admin'>('tutor');
+  const { user, isLoading } = useUser();
+
+  const userName = user?.full_name || user?.name || 'Calon Pengajar';
+  const userAvatar = user?.avatar_url || user?.image || undefined;
+  const userId = user?.id || undefined;
+  const userRole = (user?.role as 'guest' | 'student' | 'tutor' | 'admin') || 'tutor';
 
   useEffect(() => {
-    fetch('/api/user/me')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated && data.user) {
-          if (data.user.role) {
-            setUserRole(data.user.role);
-          }
-          if (data.user.id) {
-            setUserId(data.user.id);
-          }
-          if (data.user.full_name || data.user.name) {
-            setUserName(data.user.full_name || data.user.name);
-          }
-          if (data.user.avatar_url || data.user.image) {
-            setUserAvatar(data.user.avatar_url || data.user.image);
-          }
-          if (data.user.status === 'verified') {
-            router.push('/tutor/dashboard');
-          }
-        }
-      })
-      .catch((err) => console.error('Error fetching tutor profile:', err));
-  }, [router]);
+    if (!isLoading && user?.status === 'verified') {
+      router.push('/tutor/dashboard');
+    }
+  }, [user, isLoading, router]);
 
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
-      <TutorTopNavBar
-        activeRoute="/tutor/pending"
-        preloadedUser={{
-          name: userName,
-          avatar: userAvatar,
-          role: userRole,
-          status: 'pending'
-        }}
-      />
+      <TutorTopNavBar activeRoute="/tutor/pending" />
 
  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

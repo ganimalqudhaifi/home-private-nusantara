@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import Link from 'next/link';
 import { TutorTopNavBar } from '@/src/components/tutor/TutorTopNavBar';
 import { Footer } from '@/src/components/shared/Footer';
@@ -10,75 +11,31 @@ import { TutorRecentStudentsCard } from '@/src/components/tutor/TutorRecentStude
 import { CalendarPlus, ShieldCheck, Coffee, AlertTriangle, UserX, PhoneCall } from 'lucide-react';
 import { StudentSession, Student } from '@/src/types';
 import { BRAND_INFO } from '@/src/data/mockData';
+import { useUser } from '@/src/hooks/useUser';
 
 export interface TutorDashboardPageProps {
   readonly searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default function TutorDashboardPage({ searchParams }: TutorDashboardPageProps) {
-  const [userName, setUserName] = useState('');
-  const [userAvatar, setUserAvatar] = useState<string | undefined>(undefined);
-  const [userRole, setUserRole] = useState<'guest' | 'student' | 'tutor' | 'admin'>('tutor');
-  const [isVerified, setIsVerified] = useState(false);
-  const [tutorStatus, setTutorStatus] = useState<string>('verified');
-  const [sessions, setSessions] = useState<StudentSession[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [stats, setStats] = useState({
+  const { user, isLoading: isLoadingUser } = useUser();
+  const { data: dashboardData, isLoading: isLoadingData } = useSWR('/api/tutor/dashboard-data');
+
+  const sessions = dashboardData?.sessions || [];
+  const students = dashboardData?.students || [];
+  const stats = dashboardData?.stats || {
     completedSessions: 0,
     activeStudentsCount: 0,
     sdStudentsCount: 0,
     smpStudentsCount: 0,
     activeDaysCount: 0,
-  });
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoadingData(true);
-      try {
-        const res = await fetch('/api/tutor/dashboard-data');
-        const data = await res.json();
-        if (data.success) {
-          setSessions(data.sessions || []);
-          setStudents(data.students || []);
-          if (data.stats) {
-            setStats(data.stats);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch tutor data:', err);
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    setIsLoadingUser(true);
-    fetch('/api/user/me')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated && data.user) {
-          if (data.user.role) {
-            setUserRole(data.user.role);
-          }
-          if (data.user.full_name || data.user.name) {
-            setUserName(data.user.full_name || data.user.name);
-          }
-          if (data.user.avatar_url || data.user.image) {
-            setUserAvatar(data.user.avatar_url || data.user.image);
-          }
-          if (data.user.status) {
-            setTutorStatus(data.user.status);
-            setIsVerified(data.user.status === 'verified' || data.user.status === 'active');
-          }
-        }
-      })
-      .catch((err) => console.error('Error fetching user profile:', err))
-      .finally(() => setIsLoadingUser(false));
-  }, []);
+  const userName = user?.full_name || user?.name || '';
+  const userAvatar = user?.avatar_url || user?.image || undefined;
+  const userRole = (user?.role as 'guest' | 'student' | 'tutor' | 'admin') || 'tutor';
+  const tutorStatus = user?.status || 'verified';
+  const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
 
   const renderStatusBanner = () => {
     if (tutorStatus === 'on_leave') {
@@ -165,16 +122,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Header */}
-      <TutorTopNavBar
-        activeRoute="/tutor/dashboard"
-        preloadedUser={{
-          name: userName,
-          avatar: userAvatar,
-          role: userRole,
-          status: tutorStatus,
-        }}
-        isLoadingPreloaded={isLoadingUser}
-      />
+      <TutorTopNavBar activeRoute="/tutor/dashboard" />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col gap-8">
         {/* Status Notice Banner */}
@@ -205,7 +153,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
           </div>
 
           <div className="flex items-center gap-3">
-            {tutorStatus === 'verified' || tutorStatus === 'active' ? (
+            {isVerified ? (
               <Link
                 href="/tutor/availability"
                 className="bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl px-5 py-3 text-sm font-bold active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
