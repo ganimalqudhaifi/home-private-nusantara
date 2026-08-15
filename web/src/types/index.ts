@@ -1,4 +1,4 @@
-export type LevelType = 'SD' | 'SMP';
+export type LevelType = 'Calistung' | 'SD' | 'SMP';
 
 export type SubjectGrade = {
   readonly id: string;
@@ -84,6 +84,7 @@ export type AdminKPI = {
   readonly pendingTutors: number;
   readonly registeredStudents: {
     readonly total: number;
+    readonly calistung: number;
     readonly sd: number;
     readonly smp: number;
   };

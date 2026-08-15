@@ -15,6 +15,7 @@ import {
   Building,
   AlertCircle,
   Globe,
+  Palette,
 } from 'lucide-react';
 
 export interface EditStudentModalProps {
@@ -135,6 +136,8 @@ export function EditStudentModal({
       setGrade(4);
     } else if (newLevel === 'SMP' && grade < 7) {
       setGrade(7);
+    } else if (newLevel === 'Calistung') {
+      setGrade(0);
     }
   };
 
@@ -264,7 +267,19 @@ export function EditStudentModal({
             <label className="block text-xs font-semibold text-text-primary mb-1">
               Jenjang Pendidikan <span className="text-red-500">*</span>
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => handleLevelChange('Calistung')}
+                className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
+                  level === 'Calistung'
+                    ? 'bg-amber-50 border-amber-600 text-amber-700 shadow-xs'
+                    : 'border-border-whisper text-text-muted hover:bg-surface-container-high'
+                }`}
+              >
+                <Palette className="w-3.5 h-3.5" />
+                <span>Calistung</span>
+              </button>
               <button
                 type="button"
                 onClick={() => handleLevelChange('SD')}
@@ -301,7 +316,11 @@ export function EditStudentModal({
               onChange={(e) => setGrade(Number(e.target.value))}
               className="w-full px-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs outline-none focus:border-primary transition-colors font-medium"
             >
-              {level === 'SD' ? (
+              {level === 'Calistung' ? (
+                <>
+                  <option value={0}>TK / PAUD / Pra-SD</option>
+                </>
+              ) : level === 'SD' ? (
                 <>
                   <option value={1}>Kelas 1 SD</option>
                   <option value={2}>Kelas 2 SD</option>

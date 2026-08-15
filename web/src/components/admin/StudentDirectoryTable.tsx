@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Student } from '../../types';
-import { Search, GraduationCap, BookOpen, Phone, MapPin, Plus, UserPlus, Edit3, Trash2 } from 'lucide-react';
+import { Search, GraduationCap, BookOpen, Phone, MapPin, Plus, UserPlus, Edit3, Trash2, Palette } from 'lucide-react';
 import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
 import { CreateStudentModal } from './CreateStudentModal';
 import { EditStudentModal } from './EditStudentModal';
@@ -36,6 +36,7 @@ export function StudentDirectoryTable({
 
   const sdCount = studentList.filter((s) => s.level === 'SD').length;
   const smpCount = studentList.filter((s) => s.level === 'SMP').length;
+  const calistungCount = studentList.filter((s) => s.level === 'Calistung').length;
 
   const filteredStudents = studentList.filter((s) => {
     const matchesLevel = filterLevel === 'all' || s.level === filterLevel;
@@ -99,6 +100,17 @@ export function StudentDirectoryTable({
             }`}
           >
             Semua Siswa ({studentList.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterLevel('Calistung')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+              filterLevel === 'Calistung'
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-container-high'
+            }`}
+          >
+            Calistung ({calistungCount})
           </button>
           <button
             type="button"
@@ -193,6 +205,7 @@ export function StudentDirectoryTable({
               ) : (
                 filteredStudents.map((student) => {
                   const isSD = student.level === 'SD';
+                  const isCalistung = student.level === 'Calistung';
                   return (
                     <tr
                       key={student.id}
@@ -202,12 +215,14 @@ export function StudentDirectoryTable({
                         <div className="flex items-center gap-3">
                           <div
                             className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                              isSD
+                              isCalistung
+                                ? 'bg-amber-50 text-amber-900'
+                                : isSD
                                 ? 'bg-blue-50 text-blue-900'
                                 : 'bg-indigo-50 text-indigo-900'
                             }`}
                           >
-                            {isSD ? <BookOpen className="w-4 h-4" /> : <GraduationCap className="w-4 h-4" />}
+                            {isCalistung ? <Palette className="w-4 h-4" /> : isSD ? <BookOpen className="w-4 h-4" /> : <GraduationCap className="w-4 h-4" />}
                           </div>
                           <div>
                             <p className="font-headline text-sm font-bold text-primary">
@@ -220,12 +235,14 @@ export function StudentDirectoryTable({
                       <td className="px-6 py-4">
                         <span
                           className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                            isSD
+                            isCalistung
+                              ? 'bg-amber-50 text-amber-900'
+                              : isSD
                               ? 'bg-blue-50 text-blue-900'
                               : 'bg-indigo-50 text-indigo-900'
                           }`}
                         >
-                          {student.level} Kelas {student.grade}
+                          {student.level} {student.grade > 0 ? `Kelas ${student.grade}` : ''}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-text-primary">
