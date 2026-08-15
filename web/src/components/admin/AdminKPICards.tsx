@@ -90,6 +90,9 @@ export function AdminKPICards({ stats, isLoading = false, className = '' }: Admi
  </div>
  </div>
  <div className="pt-3 border-t border-border-whisper flex gap-2">
+ <span className="bg-amber-50 text-amber-900 px-2 py-0.5 rounded text-[11px] font-bold">
+ {stats.registeredStudents.calistung} Calistung
+ </span>
  <span className="bg-blue-50 text-blue-900 px-2 py-0.5 rounded text-[11px] font-bold">
  {stats.registeredStudents.sd} SD
  </span>

@@ -26,7 +26,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
   const [stats, setStats] = useState({
     activeTutors: 0,
     pendingTutors: 0,
-    registeredStudents: { total: 0, sd: 0, smp: 0 },
+    registeredStudents: { total: 0, calistung: 0, sd: 0, smp: 0 },
     totalBookings: 0,
     doubleBookingRate: '0%',
   });
@@ -79,6 +79,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
             pendingTutors: Number(data.stats.pendingTutors || 0),
             registeredStudents: {
               total: Number(data.stats.registeredStudents?.total || 0),
+              calistung: Number(data.stats.registeredStudents?.calistung || 0),
               sd: Number(data.stats.registeredStudents?.sd || 0),
               smp: Number(data.stats.registeredStudents?.smp || 0),
             },
