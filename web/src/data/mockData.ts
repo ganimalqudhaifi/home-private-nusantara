@@ -140,6 +140,19 @@ export const PACKAGE_BENEFITS = [
 
 export const CURRICULUM_PROGRAMS = [
   {
+    level: 'TK & Pra-SD',
+    badge: 'Calistung',
+    badgeColor: 'bg-amber-50 text-amber-900',
+    title: 'Membaca, Menulis & Berhitung',
+    description: 'Pembelajaran Membaca, Menulis, dan Berhitung yang menyenangkan dengan metode ramah anak usia dini untuk persiapan masuk sekolah dasar.',
+    features: [
+      'Pengenalan Huruf & Angka Interaktif',
+      'Metode Bermain Sambil Belajar',
+      'Melatih Fokus & Motorik Halus Anak'
+    ],
+    icon: 'sparkles',
+  },
+  {
     level: 'SD (Kelas 1 - 6)',
     badge: 'SD Kelas 1-6',
     badgeColor: 'bg-blue-50 text-blue-900',
