@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, level, grade, school, parentName, parentPhone, address, district, city } = body;
 
-    if (!name || !level || !grade || !parentName || !parentPhone || !address) {
+    if (!name || !level || grade === undefined || grade === null || !parentName || !parentPhone || !address) {
       return NextResponse.json(
         { error: 'Mohon lengkapi semua bidang wajib (Nama Siswa, Jenjang, Kelas, Orang Tua, Nomor HP, dan Alamat).' },
         { status: 400 }
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
 
     const newStudent = await createStudentInDB({
       name: String(name).trim(),
-      level: level === 'SMP' ? 'SMP' : 'SD',
+      level: level === 'SMP' ? 'SMP' : level === 'Calistung' ? 'Calistung' : 'SD',
       grade: Number(grade),
       school: school ? String(school).trim() : undefined,
       parentName: String(parentName).trim(),
@@ -93,7 +93,7 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { id, name, level, grade, school, parentName, parentPhone, address, district, city } = body;
 
-    if (!id || !name || !level || !grade || !parentName || !parentPhone || !address) {
+    if (!id || !name || !level || grade === undefined || grade === null || !parentName || !parentPhone || !address) {
       return NextResponse.json(
         { error: 'Mohon lengkapi semua bidang wajib untuk mengubah data siswa.' },
         { status: 400 }
@@ -102,7 +102,7 @@ export async function PUT(request: Request) {
 
     const updatedStudent = await updateStudentInDB(String(id), {
       name: String(name).trim(),
-      level: level === 'SMP' ? 'SMP' : 'SD',
+      level: level === 'SMP' ? 'SMP' : level === 'Calistung' ? 'Calistung' : 'SD',
       grade: Number(grade),
       school: school ? String(school).trim() : undefined,
       parentName: String(parentName).trim(),

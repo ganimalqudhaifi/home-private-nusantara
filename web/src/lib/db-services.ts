@@ -658,7 +658,7 @@ export async function getAllStudentsFromDB() {
 
 export interface CreateStudentInput {
   name: string;
-  level: 'SD' | 'SMP';
+  level: 'SD' | 'SMP' | 'Calistung';
   grade: number;
   school?: string;
   parentName: string;
@@ -716,7 +716,7 @@ export async function createStudentInDB(input: CreateStudentInput) {
 
 export interface UpdateStudentInput {
   name: string;
-  level: 'SD' | 'SMP';
+  level: 'SD' | 'SMP' | 'Calistung';
   grade: number;
   school?: string;
   parentName: string;
