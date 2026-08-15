@@ -49,7 +49,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
             tutorId: b.tutorId || 'tu-1',
             tutorName: b.tutorName || 'Pengajar',
             level: b.level || 'SD',
-            grade: Number(b.grade || 4),
+            grade: Number(b.grade ?? 4),
             subject: b.subject || 'Matematika SD',
             date: b.date || new Date().toISOString().split('T')[0],
             day: b.day || 'Senin',
