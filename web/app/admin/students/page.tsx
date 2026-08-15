@@ -22,7 +22,7 @@ export default function AdminStudentsPage() {
             id: s.id,
             name: s.name || 'Siswa',
             level: s.level || 'SD',
-            grade: Number(s.grade || 4),
+            grade: Number(s.grade ?? 4),
             school: s.school || 'SD/SMP Nusantara',
             parentName: s.parentName || 'Wali Murid',
             parentPhone: s.parentPhone || '-',

@@ -890,7 +890,7 @@ export async function getTutorDashboardData(tutorId: string) {
       id: row.id,
       name: row.name,
       level: row.level || 'SD',
-      grade: row.grade || 1,
+      grade: row.grade ?? 1,
       school: row.school || '-',
       parentName: row.parentName || 'Wali Murid',
       parentPhone: row.parentPhone || '',
