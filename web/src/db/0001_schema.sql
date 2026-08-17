@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255),
     full_name VARCHAR(255) NOT NULL,
     phone VARCHAR(50) NOT NULL,
-    role user_role NOT NULL DEFAULT 'student',
+    role user_role NOT NULL DEFAULT 'tutor',
     avatar_url TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

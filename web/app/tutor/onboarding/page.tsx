@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
 
 export const dynamic = 'force-dynamic';
-import { getUserById } from '@/src/lib/db-services';
+import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
 import { TutorTopNavBar } from '@/src/components/tutor/TutorTopNavBar';
 import { Footer } from '@/src/components/shared/Footer';
 import { TutorOnboardingForm } from '@/src/components/tutor/TutorOnboardingForm';
@@ -15,7 +15,14 @@ export default async function TutorOnboardingPage() {
     redirect('/auth');
   }
 
-  const user = await getUserById(data.user.id, data.user.email);
+  const authRole = (data.user as any).role;
+  const userName = data.user.name;
+  const userImage = data.user.image || (data.user as any).avatarUrl || (data.user as any).picture || null;
+
+  const user = 
+    (await syncUserRoleWithAuth(data.user.id, data.user.email, authRole, userName, userImage)) || 
+    (await getUserById(data.user.id, data.user.email));
+
   if (user && user.status) {
     // If user already has a tutor record, go to pending or dashboard
     if (user.status === 'pending') {

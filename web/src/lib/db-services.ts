@@ -181,7 +181,7 @@ export async function syncUserRoleWithAuth(
   if (!user) {
     try {
       const isInitialAdmin = authRole === 'admin' || authRole === 'ADMIN';
-      const initialRole = isInitialAdmin ? 'admin' : 'student';
+      const initialRole = isInitialAdmin ? 'admin' : 'tutor';
 
       const rows = await sql`
         INSERT INTO users (id, email, full_name, role, avatar_url, created_at, updated_at)
