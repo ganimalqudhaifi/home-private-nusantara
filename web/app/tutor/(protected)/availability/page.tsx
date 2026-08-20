@@ -1,11 +1,12 @@
 import React, { Suspense } from 'react';
+import { headers } from "next/headers";
 import { TutorAvailabilityClient } from './TutorAvailabilityClient';
 import { auth } from '@/src/lib/auth-server';
 import { sql } from '@/src/lib/db';
 import { redirect } from 'next/navigation';
 
 export default async function TutorAvailabilityPage() {
-  const { data: sessionData } = await auth.getSession();
+  const { data: sessionData } = await auth.getSession({ fetchOptions: { headers: await headers() } });
 
   if (!sessionData?.user?.id) {
     redirect('/login');

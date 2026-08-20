@@ -1,4 +1,5 @@
 import React from 'react';
+import { headers } from "next/headers";
 import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
 import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
@@ -11,7 +12,7 @@ export default async function AdminLayout({
   readonly children: React.ReactNode;
 }) {
   try {
-    const { data, error } = await auth.getSession();
+    const { data, error } = await auth.getSession({ fetchOptions: { headers: await headers() } });
 
     if (!data || !data.user) {
       // If user session is not found yet, allow page to render so authClient can process neon_auth_session_verifier token if present

@@ -1,4 +1,5 @@
 import React from 'react';
+import { headers } from 'next/headers';
 import { TopNavBar } from '../src/components/shared/TopNavBar';
 import { Footer } from '../src/components/shared/Footer';
 import { HeroSection } from '../src/components/landing/HeroSection';
@@ -19,7 +20,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     await searchParams;
   }
 
-  const { data: session } = await auth.getSession();
+  const { data: session } = await auth.getSession({ fetchOptions: { headers: await headers() } });
   const role = ((session?.user as any)?.role as 'guest' | 'student' | 'tutor' | 'admin') || 'guest';
   const userName = session?.user?.name || undefined;
   const userAvatar = session?.user?.image || (session?.user as any)?.avatarUrl || undefined;

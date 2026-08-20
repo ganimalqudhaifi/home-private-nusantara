@@ -1,4 +1,5 @@
 import React from 'react';
+import { headers } from "next/headers";
 import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
 
@@ -15,7 +16,7 @@ export interface AuthPageProps {
 
 export default async function AuthPage({ searchParams }: AuthPageProps) {
   try {
-    const { data } = await auth.getSession();
+    const { data } = await auth.getSession({ fetchOptions: { headers: await headers() } });
     if (data?.user) {
       const authRole = (data.user as { role?: string }).role;
       const dbUser =

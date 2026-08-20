@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { headers } from "next/headers";
 import { auth } from '@/src/lib/auth-server';
 import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
 
@@ -11,7 +12,7 @@ export default async function ProtectedTutorLayout({
 }) {
   let session;
   try {
-    const { data } = await auth.getSession();
+    const { data } = await auth.getSession({ fetchOptions: { headers: await headers() } });
     session = data;
   } catch (error) {
     console.warn('Auth check failed:', error);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { headers } from "next/headers";
 import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
 
@@ -10,7 +11,7 @@ import { TutorOnboardingForm } from '@/src/components/tutor/TutorOnboardingForm'
 import { GraduationCap } from 'lucide-react';
 
 export default async function TutorOnboardingPage() {
-  const { data } = await auth.getSession();
+  const { data } = await auth.getSession({ fetchOptions: { headers: await headers() } });
   if (!data?.user) {
     redirect('/auth');
   }
