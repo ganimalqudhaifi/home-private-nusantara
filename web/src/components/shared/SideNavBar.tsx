@@ -3,12 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Clock,
   HelpCircle,
-  Settings,
   LogOut,
   Users,
   CheckCircle,
@@ -19,7 +18,6 @@ import {
 import { BRAND_INFO } from '../../data/mockData';
 import { useUser } from '../../hooks/useUser';
 import { authClient } from '../../lib/auth-client';
-import { useRouter } from 'next/navigation';
 
 export interface SideNavBarProps {
   readonly role: 'tutor' | 'admin';
@@ -48,7 +46,6 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
           { label: 'Direktori Klien/Siswa', href: '/admin/students', icon: GraduationCap },
           { label: 'Monitoring Jadwal', href: '/admin/bookings', icon: CalendarDays },
           { label: 'Mata Pelajaran', href: '/admin/subjects', icon: BookOpen },
-          { label: 'Pengaturan Sistem', href: '/admin/dashboard', icon: Settings },
         ];
       default:
         return [];
@@ -68,8 +65,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
     }
   };
 
-
-   const userName = user?.full_name || user?.name || (role === 'admin' ? 'Administrator Pusat' : '');
+  const userName = user?.full_name || user?.name || (role === 'admin' ? 'Administrator Pusat' : '');
   const userAvatar = user?.avatar_url || user?.image || undefined;
   const tutorStatus = user?.status;
   const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
@@ -82,55 +78,69 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
   }
 
   return (
- <aside
- className={`bg-surface-container-lowest border-r border-border-whisper w-64 flex flex-col p-4 shrink-0 min-h-screen sticky top-0 ${className}`}
- >
- {/* Brand Header */}
- <div className="mb-6 px-3 py-2">
- <Link href="/" className="flex items-center gap-3 group">
- <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
- <Image
- src={BRAND_INFO.logoUrl}
- alt={BRAND_INFO.name}
- width={32}
- height={32}
- className="object-contain w-full h-full"
-  priority
-  />
- </div>
- <div className="flex flex-col">
- <h1 className="font-headline text-base font-bold text-primary tracking-tight">
- Home Private
- </h1>
- <p className="text-[11px] text-text-muted font-medium capitalize">
- Portal {role}
- </p>
- </div>
- </Link>
- </div>
+    <aside
+      className={`bg-surface-container-lowest border-r border-border-whisper w-64 flex flex-col p-4 shrink-0 min-h-screen sticky top-0 ${className}`}
+    >
+      {/* User Profile Block (Moved to Top) */}
+      <div className="flex items-center gap-3 px-3 py-3 bg-surface-container-low rounded-2xl mb-6">
+        {isLoading ? (
+          <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse shrink-0" />
+        ) : userAvatar ? (
+          <Image
+            src={userAvatar}
+            alt={userName}
+            width={40}
+            height={40}
+            className="w-10 h-10 rounded-full object-cover border border-border-whisper shadow-xs shrink-0"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center text-sm font-bold shadow-xs shrink-0">
+            {userName.substring(0, 2).toUpperCase()}
+          </div>
+        )}
+        
+        <div className="flex flex-col min-w-0 flex-1">
+          {isLoading ? (
+            <>
+              <div className="h-3 w-24 bg-gray-200 animate-pulse rounded mb-1" />
+              <div className="h-2 w-16 bg-gray-200 animate-pulse rounded" />
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-text-primary truncate" title={userName}>
+                {userName}
+              </p>
+              <p className="text-[11px] text-text-muted capitalize truncate">
+                {customRoleLabel}
+              </p>
+            </>
+          )}
+        </div>
+      </div>
 
- {/* Navigation Links */}
- <nav className="flex-1 space-y-1.5">
- {navItems.map((item) => {
- const Icon = item.icon;
- const isActive = pathname === item.href;
+      {/* Navigation Links */}
+      <nav className="flex-1 space-y-1.5">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
 
- return (
- <Link
- key={item.href + item.label}
- href={item.href}
- className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
- isActive
- ?'bg-primary-container text-white shadow-xs font-semibold'
- :'text-on-surface-variant hover:bg-surface-container-high'
- }`}
- >
- <Icon className={`w-4 h-4 shrink-0 ${isActive ?'text-white' :'text-text-muted'}`} />
- <span>{item.label}</span>
- </Link>
- );
- })}
- </nav>
+          return (
+            <Link
+              key={item.href + item.label}
+              href={item.href}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
+                isActive
+                  ? 'bg-primary-container text-white shadow-xs font-semibold'
+                  : 'text-on-surface-variant hover:bg-surface-container-high'
+              }`}
+            >
+              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-text-muted'}`} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
       {/* Footer / CTA Actions */}
       <div className="mt-auto pt-4 border-t border-border-whisper space-y-2">
@@ -142,44 +152,6 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
             Atur Jam Mengajar
           </Link>
         )}
-        
-        {/* User Profile Block */}
-        <div className="flex items-center gap-3 px-2 py-2 mt-2">
-          {isLoading ? (
-             <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse shrink-0" />
-          ) : userAvatar ? (
-            <Image
-              src={userAvatar}
-              alt={userName}
-              width={40}
-              height={40}
-              className="w-10 h-10 rounded-full object-cover border border-border-whisper shadow-xs shrink-0"
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center text-sm font-bold shadow-xs shrink-0">
-              {userName.substring(0, 2).toUpperCase()}
-            </div>
-          )}
-          
-          <div className="flex flex-col min-w-0 flex-1">
-             {isLoading ? (
-               <>
-                 <div className="h-3 w-24 bg-gray-200 animate-pulse rounded mb-1" />
-                 <div className="h-2 w-16 bg-gray-200 animate-pulse rounded" />
-               </>
-             ) : (
-               <>
-                 <p className="text-sm font-semibold text-text-primary truncate" title={userName}>
-                   {userName}
-                 </p>
-                 <p className="text-[11px] text-text-muted capitalize truncate">
-                   {customRoleLabel}
-                 </p>
-               </>
-             )}
-          </div>
-        </div>
 
         <button
           onClick={handleSignOut}
@@ -190,7 +162,31 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
           <span>Keluar Portal</span>
         </button>
 
+        {/* Brand Header (Moved to Bottom) */}
+        <div className="mt-4 pt-4 border-t border-border-whisper px-3 py-2">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-6 h-6 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
+              <Image
+                src={BRAND_INFO.logoUrl}
+                alt={BRAND_INFO.name}
+                width={24}
+                height={24}
+                className="object-contain w-full h-full"
+                priority
+              />
+            </div>
+            <div className="flex flex-col">
+              <h1 className="font-headline text-sm font-bold text-primary tracking-tight">
+                Home Private
+              </h1>
+              <p className="text-[10px] text-text-muted font-medium capitalize">
+                Portal {role}
+              </p>
+            </div>
+          </Link>
+        </div>
+
       </div>
- </aside>
- );
+    </aside>
+  );
 }
