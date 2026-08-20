@@ -81,6 +81,30 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
     <aside
       className={`bg-surface-container-lowest border-r border-border-whisper w-64 flex flex-col p-4 shrink-0 min-h-screen sticky top-0 ${className}`}
     >
+      {/* Brand Header (Moved to Top) */}
+      <div className="mb-6 px-3 py-2">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
+            <Image
+              src={BRAND_INFO.logoUrl}
+              alt={BRAND_INFO.name}
+              width={32}
+              height={32}
+              className="object-contain w-full h-full"
+              priority
+            />
+          </div>
+          <div className="flex flex-col">
+            <h1 className="font-headline text-base font-bold text-primary tracking-tight">
+              Home Private
+            </h1>
+            <p className="text-[11px] text-text-muted font-medium capitalize">
+              Portal {role}
+            </p>
+          </div>
+        </Link>
+      </div>
+
       {/* User Profile Block (Moved to Top) */}
       <div className="flex items-center gap-3 px-3 py-3 bg-surface-container-low rounded-2xl mb-6">
         {isLoading ? (
@@ -161,32 +185,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
           <LogOut className="w-4 h-4" />
           <span>Keluar Portal</span>
         </button>
-
-        {/* Brand Header (Moved to Bottom) */}
-        <div className="mt-4 pt-4 border-t border-border-whisper px-3 py-2">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-6 h-6 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
-              <Image
-                src={BRAND_INFO.logoUrl}
-                alt={BRAND_INFO.name}
-                width={24}
-                height={24}
-                className="object-contain w-full h-full"
-                priority
-              />
-            </div>
-            <div className="flex flex-col">
-              <h1 className="font-headline text-sm font-bold text-primary tracking-tight">
-                Home Private
-              </h1>
-              <p className="text-[10px] text-text-muted font-medium capitalize">
-                Portal {role}
-              </p>
-            </div>
-          </Link>
-        </div>
-
-      </div>
+</div>
     </aside>
   );
 }
