@@ -40,7 +40,19 @@ export function TutorDirectoryTable({
 
     const matchesLevel =
       filterLevel === 'all' ||
-      (tutor.grades || []).some((g) => g.includes(filterLevel));
+      (tutor.subjects || []).some((sub) => {
+        const s = sub.toLowerCase();
+        if (filterLevel === 'Calistung') {
+          return s.includes('calistung') || s.includes('mengaji') || s.includes('paud') || s.includes('tk');
+        }
+        if (filterLevel === 'SD') {
+          return s.includes('sd');
+        }
+        if (filterLevel === 'SMP') {
+          return s.includes('smp');
+        }
+        return false;
+      });
 
     const matchesSearch =
       searchQuery.trim() === '' ||
@@ -183,6 +195,7 @@ export function TutorDirectoryTable({
             className="px-3 py-2 rounded-xl border border-border-whisper bg-surface-container-low text-xs font-semibold outline-none"
           >
             <option value="all">Semua Jenjang</option>
+            <option value="Calistung">Jenjang Calistung</option>
             <option value="SD">Jenjang SD</option>
             <option value="SMP">Jenjang SMP</option>
           </select>
