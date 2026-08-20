@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from 'next/navigation';
 import { auth } from '@/src/lib/auth-server';
 import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
+import { DashboardLayoutWrapper } from '@/src/components/shared/DashboardLayoutWrapper';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,5 +43,5 @@ export default async function AdminLayout({
     console.error('Admin layout auth notice:', err);
   }
 
-  return <>{children}</>;
+  return <DashboardLayoutWrapper role="admin">{children}</DashboardLayoutWrapper>;
 }

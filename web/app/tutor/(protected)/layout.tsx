@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { headers } from "next/headers";
 import { auth } from '@/src/lib/auth-server';
 import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
+import { DashboardLayoutWrapper } from '@/src/components/shared/DashboardLayoutWrapper';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,5 +35,5 @@ export default async function ProtectedTutorLayout({
     redirect('/tutor/onboarding');
   }
 
-  return <>{children}</>;
+  return <DashboardLayoutWrapper role="tutor">{children}</DashboardLayoutWrapper>;
 }

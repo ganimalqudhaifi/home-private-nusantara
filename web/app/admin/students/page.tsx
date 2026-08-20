@@ -3,7 +3,7 @@
 import React from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
-import { TopNavBar } from '@/src/components/shared/TopNavBar';
+
 import { Footer } from '../../../src/components/shared/Footer';
 import { StudentDirectoryTable } from '../../../src/components/admin/StudentDirectoryTable';
 import { Student } from '../../../src/types';
@@ -34,7 +34,7 @@ export default function AdminStudentsPage() {
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Header */}
-      <TopNavBar />
+      
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border-whisper">

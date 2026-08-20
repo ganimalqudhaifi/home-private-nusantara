@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import useSWR from 'swr';
-import { TopNavBar } from '../../../src/components/shared/TopNavBar';
 import { Button } from '../../../src/components/shared/Button';
 import { Plus, Edit2, Trash2, CheckCircle, XCircle } from 'lucide-react';
 
@@ -117,8 +116,7 @@ export default function AdminSubjectsPage() {
 
   return (
     <div className="min-h-screen bg-surface-container-lowest flex flex-col">
-      <TopNavBar />
-      
+            
       <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>

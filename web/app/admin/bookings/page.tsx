@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { TopNavBar } from '@/src/components/shared/TopNavBar';
+
 import { Footer } from '../../../src/components/shared/Footer';
 import { AdminScheduleMonitoringGrid } from '../../../src/components/admin/AdminScheduleMonitoringGrid';
 import { ArrowLeft, CalendarDays, Users } from 'lucide-react';
@@ -15,7 +15,7 @@ export default async function AdminBookingsPage({ searchParams }: AdminBookingsP
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Header */}
-      <TopNavBar />
+      
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border-whisper">

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
-import { TopNavBar } from '@/src/components/shared/TopNavBar';
+
 import { Footer } from '../../../src/components/shared/Footer';
 import { AdminKPICards } from '../../../src/components/admin/AdminKPICards';
 import { UrgentTutorVerificationQueueTable } from '../../../src/components/admin/UrgentTutorVerificationQueueTable';
@@ -183,7 +183,7 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Navigation */}
-      <TopNavBar />
+      
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8">
         {/* Welcome Section */}
