@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
-import { TutorTopNavBar } from '@/src/components/tutor/TutorTopNavBar';
+import { TopNavBar } from '@/src/components/shared/TopNavBar';
 import { Footer } from '@/src/components/shared/Footer';
 import { TutorMetricsGrid } from '@/src/components/tutor/TutorMetricsGrid';
 import { TutorUpcomingSessionsCard } from '@/src/components/tutor/TutorUpcomingSessionsCard';
@@ -122,7 +122,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Header */}
-      <TutorTopNavBar activeRoute="/tutor/dashboard" />
+      <TopNavBar />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col gap-8">
         {/* Status Notice Banner */}

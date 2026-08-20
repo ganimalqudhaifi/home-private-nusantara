@@ -2,7 +2,7 @@
 
 import React from'react';
 import useSWR from 'swr';
-import { TutorTopNavBar } from'@/src/components/tutor/TutorTopNavBar';
+import { TopNavBar } from '@/src/components/shared/TopNavBar';
 import { Footer } from'@/src/components/shared/Footer';
 import { TutorWeeklyScheduleGrid } from'@/src/components/tutor/TutorWeeklyScheduleGrid';
 import { TutorStudentDrawer } from'@/src/components/tutor/TutorStudentDrawer';
@@ -44,7 +44,7 @@ export default function TutorSchedulePage({
  return (
  <div className="bg-surface text-text-primary min-h-screen flex flex-col">
  {/* Header */}
- <TutorTopNavBar activeRoute="/tutor/schedule" />
+ <TopNavBar />
 
  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

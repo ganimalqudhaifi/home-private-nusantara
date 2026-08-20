@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TutorTopNavBar } from '@/src/components/tutor/TutorTopNavBar';
+import { TopNavBar } from '@/src/components/shared/TopNavBar';
 import { Footer } from '@/src/components/shared/Footer';
 import { TutorPendingAlert } from '@/src/components/tutor/TutorPendingAlert';
 import { TutorPendingSync } from '@/src/components/tutor/TutorPendingSync';
@@ -33,7 +33,7 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
 
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
-      <TutorTopNavBar activeRoute="/tutor/pending" />
+      <TopNavBar />
 
  <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

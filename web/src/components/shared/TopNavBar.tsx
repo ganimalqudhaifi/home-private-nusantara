@@ -3,10 +3,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { ShieldCheck, Menu, X, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { BRAND_INFO, NAV_LINKS } from '../../data/mockData';
 import { authClient } from '../../lib/auth-client';
+import { useUser } from '../../hooks/useUser';
 
 export interface TopNavBarProps {
   readonly activeRoute?: string;
@@ -20,16 +21,22 @@ export interface TopNavBarProps {
 }
 
 export function TopNavBar({
-  activeRoute = '/',
-  role = 'guest',
-  userName,
-  userBadge,
-  userAvatar,
+  activeRoute: activeRouteProp,
+  role: roleProp,
+  userName: userNameProp,
+  userBadge: userBadgeProp,
+  userAvatar: userAvatarProp,
   hideUserName = false,
-  customRoleLabel,
-  isLoadingUser = false,
+  customRoleLabel: customRoleLabelProp,
+  isLoadingUser: isLoadingUserProp,
 }: TopNavBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const activeRoute = activeRouteProp || pathname || '/';
+  
+  const { user, isLoading: isUserLoading } = useUser();
+  const isLoadingUser = isLoadingUserProp !== undefined ? isLoadingUserProp : isUserLoading;
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -68,6 +75,52 @@ export function TopNavBar({
       router.refresh();
     }
   };
+
+  // Determine role
+  let role = roleProp;
+  if (!roleProp) {
+    if (pathname.startsWith('/admin')) {
+      role = 'admin';
+    } else if (pathname.startsWith('/tutor')) {
+      role = 'tutor';
+    } else {
+      role = (user?.role as 'guest' | 'student' | 'tutor' | 'admin') || 'guest';
+    }
+  }
+  
+  // Format User Name
+  const userName = userNameProp || user?.full_name || user?.name || (role === 'admin' ? 'Administrator Pusat' : '');
+  
+  // Format Avatar
+  const userAvatar = userAvatarProp || user?.avatar_url || user?.image || undefined;
+  
+  // Role Label and Badge logic
+  const tutorStatus = user?.status;
+  const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
+  
+  let customRoleLabel = customRoleLabelProp;
+  if (!customRoleLabel) {
+    if (role === 'admin') {
+      customRoleLabel = isVerified ? 'Admin & Tutor' : 'Admin';
+    } else if (role === 'tutor') {
+      customRoleLabel = 'Tutor';
+    } else {
+      customRoleLabel = role as string;
+    }
+  }
+
+  let userBadge = userBadgeProp;
+  if (userBadge === undefined && role !== 'guest') {
+    if (role === 'admin') {
+      userBadge = 'Admin Master';
+    } else if (role === 'tutor') {
+      userBadge = 'Menunggu Verifikasi';
+      if (tutorStatus === 'on_leave') userBadge = 'Sedang Cuti';
+      else if (tutorStatus === 'suspended') userBadge = 'Dibekukan';
+      else if (tutorStatus === 'inactive') userBadge = 'Nonaktif';
+      else if (isVerified) userBadge = 'Pengajar Terverifikasi';
+    }
+  }
 
   return (
     <header className="bg-surface-container-lowest sticky top-0 w-full border-b border-border-whisper shadow-sm z-50 animate-fade-in">

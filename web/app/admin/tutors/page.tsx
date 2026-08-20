@@ -2,7 +2,7 @@
 
 import React from 'react';
 import useSWR from 'swr';
-import { AdminTopNavBar } from '../../../src/components/admin/AdminTopNavBar';
+import { TopNavBar } from '@/src/components/shared/TopNavBar';
 import { Footer } from '../../../src/components/shared/Footer';
 import { TutorDirectoryTable } from '../../../src/components/admin/TutorDirectoryTable';
 import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
@@ -94,7 +94,7 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
   return (
     <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Header */}
-      <AdminTopNavBar activeRoute="/admin/tutors" />
+      <TopNavBar />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
         <div className="pb-2 border-b border-border-whisper">
