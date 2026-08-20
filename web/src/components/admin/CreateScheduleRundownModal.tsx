@@ -400,7 +400,7 @@ export function CreateScheduleRundownModal({
                   ) : studentsList.length === 0 ? (
                     <option value="">Belum ada siswa terdaftar. Klik + Tambah Siswa Baru.</option>
                   ) : (
-                    studentsList.map((s) => (
+                    studentsList.map((s: any) => (
                       <option key={s.id} value={s.id}>
                         {s.name} — {s.level} Kelas {s.grade} (Orang Tua: {s.parentName})
                       </option>
@@ -643,7 +643,7 @@ export function CreateScheduleRundownModal({
                                 onChange={(e) => handleItemChange(item.id, 'subject', e.target.value)}
                                 className={`p-1.5 rounded-lg border text-xs font-semibold outline-none bg-white ${rowErrors[item.id] ? 'border-red-300 text-red-700' : 'border-border-whisper text-primary'}`}
                               >
-                                {TUTOR_SUBJECT_NAMES.map((s) => (
+                                {TUTOR_SUBJECT_NAMES.map((s: any) => (
                                   <option key={s} value={s}>
                                     {s}
                                   </option>

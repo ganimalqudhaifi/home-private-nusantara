@@ -35,7 +35,7 @@ export function TutorRegisterForm({
 
   const toggleSubject = (key: string) => {
     setSelectedSubjects((prev) =>
-      prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]
+      prev.includes(key) ? prev.filter((s: any) => s !== key) : [...prev, key]
     );
   };
 
@@ -171,7 +171,7 @@ export function TutorRegisterForm({
           Pilihan Bidang & Mata Pelajaran yang Diampu (Bisa pilih lebih dari satu)
         </label>
         <div className="flex flex-wrap gap-2">
-          {TUTOR_SUBJECT_NAMES.map((subject) => {
+          {TUTOR_SUBJECT_NAMES.map((subject: any) => {
             const isSelected = selectedSubjects.includes(subject);
             return (
               <button

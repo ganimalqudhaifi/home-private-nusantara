@@ -78,7 +78,7 @@ export function TutorAuditDrawer({
   const toggleSubject = (sub: string) => {
     if (selectedSubjects.includes(sub)) {
       if (selectedSubjects.length > 1) {
-        setSelectedSubjects(selectedSubjects.filter((s) => s !== sub));
+        setSelectedSubjects(selectedSubjects.filter((s: any) => s !== sub));
       }
     } else {
       setSelectedSubjects([...selectedSubjects, sub]);
@@ -299,7 +299,7 @@ export function TutorAuditDrawer({
                 Mata Pelajaran yang Diampu
               </label>
               <div className="flex flex-wrap gap-1.5 p-2.5 rounded-xl bg-surface-container-low border border-border-whisper max-h-32 overflow-y-auto">
-                {TUTOR_SUBJECT_NAMES.map((sub) => {
+                {TUTOR_SUBJECT_NAMES.map((sub: any) => {
                   const isSelected = selectedSubjects.includes(sub);
                   return (
                     <button
@@ -346,7 +346,7 @@ export function TutorAuditDrawer({
               </h4>
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {tutor.subjects.map((s) => (
+              {tutor.subjects.map((s: any) => (
                 <span
                   key={s}
                   className="px-2.5 py-1 rounded-lg bg-surface-container-low text-primary font-semibold"

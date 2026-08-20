@@ -51,7 +51,7 @@ export function EditTutorModal({
   const toggleSubject = (sub: string) => {
     if (selectedSubjects.includes(sub)) {
       if (selectedSubjects.length > 1) {
-        setSelectedSubjects(selectedSubjects.filter((s) => s !== sub));
+        setSelectedSubjects(selectedSubjects.filter((s: any) => s !== sub));
       }
     } else {
       setSelectedSubjects([...selectedSubjects, sub]);
@@ -246,7 +246,7 @@ export function EditTutorModal({
             Mata Pelajaran yang Diampu <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-surface-container-low border border-border-whisper max-h-36 overflow-y-auto">
-            {TUTOR_SUBJECT_NAMES.map((sub) => {
+            {TUTOR_SUBJECT_NAMES.map((sub: any) => {
               const isSelected = selectedSubjects.includes(sub);
               return (
                 <button

@@ -996,17 +996,17 @@ export interface SubjectItem {
 
 export async function getAllSubjects(activeOnly: boolean = false): Promise<SubjectItem[]> {
   if (activeOnly) {
-    return await sql<SubjectItem[]>`
+    return await sql`
       SELECT * FROM subjects WHERE is_active = true ORDER BY display_order ASC, name ASC;
     `;
   }
-  return await sql<SubjectItem[]>`
+  return await sql`
     SELECT * FROM subjects ORDER BY category ASC, display_order ASC, name ASC;
   `;
 }
 
 export async function getSubjectByCode(code: string): Promise<SubjectItem | null> {
-  const rows = await sql<SubjectItem[]>`
+  const rows = await sql`
     SELECT * FROM subjects WHERE code = ${code} LIMIT 1;
   `;
   return rows[0] || null;

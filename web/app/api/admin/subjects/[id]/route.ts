@@ -4,7 +4,7 @@ import { updateSubject, deleteSubject } from '@/src/lib/db-services';
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { data } = await auth.getSession();
@@ -12,7 +12,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const updatedSubject = await updateSubject(id, body);
     
@@ -25,7 +25,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { data } = await auth.getSession();
@@ -33,7 +33,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     await deleteSubject(id);
     
     return NextResponse.json({ success: true });

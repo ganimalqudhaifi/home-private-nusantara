@@ -36,10 +36,10 @@ export function TutorAvailabilityMatrix({
   const dynamicSubjects = subjectsData?.subjects || [];
   const TUTOR_SUBJECT_OPTIONS = dynamicSubjects;
 
-  const paudSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'PAUD/TK');
-  const sdSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'SD');
-  const smpSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'SMP');
-  const umumSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'Semua Jenjang');
+  const paudSubjects = TUTOR_SUBJECT_OPTIONS.filter((s: any) => s.category === 'PAUD/TK');
+  const sdSubjects = TUTOR_SUBJECT_OPTIONS.filter((s: any) => s.category === 'SD');
+  const smpSubjects = TUTOR_SUBJECT_OPTIONS.filter((s: any) => s.category === 'SMP');
+  const umumSubjects = TUTOR_SUBJECT_OPTIONS.filter((s: any) => s.category === 'Semua Jenjang');
 
   return (
     <div
@@ -66,7 +66,7 @@ export function TutorAvailabilityMatrix({
             <span>Tingkat PAUD/TK</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-            {paudSubjects.map((s) => {
+            {paudSubjects.map((s: any) => {
               const isSelected = activeSubjects.includes(s.name);
               return (
                 <button
@@ -94,7 +94,7 @@ export function TutorAvailabilityMatrix({
             <span>Tingkat Sekolah Dasar (SD)</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-            {sdSubjects.map((s) => {
+            {sdSubjects.map((s: any) => {
               const isSelected = activeSubjects.includes(s.name);
               return (
                 <button
@@ -122,7 +122,7 @@ export function TutorAvailabilityMatrix({
             <span>Tingkat Sekolah Menengah Pertama (SMP)</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-            {smpSubjects.map((s) => {
+            {smpSubjects.map((s: any) => {
               const isSelected = activeSubjects.includes(s.name);
               return (
                 <button

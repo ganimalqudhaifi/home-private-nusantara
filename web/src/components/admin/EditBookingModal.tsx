@@ -180,7 +180,7 @@ export function EditBookingModal({
                 onChange={(e) => setSubject(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-border-whisper bg-white text-xs font-semibold text-primary outline-none focus:border-primary transition-colors appearance-none"
               >
-                {TUTOR_SUBJECT_NAMES.map((s) => (
+                {TUTOR_SUBJECT_NAMES.map((s: any) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>

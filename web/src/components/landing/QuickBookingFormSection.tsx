@@ -672,7 +672,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                             {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
                           </span>
                           <span className={`text-[10px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
-                            {sub.descriptionription}
+                            {sub.description}
                           </span>
                         </button>
                       );
@@ -793,7 +793,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                                 {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
                               </span>
                               <span className={`text-[9px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
-                                {sub.descriptionription}
+                                {sub.description}
                               </span>
                             </button>
                           );
@@ -901,7 +901,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                                 {isSelected && <Check className="w-3 h-3 text-emerald-700" />}
                               </span>
                               <span className={`text-[9px] leading-tight ${isSelected ? 'text-emerald-700/70' : 'text-text-muted'}`}>
-                                {sub.descriptionription}
+                                {sub.description}
                               </span>
                             </button>
                           );
