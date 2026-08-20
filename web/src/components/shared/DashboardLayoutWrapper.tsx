@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { SideNavBar } from './SideNavBar';
-import { DashboardHeader } from './DashboardHeader';
+import { Menu } from 'lucide-react';
 
 export interface DashboardLayoutWrapperProps {
   readonly children: React.ReactNode;
@@ -35,7 +35,18 @@ export function DashboardLayoutWrapper({ children, role }: DashboardLayoutWrappe
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        <DashboardHeader onMenuClick={() => setIsSidebarOpen(true)} />
+        {/* Mobile Header (Hidden on Desktop) */}
+        <header className="md:hidden bg-white border-b border-border-whisper h-14 flex items-center px-4 shrink-0 sticky top-0 z-30">
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-2 text-text-muted hover:text-primary rounded-lg hover:bg-surface-container-low transition-colors"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <span className="font-headline font-bold text-primary ml-2">Home Private</span>
+        </header>
+
         <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-surface">
           {children}
         </main>

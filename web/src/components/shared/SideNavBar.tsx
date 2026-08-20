@@ -17,6 +17,9 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { BRAND_INFO } from '../../data/mockData';
+import { useUser } from '../../hooks/useUser';
+import { authClient } from '../../lib/auth-client';
+import { useRouter } from 'next/navigation';
 
 export interface SideNavBarProps {
   readonly role: 'tutor' | 'admin';
@@ -25,6 +28,8 @@ export interface SideNavBarProps {
 
 export function SideNavBar({ role, className = '' }: SideNavBarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isLoading } = useUser();
 
   const getNavItems = () => {
     switch (role) {
@@ -52,8 +57,31 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
 
   const navItems = getNavItems();
 
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+    } catch (error: unknown) {
+      console.error('Gagal melakukan sign out:', error);
+    } finally {
+      router.push('/');
+      router.refresh();
+    }
+  };
 
- return (
+
+   const userName = user?.full_name || user?.name || (role === 'admin' ? 'Administrator Pusat' : '');
+  const userAvatar = user?.avatar_url || user?.image || undefined;
+  const tutorStatus = user?.status;
+  const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
+
+  let customRoleLabel = role as string;
+  if (role === 'admin') {
+    customRoleLabel = isVerified ? 'Admin & Tutor' : 'Admin';
+  } else if (role === 'tutor') {
+    customRoleLabel = 'Tutor';
+  }
+
+  return (
  <aside
  className={`bg-surface-container-lowest border-r border-border-whisper w-64 flex flex-col p-4 shrink-0 min-h-screen sticky top-0 ${className}`}
  >
@@ -114,13 +142,54 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
             Atur Jam Mengajar
           </Link>
         )}
-        <Link
-          href="/auth"
-          className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-text-muted hover:text-[#DC2626] hover:bg-red-50 text-xs font-medium transition-colors"
+        
+        {/* User Profile Block */}
+        <div className="flex items-center gap-3 px-2 py-2 mt-2">
+          {isLoading ? (
+             <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse shrink-0" />
+          ) : userAvatar ? (
+            <Image
+              src={userAvatar}
+              alt={userName}
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full object-cover border border-border-whisper shadow-xs shrink-0"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center text-sm font-bold shadow-xs shrink-0">
+              {userName.substring(0, 2).toUpperCase()}
+            </div>
+          )}
+          
+          <div className="flex flex-col min-w-0 flex-1">
+             {isLoading ? (
+               <>
+                 <div className="h-3 w-24 bg-gray-200 animate-pulse rounded mb-1" />
+                 <div className="h-2 w-16 bg-gray-200 animate-pulse rounded" />
+               </>
+             ) : (
+               <>
+                 <p className="text-sm font-semibold text-text-primary truncate" title={userName}>
+                   {userName}
+                 </p>
+                 <p className="text-[11px] text-text-muted capitalize truncate">
+                   {customRoleLabel}
+                 </p>
+               </>
+             )}
+          </div>
+        </div>
+
+        <button
+          onClick={handleSignOut}
+          type="button"
+          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-text-muted hover:text-[#DC2626] hover:bg-red-50 text-xs font-semibold transition-colors mt-2"
         >
           <LogOut className="w-4 h-4" />
           <span>Keluar Portal</span>
-        </Link>
+        </button>
+
       </div>
  </aside>
  );
