@@ -981,3 +981,64 @@ export async function getTutorSchedule(tutorId: string) {
     return { success: false, error: 'Failed to fetch tutor schedule' };
   }
 }
+
+// --- Subjects Management ---
+
+export interface SubjectItem {
+  id: string;
+  code: string;
+  name: string;
+  category: string;
+  description: string | null;
+  is_active: boolean;
+  display_order: number;
+}
+
+export async function getAllSubjects(activeOnly: boolean = false): Promise<SubjectItem[]> {
+  if (activeOnly) {
+    return await sql<SubjectItem[]>`
+      SELECT * FROM subjects WHERE is_active = true ORDER BY display_order ASC, name ASC;
+    `;
+  }
+  return await sql<SubjectItem[]>`
+    SELECT * FROM subjects ORDER BY category ASC, display_order ASC, name ASC;
+  `;
+}
+
+export async function getSubjectByCode(code: string): Promise<SubjectItem | null> {
+  const rows = await sql<SubjectItem[]>`
+    SELECT * FROM subjects WHERE code = ${code} LIMIT 1;
+  `;
+  return rows[0] || null;
+}
+
+export async function createSubject(input: Omit<SubjectItem, 'id'>) {
+  const rows = await sql`
+    INSERT INTO subjects (code, name, category, description, is_active, display_order)
+    VALUES (${input.code}, ${input.name}, ${input.category}, ${input.description || null}, ${input.is_active}, ${input.display_order})
+    RETURNING *;
+  `;
+  return rows[0];
+}
+
+export async function updateSubject(id: string, input: Partial<SubjectItem>) {
+  const rows = await sql`
+    UPDATE subjects
+    SET
+      code = COALESCE(${input.code ?? null}, code),
+      name = COALESCE(${input.name ?? null}, name),
+      category = COALESCE(${input.category ?? null}, category),
+      description = COALESCE(${input.description ?? null}, description),
+      is_active = COALESCE(${input.is_active ?? null}, is_active),
+      display_order = COALESCE(${input.display_order ?? null}, display_order),
+      updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING *;
+  `;
+  return rows[0];
+}
+
+export async function deleteSubject(id: string) {
+  await sql`DELETE FROM subjects WHERE id = ${id};`;
+  return { success: true };
+}

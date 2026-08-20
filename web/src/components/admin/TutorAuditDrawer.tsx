@@ -6,7 +6,10 @@ import { Drawer } from '../shared/Drawer';
 import { Button } from '../shared/Button';
 import { Tutor } from '../../types';
 import { ActionType } from './TutorActionModal';
-import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
+
+import useSWR from 'swr';
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 import {
   ShieldCheck,
   Phone,
@@ -40,6 +43,10 @@ export function TutorAuditDrawer({
   onOpenActionModal,
   onTutorUpdated,
 }: TutorAuditDrawerProps) {
+  const { data: subjectsData } = useSWR('/api/subjects', fetcher);
+  const dynamicSubjects = subjectsData?.subjects || [];
+  const TUTOR_SUBJECT_NAMES = dynamicSubjects.map((s: any) => s.name);
+
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');

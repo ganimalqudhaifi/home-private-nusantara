@@ -14,6 +14,7 @@ import {
   CheckCircle,
   GraduationCap,
   CalendarDays,
+  BookOpen,
 } from 'lucide-react';
 import { BRAND_INFO } from '../../data/mockData';
 
@@ -41,6 +42,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
           { label: 'Kurasi Pengajar', href: '/admin/tutors', icon: Users },
           { label: 'Direktori Klien/Siswa', href: '/admin/students', icon: GraduationCap },
           { label: 'Monitoring Jadwal', href: '/admin/bookings', icon: CalendarDays },
+          { label: 'Mata Pelajaran', href: '/admin/subjects', icon: BookOpen },
           { label: 'Pengaturan Sistem', href: '/admin/dashboard', icon: Settings },
         ];
       default:

@@ -5,7 +5,10 @@ import useSWR from 'swr';
 import { Modal } from '../shared/Modal';
 import { Tutor, StudentSession, Student } from '../../types';
 import { CreateStudentModal } from './CreateStudentModal';
-import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
+
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 import {
   Calendar,
   Clock,
@@ -66,6 +69,10 @@ export function CreateScheduleRundownModal({
   defaultParentPhone = '081234567890',
   defaultAddress = 'Jl. Hertasning No. 25, Makassar',
 }: CreateScheduleRundownModalProps) {
+  const { data: subjectsData } = useSWR('/api/subjects', fetcher);
+  const dynamicSubjects = subjectsData?.subjects || [];
+  const TUTOR_SUBJECT_NAMES = dynamicSubjects.map((s: any) => s.name);
+
   const getTodayISO = () => new Date().toISOString().split('T')[0];
 
   const { data: studentsData, isLoading: isLoadingStudents, mutate: mutateStudents } = useSWR('/api/admin/students');

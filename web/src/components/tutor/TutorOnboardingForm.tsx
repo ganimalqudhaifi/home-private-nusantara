@@ -3,9 +3,16 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, School, Phone, Link as LinkIcon, CheckCircle2, Check, Loader2 } from 'lucide-react';
-import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
+
+import useSWR from 'swr';
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 
 export function TutorOnboardingForm() {
+  const { data: subjectsData } = useSWR('/api/subjects', fetcher);
+  const dynamicSubjects = subjectsData?.subjects || [];
+  const TUTOR_SUBJECT_NAMES = dynamicSubjects.map((s: any) => s.name);
+
   const router = useRouter();
   const [name, setName] = useState('');
   const [university, setUniversity] = useState('');

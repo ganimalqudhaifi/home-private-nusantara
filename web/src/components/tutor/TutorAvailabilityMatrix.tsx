@@ -2,7 +2,10 @@
 
 import React from 'react';
 import { BookOpen, GraduationCap, Check, Clock, CalendarHeart } from 'lucide-react';
-import { TUTOR_SUBJECT_OPTIONS } from '../../data/tutorSubjectsData';
+
+import useSWR from 'swr';
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 
 export interface TutorAvailabilityMatrixProps {
   readonly activeSubjects: readonly string[];
@@ -29,9 +32,14 @@ export function TutorAvailabilityMatrix({
   onToggleTimeSlot,
   className = '',
 }: TutorAvailabilityMatrixProps) {
+  const { data: subjectsData } = useSWR('/api/subjects', fetcher);
+  const dynamicSubjects = subjectsData?.subjects || [];
+  const TUTOR_SUBJECT_OPTIONS = dynamicSubjects;
+
   const paudSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'PAUD/TK');
   const sdSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'SD');
   const smpSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'SMP');
+  const umumSubjects = TUTOR_SUBJECT_OPTIONS.filter((s) => s.category === 'Semua Jenjang');
 
   return (
     <div

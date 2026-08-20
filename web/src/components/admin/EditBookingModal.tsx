@@ -13,7 +13,10 @@ import {
   CheckCircle2,
   FileText,
 } from 'lucide-react';
-import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
+
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 
 const TIME_OPTIONS = [
   '08:00 - 09:30',
@@ -39,6 +42,10 @@ export function EditBookingModal({
   booking,
   onSaveSuccess,
 }: EditBookingModalProps) {
+  const { data: subjectsData } = useSWR('/api/subjects', fetcher);
+  const dynamicSubjects = subjectsData?.subjects || [];
+  const TUTOR_SUBJECT_NAMES = dynamicSubjects.map((s: any) => s.name);
+
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [subject, setSubject] = useState('');

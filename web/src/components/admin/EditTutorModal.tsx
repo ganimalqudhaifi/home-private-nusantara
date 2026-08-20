@@ -4,7 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../shared/Modal';
 import { Tutor, TutorStatus } from '../../types';
 import { Edit3, User, Phone, GraduationCap, Award, AlertCircle, Check } from 'lucide-react';
-import { TUTOR_SUBJECT_NAMES } from '../../data/tutorSubjectsData';
+
+import useSWR from 'swr';
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 
 export interface EditTutorModalProps {
   readonly isOpen: boolean;
@@ -19,6 +22,10 @@ export function EditTutorModal({
   onClose,
   onTutorUpdated,
 }: EditTutorModalProps) {
+  const { data: subjectsData } = useSWR('/api/subjects', fetcher);
+  const dynamicSubjects = subjectsData?.subjects || [];
+  const TUTOR_SUBJECT_NAMES = dynamicSubjects.map((s: any) => s.name);
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [university, setUniversity] = useState('');

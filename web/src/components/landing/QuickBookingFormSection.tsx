@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import useSWR from 'swr';
 import { BRAND_INFO, PRICING_PACKAGES } from '../../data/mockData';
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 import { Button } from '../shared/Button';
 import {
   MessageCircle,
@@ -30,13 +33,15 @@ const TIME_OPTIONS = [
 ] as const;
 
 interface Subject {
+  readonly id: string;
+  readonly code: string;
   readonly name: string;
-  readonly desc: string;
+  readonly category: string;
+  readonly description: string;
 }
 
 interface LevelOptionConfig {
   readonly grades: readonly string[];
-  readonly subjects: readonly Subject[];
   readonly placeholderNote: string;
 }
 
@@ -47,16 +52,6 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
       'TK B (5-6 Tahun)',
       'Pra-SD / Persiapan Masuk SD',
       'Kelas 1 SD (Remedial Membaca)',
-    ],
-    subjects: [
-      {
-        name: 'Calistung',
-        desc: 'Membaca, menulis dan menghitung dengan menyenangkan',
-      },
-      {
-        name: 'Mengaji',
-        desc: 'Bimbingan mengaji / Iqra, Al-Qur\'an, dan tajwid',
-      },
     ],
     placeholderNote:
       'Contoh: Anak belum lancar mengeja 2 suku kata, butuh metode belajar visual yang menyenangkan.',
@@ -70,20 +65,6 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
       'Kelas 5 SD',
       'Kelas 6 SD (Persiapan Ujian)',
     ],
-    subjects: [
-      {
-        name: 'Matematika',
-        desc: 'Memahami konsep, logika, dan pemecahan masalah',
-      },
-      {
-        name: 'Bahasa Inggris',
-        desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami',
-      },
-      {
-        name: 'Mengaji',
-        desc: 'Bimbingan mengaji / Iqra, Al-Qur\'an, dan tajwid',
-      },
-    ],
     placeholderNote:
       'Contoh: Butuh bimbingan intensif materi pecahan campuran dan persiapan ulangan harian matematika.',
   },
@@ -93,26 +74,15 @@ const LEVEL_CONFIGS: Record<'calistung' | 'sd' | 'smp', LevelOptionConfig> = {
       'Kelas 8 SMP',
       'Kelas 9 SMP (Persiapan Masuk SMA)',
     ],
-    subjects: [
-      {
-        name: 'Matematika',
-        desc: 'Memahami konsep, logika, dan pemecahan masalah',
-      },
-      {
-        name: 'Bahasa Inggris',
-        desc: 'Meningkatkan kemampuan berbicara, membaca, menulis dan memahami',
-      },
-      {
-        name: 'Mengaji',
-        desc: 'Bimbingan mengaji / Iqra, Al-Qur\'an, dan tajwid',
-      },
-    ],
     placeholderNote:
       'Contoh: Fokus pendalaman rumus fisika gerak dan aljabar matematika untuk persiapan PTS.',
   },
 };
 
 export function QuickBookingFormSection() {
+  const { data: subjectsData } = useSWR<{ subjects: Subject[] }>('/api/subjects', fetcher);
+  const allSubjects = subjectsData?.subjects || [];
+
   const [levelId1, setLevelId1] = useState<'calistung' | 'sd' | 'smp'>('sd');
   const [levelId2, setLevelId2] = useState<'calistung' | 'sd' | 'smp'>('sd');
   const [bookingPeriod, setBookingPeriod] = useState<'monthly' | '3months'>('monthly');
@@ -123,11 +93,11 @@ export function QuickBookingFormSection() {
 
   // Dynamic Class, Subjects & Name state for Student 1 and Student 2
   const [selectedGrade1, setSelectedGrade1] = useState<string>(LEVEL_CONFIGS.sd.grades[3]);
-  const [selectedSubjects1, setSelectedSubjects1] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0].name]);
+  const [selectedSubjects1, setSelectedSubjects1] = useState<string[]>([]);
   const [studentName1, setStudentName1] = useState('');
 
   const [selectedGrade2, setSelectedGrade2] = useState<string>(LEVEL_CONFIGS.sd.grades[1]);
-  const [selectedSubjects2, setSelectedSubjects2] = useState<string[]>([LEVEL_CONFIGS.sd.subjects[0].name]);
+  const [selectedSubjects2, setSelectedSubjects2] = useState<string[]>([]);
   const [studentName2, setStudentName2] = useState('');
 
   const [parentName, setParentName] = useState('');
@@ -140,20 +110,48 @@ export function QuickBookingFormSection() {
   const config1 = LEVEL_CONFIGS[levelId1];
   const config2 = LEVEL_CONFIGS[levelId2];
 
-  // Synchronize grade and subjects defaults when student 1 level changes
+  const getSubjectsByLevel = (levelId: 'calistung' | 'sd' | 'smp') => {
+    const categoryMap: Record<'calistung' | 'sd' | 'smp', string> = { calistung: 'PAUD/TK', sd: 'SD', smp: 'SMP' };
+    return allSubjects.filter(s => s.category === categoryMap[levelId] || s.category === 'Semua Jenjang');
+  };
+  
+  const subjects1 = getSubjectsByLevel(levelId1);
+  const subjects2 = getSubjectsByLevel(levelId2);
+
+  useEffect(() => {
+    if (subjects1.length > 0 && selectedSubjects1.length === 0) {
+      setSelectedSubjects1([subjects1[0].name]);
+    }
+  }, [subjects1, selectedSubjects1.length]);
+
+  useEffect(() => {
+    if (subjects2.length > 0 && selectedSubjects2.length === 0) {
+      setSelectedSubjects2([subjects2[0].name]);
+    }
+  }, [subjects2, selectedSubjects2.length]);
+
   const handleLevelChange1 = (newLevel: 'calistung' | 'sd' | 'smp') => {
     setLevelId1(newLevel);
     const config = LEVEL_CONFIGS[newLevel];
     setSelectedGrade1(config.grades[0]);
-    setSelectedSubjects1([config.subjects[0].name]);
+    const subs = getSubjectsByLevel(newLevel);
+    if (subs.length > 0) {
+      setSelectedSubjects1([subs[0].name]);
+    } else {
+      setSelectedSubjects1([]);
+    }
   };
 
-  // Synchronize grade and subjects defaults when student 2 level changes
   const handleLevelChange2 = (newLevel: 'calistung' | 'sd' | 'smp') => {
     setLevelId2(newLevel);
     const config = LEVEL_CONFIGS[newLevel];
     setSelectedGrade2(config.grades[0]);
-    setSelectedSubjects2([config.subjects[0].name]);
+    const subs = getSubjectsByLevel(newLevel);
+    if (subs.length > 0) {
+      setSelectedSubjects2([subs[0].name]);
+    } else {
+      setSelectedSubjects2([]);
+    }
   };
 
   // Master level selector handler (Step 1)
@@ -656,7 +654,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                     <span>Mata Pelajaran / Fokus Bimbingan:</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {config1.subjects.map((sub) => {
+                    {subjects1.map((sub) => {
                       const isSelected = selectedSubjects1.includes(sub.name);
                       return (
                         <button
@@ -674,7 +672,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                             {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
                           </span>
                           <span className={`text-[10px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
-                            {sub.desc}
+                            {sub.descriptionription}
                           </span>
                         </button>
                       );
@@ -777,7 +775,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                         Mata Pelajaran Siswa 1:
                       </label>
                       <div className="flex flex-wrap gap-1.5">
-                        {config1.subjects.map((sub) => {
+                        {subjects1.map((sub) => {
                           const isSelected = selectedSubjects1.includes(sub.name);
                           return (
                             <button
@@ -795,7 +793,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                                 {isSelected && <Check className="w-3 h-3 text-[#DC2626]" />}
                               </span>
                               <span className={`text-[9px] leading-tight ${isSelected ? 'text-[#DC2626]/70' : 'text-text-muted'}`}>
-                                {sub.desc}
+                                {sub.descriptionription}
                               </span>
                             </button>
                           );
@@ -885,7 +883,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                         Mata Pelajaran Siswa 2:
                       </label>
                       <div className="flex flex-wrap gap-1.5">
-                        {config2.subjects.map((sub) => {
+                        {subjects2.map((sub) => {
                           const isSelected = selectedSubjects2.includes(sub.name);
                           return (
                             <button
@@ -903,7 +901,7 @@ Mohon konfirmasi ketersediaan guru pengajar untuk jadwal tersebut. Terima kasih!
                                 {isSelected && <Check className="w-3 h-3 text-emerald-700" />}
                               </span>
                               <span className={`text-[9px] leading-tight ${isSelected ? 'text-emerald-700/70' : 'text-text-muted'}`}>
-                                {sub.desc}
+                                {sub.descriptionription}
                               </span>
                             </button>
                           );
