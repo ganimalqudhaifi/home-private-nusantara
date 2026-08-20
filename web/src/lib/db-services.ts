@@ -996,20 +996,22 @@ export interface SubjectItem {
 
 export async function getAllSubjects(activeOnly: boolean = false): Promise<SubjectItem[]> {
   if (activeOnly) {
-    return await sql`
+    const rows = await sql`
       SELECT * FROM subjects WHERE is_active = true ORDER BY display_order ASC, name ASC;
     `;
+    return rows as unknown as SubjectItem[];
   }
-  return await sql`
+  const rows = await sql`
     SELECT * FROM subjects ORDER BY category ASC, display_order ASC, name ASC;
   `;
+  return rows as unknown as SubjectItem[];
 }
 
 export async function getSubjectByCode(code: string): Promise<SubjectItem | null> {
   const rows = await sql`
     SELECT * FROM subjects WHERE code = ${code} LIMIT 1;
   `;
-  return rows[0] || null;
+  return (rows[0] as unknown as SubjectItem) || null;
 }
 
 export async function createSubject(input: Omit<SubjectItem, 'id'>) {
@@ -1018,7 +1020,7 @@ export async function createSubject(input: Omit<SubjectItem, 'id'>) {
     VALUES (${input.code}, ${input.name}, ${input.category}, ${input.description || null}, ${input.is_active}, ${input.display_order})
     RETURNING *;
   `;
-  return rows[0];
+  return rows[0] as unknown as SubjectItem;
 }
 
 export async function updateSubject(id: string, input: Partial<SubjectItem>) {
@@ -1035,7 +1037,7 @@ export async function updateSubject(id: string, input: Partial<SubjectItem>) {
     WHERE id = ${id}
     RETURNING *;
   `;
-  return rows[0];
+  return rows[0] as unknown as SubjectItem;
 }
 
 export async function deleteSubject(id: string) {
