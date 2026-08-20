@@ -82,7 +82,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
       className={`bg-surface-container-lowest border-r border-border-whisper w-64 flex flex-col p-4 shrink-0 min-h-screen sticky top-0 ${className}`}
     >
       {/* Brand Header (Moved to Top) */}
-      <div className="mb-6 px-3 py-2">
+      <div className="mb-3 px-3 py-2">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
             <Image
@@ -106,7 +106,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
       </div>
 
       {/* User Profile Block (Moved to Top) */}
-      <div className="flex items-center gap-3 px-3 py-3 bg-surface-container-low rounded-2xl mb-6">
+      <div className="flex items-center gap-3 px-3 py-3 bg-surface-container-low rounded-2xl mb-3">
         {isLoading ? (
           <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse shrink-0" />
         ) : userAvatar ? (
