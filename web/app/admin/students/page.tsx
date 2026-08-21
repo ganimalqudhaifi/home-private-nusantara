@@ -4,7 +4,6 @@ import React from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 
-import { Footer } from '../../../src/components/shared/Footer';
 import { StudentDirectoryTable } from '../../../src/components/admin/StudentDirectoryTable';
 import { Student } from '../../../src/types';
 import { ArrowLeft } from 'lucide-react';
@@ -73,7 +72,6 @@ export default function AdminStudentsPage() {
         />
       </main>
 
-      <Footer />
     </div>
   );
 }

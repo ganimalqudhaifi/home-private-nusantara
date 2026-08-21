@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Footer } from '@/src/components/shared/Footer';
 import { TutorPendingAlert } from '@/src/components/tutor/TutorPendingAlert';
 import { TutorPendingSync } from '@/src/components/tutor/TutorPendingSync';
 import { TutorVerificationSteps } from '@/src/components/tutor/TutorVerificationSteps';
@@ -96,7 +95,6 @@ export default function TutorPendingPage({ searchParams }: TutorPendingPageProps
  </div>
  </main>
 
- <Footer />
  </div>
  );
 }

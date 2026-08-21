@@ -3,7 +3,6 @@
 import React from 'react';
 import useSWR from 'swr';
 
-import { Footer } from '../../../src/components/shared/Footer';
 import { TutorDirectoryTable } from '../../../src/components/admin/TutorDirectoryTable';
 import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
 import { TutorActionModal, ActionType } from '../../../src/components/admin/TutorActionModal';
@@ -142,7 +141,6 @@ export default function AdminTutorsPage({ initialFilter = 'all' }: AdminTutorsPa
         />
       )}
 
-      <Footer />
     </div>
   );
 }

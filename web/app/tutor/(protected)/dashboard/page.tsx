@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
-import { Footer } from '@/src/components/shared/Footer';
 import { TutorMetricsGrid } from '@/src/components/tutor/TutorMetricsGrid';
 import { TutorUpcomingSessionsCard } from '@/src/components/tutor/TutorUpcomingSessionsCard';
 import { TutorRecentStudentsCard } from '@/src/components/tutor/TutorRecentStudentsCard';
@@ -193,7 +192,6 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

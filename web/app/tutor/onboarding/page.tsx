@@ -6,7 +6,6 @@ import { auth } from '@/src/lib/auth-server';
 export const dynamic = 'force-dynamic';
 import { getUserById, syncUserRoleWithAuth } from '@/src/lib/db-services';
 import { TopNavBar } from '@/src/components/shared/TopNavBar';
-import { Footer } from '@/src/components/shared/Footer';
 import { TutorOnboardingForm } from '@/src/components/tutor/TutorOnboardingForm';
 import { GraduationCap } from 'lucide-react';
 
@@ -52,7 +51,6 @@ export default async function TutorOnboardingPage() {
           <TutorOnboardingForm />
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 
-import { Footer } from '../../../src/components/shared/Footer';
 import { AdminKPICards } from '../../../src/components/admin/AdminKPICards';
 import { UrgentTutorVerificationQueueTable } from '../../../src/components/admin/UrgentTutorVerificationQueueTable';
 import { TutorAuditDrawer } from '../../../src/components/admin/TutorAuditDrawer';
@@ -353,7 +352,6 @@ export default function AdminDashboardPage({ initialRole = 'admin' }: AdminDashb
         onSaveRundown={handleSaveRundownFromDashboard}
       />
 
-      <Footer />
     </div>
   );
 }

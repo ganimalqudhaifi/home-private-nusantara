@@ -2,7 +2,6 @@
 
 import React from'react';
 import useSWR from 'swr';
-import { Footer } from'@/src/components/shared/Footer';
 import { TutorWeeklyScheduleGrid } from'@/src/components/tutor/TutorWeeklyScheduleGrid';
 import { TutorStudentDrawer } from'@/src/components/tutor/TutorStudentDrawer';
 import { useDrawer } from'@/src/hooks/useDrawer';
@@ -88,7 +87,6 @@ export default function TutorSchedulePage({
  session={selectedSession}
  />
 
- <Footer />
  </div>
  );
 }

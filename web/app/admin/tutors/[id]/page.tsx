@@ -3,7 +3,6 @@ import Link from'next/link';
 import Image from'next/image';
 import { notFound } from'next/navigation';
 
-import { Footer } from'../../../../src/components/shared/Footer';
 import { getAllTutorsFromDB } from'../../../../src/lib/db-services';
 import { ArrowLeft, ShieldCheck, School, Phone, Calendar, Clock, Star, FileText, CheckCircle2 } from'lucide-react';
 
@@ -133,7 +132,6 @@ export default async function AdminTutorDetailPage({ params }: AdminTutorDetailP
  </div>
  </main>
 
- <Footer />
  </div>
  );
 }

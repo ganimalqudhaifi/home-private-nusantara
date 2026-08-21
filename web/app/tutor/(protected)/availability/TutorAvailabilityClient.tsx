@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Footer } from '@/src/components/shared/Footer';
 import { TutorAvailabilityMatrix } from '@/src/components/tutor/TutorAvailabilityMatrix';
 import { useAvailability } from '@/src/hooks/useAvailability';
 import { Info, CheckCircle2, Loader2, ChevronLeft } from 'lucide-react';
@@ -145,7 +144,6 @@ export function TutorAvailabilityClient({
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 }

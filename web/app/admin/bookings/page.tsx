@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { Footer } from '../../../src/components/shared/Footer';
 import { AdminScheduleMonitoringGrid } from '../../../src/components/admin/AdminScheduleMonitoringGrid';
 import { ArrowLeft, CalendarDays, Users } from 'lucide-react';
 
@@ -48,7 +47,6 @@ export default async function AdminBookingsPage({ searchParams }: AdminBookingsP
         <AdminScheduleMonitoringGrid />
       </main>
 
-      <Footer />
     </div>
   );
 }
