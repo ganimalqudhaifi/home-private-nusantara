@@ -5,8 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  ChevronLeft,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
   LayoutDashboard,
   Clock,
   HelpCircle,
@@ -84,19 +84,11 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
 
   return (
     <aside
-      className={`relative bg-surface-container-lowest border-r border-border-whisper ${isCollapsed ? 'w-20 items-center px-2' : 'w-64 px-4'} flex flex-col py-4 shrink-0 min-h-screen sticky top-0 transition-all duration-300 ${className}`}
+      className={`bg-surface-container-lowest border-r border-border-whisper ${isCollapsed ? 'w-20 items-center px-2' : 'w-64 px-4'} flex flex-col py-4 shrink-0 min-h-screen sticky top-0 transition-all duration-300 ${className}`}
     >
-      {/* Floating Toggle Button */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-8 bg-white border border-border-whisper rounded-full p-1 shadow-sm text-text-muted hover:text-primary transition-all z-50 focus:outline-none"
-        title={isCollapsed ? 'Perbesar Sidebar' : 'Kecilkan Sidebar'}
-      >
-        {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-      </button>
       {/* Brand Header */}
-      <div className={`mb-3 py-2 ${isCollapsed ? 'px-0 flex justify-center' : 'px-3'}`}>
-        <Link href="/" className="flex items-center gap-3 group">
+      <div className={`mb-4 py-2 flex ${isCollapsed ? 'flex-col items-center gap-4 px-0' : 'items-center justify-between px-3'}`}>
+        <Link href="/" className="flex items-center gap-3 group" title="Beranda">
           <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
             <Image
               src={BRAND_INFO.logoUrl}
@@ -118,6 +110,13 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
             </div>
           )}
         </Link>
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
+          title={isCollapsed ? 'Perbesar Sidebar' : 'Kecilkan Sidebar'}
+        >
+          {isCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
+        </button>
       </div>
 
       {/* User Profile Block (Moved to Top) */}
