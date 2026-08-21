@@ -913,13 +913,17 @@ export async function getTutorDashboardData(tutorId: string) {
       WHERE b.tutor_id = ${tutorId}
     `;
     
-    // Active days (from tutor schedules)
+    // Active days (from tutor availability_slots)
     let activeDays = 0;
     try {
-      const scheduleResult = await sql`SELECT COUNT(DISTINCT day) as active_days FROM tutor_schedules WHERE tutor_id = ${tutorId} AND is_available = true`;
-      activeDays = Number(scheduleResult[0]?.active_days || 0);
+      const scheduleResult = await sql`SELECT availability_slots FROM tutors WHERE id = ${tutorId}`;
+      const slots = scheduleResult[0]?.availability_slots || [];
+      if (Array.isArray(slots)) {
+        const uniqueDays = new Set(slots.map((slot: string) => slot.split(':')[0]));
+        activeDays = uniqueDays.size;
+      }
     } catch(e) {
-      // Ignore if tutor_schedules doesn't exist
+      // Ignore if parsing fails
     }
 
     const stats = {
