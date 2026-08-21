@@ -170,14 +170,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
 
       {/* Footer / CTA Actions */}
       <div className="mt-auto pt-4 border-t border-border-whisper space-y-2">
-        {role === 'tutor' && (
-          <Link
-            href="/tutor/availability"
-            className="w-full bg-primary-container hover:bg-primary-hover text-white py-2.5 px-4 rounded-xl text-xs font-bold text-center block shadow-xs transition-colors"
-          >
-            Atur Jam Mengajar
-          </Link>
-        )}
+        
 
         <button
           onClick={handleSignOut}
