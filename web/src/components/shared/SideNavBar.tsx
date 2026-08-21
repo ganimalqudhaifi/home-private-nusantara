@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
+  ChevronLeft,
+  ChevronRight,
   LayoutDashboard,
   Clock,
   HelpCircle,
@@ -26,6 +28,7 @@ export interface SideNavBarProps {
 
 export function SideNavBar({ role, className = '' }: SideNavBarProps) {
   const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const router = useRouter();
   const { user, isLoading } = useUser();
 
@@ -81,10 +84,10 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
 
   return (
     <aside
-      className={`bg-surface-container-lowest border-r border-border-whisper w-64 flex flex-col p-4 shrink-0 min-h-screen sticky top-0 ${className}`}
+      className={`bg-surface-container-lowest border-r border-border-whisper ${isCollapsed ? 'w-20 items-center px-2' : 'w-64 px-4'} flex flex-col py-4 shrink-0 min-h-screen sticky top-0 transition-all duration-300 ${className}`}
     >
-      {/* Brand Header (Moved to Top) */}
-      <div className="mb-3 px-3 py-2">
+      {/* Brand Header */}
+      <div className={`mb-3 py-2 ${isCollapsed ? 'px-0 flex justify-center' : 'px-3'}`}>
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
             <Image
@@ -96,19 +99,21 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
               priority
             />
           </div>
-          <div className="flex flex-col">
-            <h1 className="font-headline text-base font-bold text-primary tracking-tight">
-              Home Private
-            </h1>
-            <p className="text-[11px] text-text-muted font-medium capitalize">
-              Portal {role}
-            </p>
-          </div>
+          {!isCollapsed && (
+            <div className="flex flex-col">
+              <h1 className="font-headline text-base font-bold text-primary tracking-tight">
+                Home Private
+              </h1>
+              <p className="text-[11px] text-text-muted font-medium capitalize">
+                Portal {role}
+              </p>
+            </div>
+          )}
         </Link>
       </div>
 
       {/* User Profile Block (Moved to Top) */}
-      <div className="flex items-center gap-3 px-3 py-3 bg-surface-container-low rounded-2xl mb-3">
+      <div className={`flex items-center ${isCollapsed ? 'justify-center p-2' : 'gap-3 px-3 py-3'} bg-surface-container-low rounded-2xl mb-3`}>
         {isLoading ? (
           <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse shrink-0" />
         ) : userAvatar ? (
@@ -126,23 +131,25 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
           </div>
         )}
         
-        <div className="flex flex-col min-w-0 flex-1">
-          {isLoading ? (
-            <>
-              <div className="h-3 w-24 bg-gray-200 animate-pulse rounded mb-1" />
-              <div className="h-2 w-16 bg-gray-200 animate-pulse rounded" />
-            </>
-          ) : (
-            <>
-              <p className="text-sm font-semibold text-text-primary truncate" title={userName}>
-                {userName}
-              </p>
-              <p className="text-[11px] text-text-muted capitalize truncate">
-                {customRoleLabel}
-              </p>
-            </>
-          )}
-        </div>
+        {!isCollapsed && (
+          <div className="flex flex-col min-w-0 flex-1">
+            {isLoading ? (
+              <>
+                <div className="h-3 w-24 bg-gray-200 animate-pulse rounded mb-1" />
+                <div className="h-2 w-16 bg-gray-200 animate-pulse rounded" />
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-semibold text-text-primary truncate" title={userName}>
+                  {userName}
+                </p>
+                <p className="text-[11px] text-text-muted capitalize truncate">
+                  {customRoleLabel}
+                </p>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Navigation Links */}
@@ -155,32 +162,40 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
             <Link
               key={item.href + item.label}
               href={item.href}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
+              title={isCollapsed ? item.label : undefined}
+              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl font-body text-sm font-medium transition-all ${
                 isActive
                   ? 'bg-primary-container text-white shadow-xs font-semibold'
                   : 'text-on-surface-variant hover:bg-surface-container-high'
               }`}
             >
               <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-text-muted'}`} />
-              <span>{item.label}</span>
+              {!isCollapsed && <span>{item.label}</span>}
             </Link>
           );
         })}
       </nav>
 
       {/* Footer / CTA Actions */}
-      <div className="mt-auto pt-4 border-t border-border-whisper space-y-2">
-        
-
+      <div className="mt-auto pt-4 border-t border-border-whisper flex flex-col gap-2">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={`w-full flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl text-text-muted hover:text-primary hover:bg-surface-container-low text-xs font-semibold transition-colors`}
+          title={isCollapsed ? 'Perbesar Sidebar' : 'Kecilkan Sidebar'}
+        >
+          {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          {!isCollapsed && <span>Kecilkan Sidebar</span>}
+        </button>
         <button
           onClick={handleSignOut}
           type="button"
-          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-text-muted hover:text-[#DC2626] hover:bg-red-50 text-xs font-semibold transition-colors mt-2"
+          title={isCollapsed ? 'Keluar Portal' : undefined}
+          className={`w-full flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl text-text-muted hover:text-[#DC2626] hover:bg-red-50 text-xs font-semibold transition-colors`}
         >
           <LogOut className="w-4 h-4" />
-          <span>Keluar Portal</span>
+          {!isCollapsed && <span>Keluar Portal</span>}
         </button>
-</div>
+      </div>
     </aside>
   );
 }

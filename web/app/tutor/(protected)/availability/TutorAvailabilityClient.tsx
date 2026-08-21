@@ -106,7 +106,7 @@ export function TutorAvailabilityClient({
       </main>
 
       {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-white border-t border-border-whisper shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-40">
+      <div className="sticky bottom-0 w-full bg-white border-t border-border-whisper shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-40">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-sm text-text-muted flex items-center gap-2">
             <Info className="w-4 h-4 text-primary-container shrink-0" />
