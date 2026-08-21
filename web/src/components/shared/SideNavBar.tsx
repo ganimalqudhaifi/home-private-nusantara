@@ -87,7 +87,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
       className={`bg-surface-container-lowest border-r border-border-whisper ${isCollapsed ? 'w-20 items-center px-2' : 'w-64 px-4'} flex flex-col py-4 shrink-0 min-h-screen sticky top-0 transition-all duration-300 ${className}`}
     >
       {/* Brand Header */}
-      <div className={`mb-4 py-2 flex ${isCollapsed ? 'flex-col items-center gap-4 px-0' : 'items-center justify-between px-3'}`}>
+      <div className={`mb-3 py-2 ${isCollapsed ? 'px-0 flex justify-center' : 'px-3'}`}>
         <Link href="/" className="flex items-center gap-3 group" title="Beranda">
           <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-border-whisper shrink-0 bg-white">
             <Image
@@ -110,13 +110,6 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
             </div>
           )}
         </Link>
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-surface-container-low transition-colors"
-          title={isCollapsed ? 'Perbesar Sidebar' : 'Kecilkan Sidebar'}
-        >
-          {isCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
-        </button>
       </div>
 
       {/* User Profile Block (Moved to Top) */}
