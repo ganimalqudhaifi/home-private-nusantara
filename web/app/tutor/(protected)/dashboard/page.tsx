@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { TutorMetricsGrid } from '@/src/components/tutor/TutorMetricsGrid';
 import { TutorUpcomingSessionsCard } from '@/src/components/tutor/TutorUpcomingSessionsCard';
 import { TutorRecentStudentsCard } from '@/src/components/tutor/TutorRecentStudentsCard';
+import { TutorStudentDrawer } from '@/src/components/tutor/TutorStudentDrawer';
+import { useDrawer } from '@/src/hooks/useDrawer';
 import { CalendarPlus, ShieldCheck, Coffee, AlertTriangle, UserX, PhoneCall } from 'lucide-react';
 import { StudentSession, Student } from '@/src/types';
 import { BRAND_INFO } from '@/src/data/mockData';
@@ -34,6 +36,20 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
   const userRole = (user?.role as 'guest' | 'student' | 'tutor' | 'admin') || 'tutor';
   const tutorStatus = user?.status || 'verified';
   const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
+
+  const {
+    isOpen: isDrawerOpen,
+    data: selectedSession,
+    open: openDrawer,
+    close: closeDrawer,
+  } = useDrawer<StudentSession>({
+    initialOpen: false,
+    initialData: null,
+  });
+
+  const handleSelectSession = (session: StudentSession) => {
+    openDrawer(session);
+  };
 
   const renderStatusBanner = () => {
     if (tutorStatus === 'on_leave') {
@@ -183,7 +199,7 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
         {/* 2-Column Content Grid: Upcoming Sessions & Recent Students */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7">
-            <TutorUpcomingSessionsCard sessions={sessions} isLoading={isLoadingData} />
+            <TutorUpcomingSessionsCard sessions={sessions} isLoading={isLoadingData} onSelectSession={handleSelectSession} />
           </div>
 
           <div className="lg:col-span-5">
@@ -192,6 +208,12 @@ export default function TutorDashboardPage({ searchParams }: TutorDashboardPageP
         </div>
       </main>
 
+      {/* Slide-over Drawer for Student Session Details */}
+      <TutorStudentDrawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+        session={selectedSession}
+      />
     </div>
   );
 }

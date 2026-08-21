@@ -73,7 +73,7 @@ export function TutorUpcomingSessionsCard({
  onClick={() => onSelectSession && onSelectSession(session)}
  className="p-4 rounded-xl border border-border-whisper hover:border-primary-container transition-all bg-surface-container-low/40 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
  >
- <div className="flex items-start gap-3.5">
+ <div className="flex items-start gap-3.5 min-w-0 flex-1">
  <div className="w-11 h-11 rounded-xl bg-primary-container text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
  {session.level} {session.grade}
  </div>
