@@ -20,7 +20,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     await searchParams;
   }
 
-  const { data: session } = await auth.getSession({ fetchOptions: { headers: await headers() } });
+  let session = null;
+  try {
+    const res = await auth.getSession({ fetchOptions: { headers: await headers() } });
+    session = res.data;
+  } catch (err) {
+    // Suppress cookie modification errors in Server Components
+    // Client-side TopNavBar will fallback to useUser() automatically if this fails
+    console.warn('Failed to fetch session on server:', err);
+  }
+
   const role = ((session?.user as any)?.role as 'guest' | 'student' | 'tutor' | 'admin') || 'guest';
   const userName = session?.user?.name || undefined;
   const userAvatar = session?.user?.image || (session?.user as any)?.avatarUrl || undefined;
