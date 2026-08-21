@@ -1,6 +1,7 @@
 'use client';
 
-import React from'react';
+import React, { useState } from 'react';
+import { mutate } from 'swr';
 import { Drawer } from'../shared/Drawer';
 import { StudentSession } from'../../types';
 import {
@@ -27,9 +28,40 @@ export function TutorStudentDrawer({
  onClose,
  session,
 }: TutorStudentDrawerProps) {
- if (!session) return null;
+  const [isCompleting, setIsCompleting] = useState(false);
 
- const isSD = session.level ==='SD';
+  if (!session) return null;
+
+  const isSD = session.level === 'SD';
+
+  // Check if session date is today or in the past
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const sessionDate = new Date(session.date);
+  sessionDate.setHours(0, 0, 0, 0);
+  const canComplete = sessionDate.getTime() <= today.getTime() && (session.status === 'scheduled' || session.status === 'in_progress');
+
+  const handleCompleteSession = async () => {
+    try {
+      setIsCompleting(true);
+      const res = await fetch(`/api/tutor/sessions/${session.id}/complete`, {
+        method: 'PUT',
+      });
+      if (res.ok) {
+        // Refresh data
+        mutate('/api/tutor/dashboard-data');
+        mutate('/api/tutor/schedule');
+        onClose();
+      } else {
+        alert('Gagal menandai sesi sebagai selesai.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Terjadi kesalahan jaringan.');
+    } finally {
+      setIsCompleting(false);
+    }
+  };
 
  return (
  <Drawer
@@ -165,13 +197,24 @@ export function TutorStudentDrawer({
  )}
 
  {/* Session Status Button */}
- <div className="pt-2">
+ <div className="pt-2 flex flex-col gap-2">
+ {canComplete && (
+ <button
+ type="button"
+ onClick={handleCompleteSession}
+ disabled={isCompleting}
+ className="w-full bg-emerald-600 text-white py-3 rounded-xl font-headline text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+ >
+ <CheckCircle2 className="w-4 h-4" />
+ <span>{isCompleting ? 'Menyelesaikan...' : 'Tandai Sesi Selesai'}</span>
+ </button>
+ )}
  <button
  type="button"
  onClick={onClose}
- className="w-full bg-primary-container text-white py-3 rounded-xl font-headline text-xs font-bold hover:bg-primary-hover transition-colors shadow-sm flex items-center justify-center gap-2"
+ className={`w-full py-3 rounded-xl font-headline text-xs font-bold transition-colors flex items-center justify-center gap-2 ${canComplete ? 'bg-surface-container-low text-text-muted hover:bg-surface-container-high' : 'bg-primary-container text-white hover:bg-primary-hover shadow-sm'}`}
  >
- <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+ {!canComplete && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
  <span>Tutup Rincian Sesi</span>
  </button>
  </div>
