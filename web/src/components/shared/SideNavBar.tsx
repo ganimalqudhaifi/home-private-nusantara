@@ -177,15 +177,23 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
       </nav>
 
       {/* Footer / CTA Actions */}
-      <div className="mt-auto pt-4 border-t border-border-whisper flex flex-col gap-2">
-        
+      <div className="mt-auto pt-4 border-t border-border-whisper space-y-1.5">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          type="button"
+          title={isCollapsed ? 'Perbesar Sidebar' : 'Kecilkan Sidebar'}
+          className={`w-full flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl font-body text-sm font-medium transition-all text-on-surface-variant hover:bg-surface-container-high`}
+        >
+          {isCollapsed ? <PanelLeftOpen className="w-4 h-4 shrink-0 text-text-muted" /> : <PanelLeftClose className="w-4 h-4 shrink-0 text-text-muted" />}
+          {!isCollapsed && <span>Kecilkan Sidebar</span>}
+        </button>
         <button
           onClick={handleSignOut}
           type="button"
           title={isCollapsed ? 'Keluar Portal' : undefined}
-          className={`w-full flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl text-text-muted hover:text-[#DC2626] hover:bg-red-50 text-xs font-semibold transition-colors`}
+          className={`w-full flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl font-body text-sm font-medium transition-all text-text-muted hover:text-[#DC2626] hover:bg-red-50`}
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-4 h-4 shrink-0" />
           {!isCollapsed && <span>Keluar Portal</span>}
         </button>
       </div>
