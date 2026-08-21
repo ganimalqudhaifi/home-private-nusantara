@@ -6,6 +6,8 @@ import { StudentSession } from '../../types';
 import { CreateScheduleRundownModal } from './CreateScheduleRundownModal';
 import { DeleteBookingModal } from './DeleteBookingModal';
 import { EditBookingModal } from './EditBookingModal';
+import { TutorStudentDrawer } from '../tutor/TutorStudentDrawer';
+import { useDrawer } from '../../hooks/useDrawer';
 import {
   Calendar,
   Clock,
@@ -114,6 +116,16 @@ export function AdminScheduleMonitoringGrid({
       (s.code || '').toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesStatus && matchesSearch;
+  });
+
+  const {
+    isOpen: isDrawerOpen,
+    data: selectedSession,
+    open: openDrawer,
+    close: closeDrawer,
+  } = useDrawer<StudentSession>({
+    initialOpen: false,
+    initialData: null,
   });
 
   const scheduledCount = sessions.filter((s) => s.status === 'scheduled').length;
@@ -319,16 +331,16 @@ export function AdminScheduleMonitoringGrid({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+            <table className="w-full text-left border-collapse min-w-[800px] table-fixed">
               <thead className="bg-surface-container-low/70 border-b border-border-whisper text-xs text-text-muted uppercase tracking-wider">
                 <tr>
-                  <th className="p-4 font-semibold">ID & Tanggal</th>
-                  <th className="p-4 font-semibold">Waktu (WIB)</th>
-                  <th className="p-4 font-semibold">Siswa & Mapel</th>
-                  <th className="p-4 font-semibold">Tutor Pengajar</th>
-                  <th className="p-4 font-semibold">Lokasi Belajar</th>
-                  <th className="p-4 font-semibold text-center">Status</th>
-                  <th className="p-4 font-semibold text-center">Aksi</th>
+                  <th className="p-4 font-semibold w-[130px]">ID & Tanggal</th>
+                  <th className="p-4 font-semibold w-[90px]">Waktu</th>
+                  <th className="p-4 font-semibold w-[160px]">Siswa & Mapel</th>
+                  <th className="p-4 font-semibold w-[160px]">Tutor</th>
+                  <th className="p-4 font-semibold w-auto">Lokasi Belajar</th>
+                  <th className="p-4 font-semibold text-center w-[120px]">Status</th>
+                  <th className="p-4 font-semibold text-right w-[90px]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-whisper text-xs">
@@ -339,7 +351,8 @@ export function AdminScheduleMonitoringGrid({
                   return (
                     <tr
                       key={ses.id}
-                      className="hover:bg-surface-container-low/40 transition-colors"
+                      onClick={() => openDrawer(ses)}
+                      className="hover:bg-surface-container-low/80 cursor-pointer transition-colors"
                     >
                       <td className="p-4">
                         <span className="font-mono font-bold text-primary">
@@ -357,10 +370,8 @@ export function AdminScheduleMonitoringGrid({
                       </td>
 
                       <td className="p-4">
-                        <p className="font-headline font-bold text-primary">
-                          {ses.studentName}
-                        </p>
-                        <div className="flex items-center gap-1.5 mt-0.5">
+                        <p className="font-headline font-bold text-primary truncate">{ses.studentName}</p>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1">
                           <span
                             className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
                               isSD
@@ -368,9 +379,9 @@ export function AdminScheduleMonitoringGrid({
                                 : 'bg-indigo-50 text-indigo-900'
                             }`}
                           >
-                            {ses.level} KELAS {ses.grade}
+                            {ses.level} KLS {ses.grade}
                           </span>
-                          <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 whitespace-nowrap">
                             {ses.subject}
                           </span>
                         </div>
@@ -387,7 +398,7 @@ export function AdminScheduleMonitoringGrid({
                         </div>
                       </td>
 
-                      <td className="p-4 max-w-xs truncate">
+                      <td className="p-4 truncate">
                         <div className="flex items-center gap-1 text-text-muted">
                           <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
                           <span className="truncate">{ses.address} ({ses.city || 'Makassar'})</span>
@@ -410,7 +421,7 @@ export function AdminScheduleMonitoringGrid({
                         <div className="flex items-center justify-end gap-1">
                           <button
                             type="button"
-                            onClick={() => setBookingToEdit(ses)}
+                            onClick={(e) => { e.stopPropagation(); setBookingToEdit(ses); }}
                             className="inline-flex items-center gap-1 rounded-lg p-2 text-primary transition-colors hover:bg-surface-container-high"
                             aria-label={`Edit sesi ${ses.code}`}
                             title="Edit sesi"
@@ -419,7 +430,8 @@ export function AdminScheduleMonitoringGrid({
                           </button>
                           <button
                             type="button"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setDeleteError('');
                               setBookingToDelete(ses);
                             }}

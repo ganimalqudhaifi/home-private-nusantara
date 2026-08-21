@@ -21,12 +21,14 @@ export interface TutorStudentDrawerProps {
  readonly isOpen: boolean;
  readonly onClose: () => void;
  readonly session: StudentSession | null;
+ readonly readOnly?: boolean;
 }
 
 export function TutorStudentDrawer({
  isOpen,
  onClose,
  session,
+ readOnly = false,
 }: TutorStudentDrawerProps) {
   const [isCompleting, setIsCompleting] = useState(false);
 
@@ -39,7 +41,7 @@ export function TutorStudentDrawer({
   today.setHours(0, 0, 0, 0);
   const sessionDate = new Date(session.date);
   sessionDate.setHours(0, 0, 0, 0);
-  const canComplete = sessionDate.getTime() <= today.getTime() && (session.status === 'scheduled' || session.status === 'in_progress');
+  const canComplete = !readOnly && sessionDate.getTime() <= today.getTime() && (session.status === 'scheduled' || session.status === 'in_progress');
 
   const handleCompleteSession = async () => {
     try {
