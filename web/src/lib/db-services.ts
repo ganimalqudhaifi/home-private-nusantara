@@ -842,6 +842,8 @@ export async function getTutorDashboardData(tutorId: string) {
         b.booking_code as code,
         b.student_id as "studentId",
         COALESCE(s.student_name, u_st.full_name, 'Siswa Nusantara') as "studentName",
+        s.parent_name as "parentName",
+        s.parent_phone as "parentPhone",
         b.tutor_id as "tutorId",
         COALESCE(u_tu.full_name, 'Pengajar') as "tutorName",
         b.level,
