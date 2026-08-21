@@ -21,6 +21,7 @@ import {
   RefreshCw,
   Trash2,
   Edit3,
+  Eye,
 } from 'lucide-react';
 
 export interface AdminScheduleMonitoringGridProps {
@@ -339,8 +340,8 @@ export function AdminScheduleMonitoringGrid({
                   <th className="p-4 font-semibold w-[160px]">Siswa & Mapel</th>
                   <th className="p-4 font-semibold w-[160px]">Tutor</th>
                   <th className="p-4 font-semibold w-auto">Lokasi Belajar</th>
-                  <th className="p-4 font-semibold text-center w-[120px]">Status</th>
-                  <th className="p-4 font-semibold text-right w-[90px]">Aksi</th>
+                  <th className="p-4 font-semibold text-center w-[140px]">Status</th>
+                  <th className="p-4 font-semibold text-center w-[140px]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-whisper text-xs">
@@ -349,11 +350,7 @@ export function AdminScheduleMonitoringGrid({
                   const isCompleted = ses.status === 'completed';
 
                   return (
-                    <tr
-                      key={ses.id}
-                      onClick={() => openDrawer(ses)}
-                      className="hover:bg-surface-container-low/80 cursor-pointer transition-colors"
-                    >
+                    <tr key={ses.id} className="hover:bg-surface-container-low/40 transition-colors">
                       <td className="p-4">
                         <span className="font-mono font-bold text-primary">
                           #{ses.code}
@@ -417,11 +414,20 @@ export function AdminScheduleMonitoringGrid({
                           <span>{isCompleted ? 'SELESAI' : 'TERKONFIRMASI'}</span>
                         </span>
                       </td>
-                      <td className="p-4 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="p-4 text-center whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-1">
                           <button
                             type="button"
-                            onClick={(e) => { e.stopPropagation(); setBookingToEdit(ses); }}
+                            onClick={() => openDrawer(ses)}
+                            className="inline-flex items-center gap-1 rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50"
+                            aria-label={`Lihat rincian ${ses.code}`}
+                            title="Lihat rincian sesi"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setBookingToEdit(ses)}
                             className="inline-flex items-center gap-1 rounded-lg p-2 text-primary transition-colors hover:bg-surface-container-high"
                             aria-label={`Edit sesi ${ses.code}`}
                             title="Edit sesi"
@@ -430,8 +436,7 @@ export function AdminScheduleMonitoringGrid({
                           </button>
                           <button
                             type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
+                            onClick={() => {
                               setDeleteError('');
                               setBookingToDelete(ses);
                             }}
