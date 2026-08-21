@@ -117,82 +117,88 @@ export default function AdminSubjectsPage() {
   return (
     <div className="min-h-screen bg-surface-container-lowest flex flex-col">
             
-      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border-whisper">
           <div>
-            <h1 className="text-2xl font-headline font-bold text-primary">Kelola Mata Pelajaran</h1>
-            <p className="text-text-muted mt-1">Atur daftar mata pelajaran yang tersedia di formulir pendaftaran dan booking.</p>
+            <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">Kelola Mata Pelajaran</h1>
+            <p className="text-sm text-text-muted mt-0.5">Atur daftar mata pelajaran yang tersedia di formulir pendaftaran dan booking.</p>
           </div>
-          <Button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors">
+          <button
+            type="button"
+            onClick={openAddModal}
+            className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 shrink-0"
+          >
             <Plus className="w-4 h-4" />
             <span>Tambah Mapel</span>
-          </Button>
+          </button>
         </div>
 
         {error && <div className="p-4 bg-red-50 text-red-600 rounded-xl mb-6">Gagal memuat data.</div>}
 
         <div className="bg-white rounded-2xl border border-border-whisper shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+            <table className="w-full text-left border-collapse min-w-[800px] table-fixed">
               <thead>
-                <tr className="bg-surface-container-lowest border-b border-border-whisper text-sm text-text-muted">
-                  <th className="px-6 py-4 font-semibold">Nama Mapel</th>
-                  <th className="px-6 py-4 font-semibold">Kategori</th>
-                  <th className="px-6 py-4 font-semibold">Kode</th>
-                  <th className="px-6 py-4 font-semibold">Urutan</th>
-                  <th className="px-6 py-4 font-semibold text-center">Status</th>
-                  <th className="px-6 py-4 font-semibold text-right">Aksi</th>
+                <tr className="bg-surface-container-low/70 border-b border-border-whisper text-xs text-text-muted uppercase tracking-wider">
+                  <th className="p-4 font-semibold w-auto">Nama Mapel</th>
+                  <th className="p-4 font-semibold w-[140px]">Kategori</th>
+                  <th className="p-4 font-semibold w-[140px]">Kode</th>
+                  <th className="p-4 font-semibold w-[100px]">Urutan</th>
+                  <th className="p-4 font-semibold text-center w-[120px]">Status</th>
+                  <th className="p-4 font-semibold text-right w-[100px]">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="text-sm">
+              <tbody className="divide-y divide-border-whisper text-xs">
                 {!data && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-text-muted">
+                    <td colSpan={6} className="p-8 text-center text-text-muted">
                       Memuat data...
                     </td>
                   </tr>
                 )}
                 {subjects.map((subject) => (
-                  <tr key={subject.id} className="border-b border-border-whisper last:border-0 hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-primary">{subject.name}</div>
-                      <div className="text-xs text-text-muted mt-0.5 line-clamp-1" title={subject.description}>{subject.description || '-'}</div>
+                  <tr key={subject.id} className="hover:bg-surface-container-low/40 transition-colors">
+                    <td className="p-4">
+                      <div className="font-headline font-bold text-primary truncate">{subject.name}</div>
+                      <div className="text-[11px] text-text-muted mt-0.5 truncate" title={subject.description}>{subject.description || '-'}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="bg-surface-container-low px-2 py-1 rounded-md text-xs font-medium text-text-primary">
+                    <td className="p-4">
+                      <span className="bg-surface-container-low px-2 py-0.5 rounded text-[10px] font-bold text-text-primary border border-border-whisper whitespace-nowrap">
                         {subject.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <code className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs">{subject.code}</code>
+                    <td className="p-4">
+                      <span className="font-mono px-2 py-1 bg-surface-container-low rounded-md border border-border-whisper">{subject.code}</span>
                     </td>
-                    <td className="px-6 py-4 text-text-muted">{subject.display_order}</td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="p-4 text-text-muted font-mono">{subject.display_order}</td>
+                    <td className="p-4 text-center">
                       <button
                         onClick={() => handleToggleStatus(subject)}
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
-                          subject.is_active ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors ${
+                          subject.is_active ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100' : 'bg-surface-container-high text-text-muted border border-border-whisper hover:bg-gray-200'
                         }`}
                       >
-                        {subject.is_active ? <CheckCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                        {subject.is_active ? 'Aktif' : 'Nonaktif'}
+                        {subject.is_active ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                        <span>{subject.is_active ? 'AKTIF' : 'NONAKTIF'}</span>
                       </button>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="p-4">
+                      <div className="flex items-center justify-end gap-1">
                         <button
+                          type="button"
                           onClick={() => openEditModal(subject)}
-                          className="p-1.5 text-text-muted hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors"
-                          title="Edit"
+                          className="inline-flex items-center gap-1 rounded-lg p-2 text-primary transition-colors hover:bg-surface-container-high"
+                          title="Edit mapel"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 className="h-4 w-4" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleDelete(subject.id)}
-                          className="p-1.5 text-text-muted hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Hapus"
+                          className="inline-flex items-center gap-1 rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+                          title="Hapus mapel"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </td>
