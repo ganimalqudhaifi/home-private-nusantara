@@ -142,7 +142,7 @@ export default function AdminSubjectsPage() {
                 <tr className="bg-surface-container-low/70 border-b border-border-whisper text-xs text-text-muted uppercase tracking-wider">
                   <th className="p-4 font-semibold w-auto">Nama Mapel</th>
                   <th className="p-4 font-semibold w-[140px]">Kategori</th>
-                  <th className="p-4 font-semibold w-[140px]">Kode</th>
+                  <th className="p-4 font-semibold w-[160px]">Kode</th>
                   <th className="p-4 font-semibold w-[100px]">Urutan</th>
                   <th className="p-4 font-semibold text-center w-[120px]">Status</th>
                   <th className="p-4 font-semibold text-right w-[100px]">Aksi</th>
@@ -168,7 +168,7 @@ export default function AdminSubjectsPage() {
                       </span>
                     </td>
                     <td className="p-4">
-                      <span className="font-mono px-2 py-1 bg-surface-container-low rounded-md border border-border-whisper">{subject.code}</span>
+                      <span className="font-mono text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 whitespace-nowrap">{subject.code}</span>
                     </td>
                     <td className="p-4 text-text-muted font-mono">{subject.display_order}</td>
                     <td className="p-4 text-center">
