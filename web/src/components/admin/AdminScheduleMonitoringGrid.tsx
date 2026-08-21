@@ -485,6 +485,13 @@ export function AdminScheduleMonitoringGrid({
         onClose={() => setBookingToDelete(null)}
         onConfirm={handleDeleteBooking}
       />
+
+      <TutorStudentDrawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+        session={selectedSession}
+        readOnly={true}
+      />
     </div>
   );
 }
