@@ -5,7 +5,7 @@ import { TutorAvailabilityMatrix } from '@/src/components/tutor/TutorAvailabilit
 import { useAvailability } from '@/src/hooks/useAvailability';
 import { Info, CheckCircle2, Loader2, ChevronLeft } from 'lucide-react';
 import { Button } from '@/src/components/shared/Button';
-import { useSearchParams } from 'next/navigation';
+
 import Link from 'next/link';
 
 export interface TutorAvailabilityClientProps {
@@ -17,13 +17,7 @@ export function TutorAvailabilityClient({
   initialSubjects,
   initialTimeSlots,
 }: TutorAvailabilityClientProps) {
-  const searchParams = useSearchParams();
-  const from = searchParams.get('from');
-  
-  const backUrl = from === 'schedule' ? '/tutor/schedule' : '/tutor/dashboard';
-  const backText = from === 'schedule' ? 'Kembali ke Jadwal' : 'Kembali ke Dashboard';
-
-  const {
+const {
     activeSubjects,
     toggleSubject,
     activeTimeSlots,
@@ -75,13 +69,6 @@ export function TutorAvailabilityClient({
       
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8">
         <div>
-          <Link 
-            href={backUrl} 
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors mb-3"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            {backText}
-          </Link>
           <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
             Konfigurasi Mata Pelajaran & Ketersediaan Mengajar
           </h1>

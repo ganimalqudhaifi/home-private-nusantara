@@ -19,12 +19,6 @@ export default async function AdminBookingsPage({ searchParams }: AdminBookingsP
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border-whisper">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-text-muted mb-1">
-              <Link href="/admin/dashboard" className="hover:text-primary flex items-center gap-1">
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Kembali ke Dashboard</span>
-              </Link>
-            </div>
             <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-primary">
               Monitoring Jadwal Sesi Belajar
             </h1>
