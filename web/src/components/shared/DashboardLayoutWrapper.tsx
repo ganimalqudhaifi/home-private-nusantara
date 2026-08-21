@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { SideNavBar } from './SideNavBar';
 import { Menu } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export interface DashboardLayoutWrapperProps {
   readonly children: React.ReactNode;
@@ -11,6 +12,11 @@ export interface DashboardLayoutWrapperProps {
 
 export function DashboardLayoutWrapper({ children, role }: DashboardLayoutWrapperProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const pathname = usePathname();
+
+  if (pathname === '/tutor/pending') {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex min-h-screen bg-surface-container-lowest">

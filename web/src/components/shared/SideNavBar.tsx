@@ -29,16 +29,23 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
   const router = useRouter();
   const { user, isLoading } = useUser();
 
+  const userName = user?.full_name || user?.name || (role === 'admin' ? 'Administrator Pusat' : '');
+  const userAvatar = user?.avatar_url || user?.image || undefined;
+  const tutorStatus = user?.status;
+  const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
+
   const getNavItems = () => {
     switch (role) {
       case 'tutor':
-        return [
+        const tutorItems = [
           { label: 'Dashboard', href: '/tutor/dashboard', icon: LayoutDashboard },
           { label: 'Jadwal Mengajar', href: '/tutor/schedule', icon: CalendarDays },
           { label: 'Atur Ketersediaan', href: '/tutor/availability', icon: Clock },
-          { label: 'Status Akun', href: '/tutor/pending', icon: CheckCircle },
-          { label: 'Bantuan', href: '/#contact', icon: HelpCircle },
         ];
+        if (!isVerified) {
+          tutorItems.push({ label: 'Status Akun', href: '/tutor/pending', icon: CheckCircle });
+        }
+        return tutorItems;
       case 'admin':
         return [
           { label: 'Control Hub', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -64,11 +71,6 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
       router.refresh();
     }
   };
-
-  const userName = user?.full_name || user?.name || (role === 'admin' ? 'Administrator Pusat' : '');
-  const userAvatar = user?.avatar_url || user?.image || undefined;
-  const tutorStatus = user?.status;
-  const isVerified = tutorStatus === 'verified' || tutorStatus === 'active';
 
   let customRoleLabel = role as string;
   if (role === 'admin') {
