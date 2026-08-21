@@ -84,8 +84,16 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
 
   return (
     <aside
-      className={`bg-surface-container-lowest border-r border-border-whisper ${isCollapsed ? 'w-20 items-center px-2' : 'w-64 px-4'} flex flex-col py-4 shrink-0 min-h-screen sticky top-0 transition-all duration-300 ${className}`}
+      className={`relative bg-surface-container-lowest border-r border-border-whisper ${isCollapsed ? 'w-20 items-center px-2' : 'w-64 px-4'} flex flex-col py-4 shrink-0 min-h-screen sticky top-0 transition-all duration-300 ${className}`}
     >
+      {/* Floating Toggle Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-3 top-8 bg-white border border-border-whisper rounded-full p-1 shadow-sm text-text-muted hover:text-primary transition-all z-50 focus:outline-none"
+        title={isCollapsed ? 'Perbesar Sidebar' : 'Kecilkan Sidebar'}
+      >
+        {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+      </button>
       {/* Brand Header */}
       <div className={`mb-3 py-2 ${isCollapsed ? 'px-0 flex justify-center' : 'px-3'}`}>
         <Link href="/" className="flex items-center gap-3 group">
@@ -178,14 +186,7 @@ export function SideNavBar({ role, className = '' }: SideNavBarProps) {
 
       {/* Footer / CTA Actions */}
       <div className="mt-auto pt-4 border-t border-border-whisper flex flex-col gap-2">
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`w-full flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl text-text-muted hover:text-primary hover:bg-surface-container-low text-xs font-semibold transition-colors`}
-          title={isCollapsed ? 'Perbesar Sidebar' : 'Kecilkan Sidebar'}
-        >
-          {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          {!isCollapsed && <span>Kecilkan Sidebar</span>}
-        </button>
+        
         <button
           onClick={handleSignOut}
           type="button"

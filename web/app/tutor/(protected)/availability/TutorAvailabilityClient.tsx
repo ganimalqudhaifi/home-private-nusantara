@@ -70,7 +70,7 @@ export function TutorAvailabilityClient({
   const activeDaysCount = Array.from(new Set(activeTimeSlots.map(s => s.split(':')[0]))).length;
 
   return (
-    <div className="bg-surface text-text-primary min-h-screen flex flex-col pb-24">
+    <div className="bg-surface text-text-primary min-h-screen flex flex-col">
       {/* Top Header */}
       
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8">
@@ -103,11 +103,8 @@ export function TutorAvailabilityClient({
           activeTimeSlots={activeTimeSlots}
           onToggleTimeSlot={toggleTimeSlot}
         />
-      </main>
-
-      {/* Sticky Bottom Bar */}
-      <div className="sticky bottom-0 w-full bg-white border-t border-border-whisper shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-40">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+              {/* Action Bar (Block Component) */}
+        <div className="bg-white border border-border-whisper rounded-xl p-4 md:p-6 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
           <div className="text-sm text-text-muted flex items-center gap-2">
             <Info className="w-4 h-4 text-primary-container shrink-0" />
             <span>
@@ -142,7 +139,7 @@ export function TutorAvailabilityClient({
             </Button>
           </div>
         </div>
-      </div>
+      </main>
 
     </div>
   );
